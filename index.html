@@ -81,7 +81,7 @@ body::after {
 
 /* ---- TICKER ---- */
 .ticker-bar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  position: sticky; top: 0; left: 0; right: 0; z-index: 1000;
   background: var(--neon-pink); height: 28px;
   display: flex; align-items: center; overflow: hidden;
 }
@@ -99,7 +99,7 @@ body::after {
 
 /* ---- NAV ---- */
 nav {
-  position: fixed; top: 28px; left: 0; right: 0; z-index: 999;
+  position: sticky; top: 28px; left: 0; right: 0; z-index: 999;
   background: rgba(5,5,8,0.96); border-bottom: 1px solid var(--border-glow);
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 48px; height: 58px; backdrop-filter: blur(12px);
@@ -400,12 +400,15 @@ footer {
 }
 @media (min-width: 640px) {
   footer {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
     text-align: left;
     padding: 40px 48px;
   }
+  .ft-l { order: 1; text-align: left; }
+  .ft-center { order: 2; text-align: center; }
+  .ft-r { order: 3; text-align: right; }
 }
 .ft-l { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 2px; }
 .ft-r { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 1px; }
@@ -419,10 +422,17 @@ footer {
 @media(max-width:768px) {
   .episodes-grid, .detector-wrap, .lore-grid { grid-template-columns: 1fr; }
   .ep-s2 { grid-column: span 1; }
-  nav { padding: 0 20px; }
+  nav { padding: 0 20px; position: fixed; }
   section { padding: 60px 20px; }
   .nav-links { display: none; }
   .d-stats { flex-direction: column; gap: 28px; }
+  .ticker-bar { position: fixed; }
+  .confined-fixed { position: fixed !important; }
+  html, body { height: auto !important; overflow: visible !important; overflow-x: hidden !important; }
+  #consoleFrameWrap { display: contents !important; }
+  #consoleFrameBox { display: contents !important; }
+  #consoleScreen { display: contents !important; }
+  #consoleFrameImg { display: none !important; }
 }
 
 /* ---- VIDEO MODAL ---- */
@@ -617,6 +627,45 @@ footer {
   #broadcastBug { font-size:7px;bottom:14px;left:14px; }
 }
 
+/* ---- CONSOLE MONITOR FRAME (desktop) ---- */
+html, body { height: 100%; overflow: hidden; }
+
+#consoleFrameWrap {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: #000;
+  z-index: 0;
+}
+#consoleFrameBox {
+  position: relative;
+  width: min(100vw, 100vh * (1920 / 1331));
+  height: min(100vh, 100vw * (1331 / 1920));
+}
+#consoleScreen {
+  position: absolute;
+  left: 0.83%; top: 4.21%;
+  width: 94.27%; height: 75.43%;
+  overflow-y: auto; overflow-x: hidden;
+  background: #050508;
+  -webkit-overflow-scrolling: touch;
+}
+#consoleFrameImg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Shared class for overlays that should stay confined to the console
+   glass on desktop, but return to true full-viewport fixed on mobile
+   (mobile disables the frame entirely — see max-width:768px block). */
+.confined-fixed {
+  position: absolute !important;
+  inset: 0 !important;
+  top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+  width: 100% !important; height: 100% !important;
+}
+
 </style>
 <script>
 // ── SIGNAL ACQUISITION ──────────────────────────────────
@@ -686,10 +735,11 @@ function skipIntro() {
 
   // Quick glitch burst then dismiss
   const gc = document.createElement('canvas');
-  gc.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:100001;pointer-events:none';
+  gc.className = 'confined-fixed';
+  gc.style.cssText = 'width:100%;height:100%;z-index:100001;pointer-events:none;position:fixed;inset:0;';
   gc.width = window.innerWidth;
   gc.height = window.innerHeight;
-  document.body.appendChild(gc);
+  (document.getElementById('consoleScreen') || document.body).appendChild(gc);
   const gctx = gc.getContext('2d');
   const W = gc.width, H = gc.height;
 
@@ -726,6 +776,14 @@ function skipIntro() {
 </head>
 <body>
 
+<!-- ============================================================
+     CONSOLE MONITOR FRAME — desktop only. Wraps the entire site.
+     On mobile this collapses to display:contents (inert, normal flow).
+     ============================================================ -->
+<div id="consoleFrameWrap">
+  <div id="consoleFrameBox">
+    <div id="consoleScreen">
+
 <!-- News Hero Mute Button — fixed position, always visible top-right of viewport -->
 <button id="newsHeroMuteBtn" onclick="toggleNewsHeroMute()" style="
   position:fixed;
@@ -750,7 +808,7 @@ function skipIntro() {
 <!-- ============================================================
      COLD OPEN INTRO — runs once on first visit
      ============================================================ -->
-<div id="coldOpen" style="
+<div id="coldOpen" class="confined-fixed" style="
   position:fixed;
   inset:0;
   top:0;
@@ -986,6 +1044,7 @@ function skipIntro() {
     // ── CRT OVERLAY ─────────────────────────────────────────
     // Scanline layer
     const scanlines = document.createElement('div');
+    scanlines.className = 'confined-fixed';
     scanlines.style.cssText = `
       position:fixed;inset:0;z-index:99998;pointer-events:none;
       background:repeating-linear-gradient(
@@ -994,7 +1053,7 @@ function skipIntro() {
         rgba(0,0,0,0.12) 2px,rgba(0,0,0,0.12) 4px
       );
     `;
-    document.body.appendChild(scanlines);
+    (document.getElementById('consoleScreen') || document.body).appendChild(scanlines);
 
     // CRT flicker keyframe
     const flickerStyle = document.createElement('style');
@@ -1975,7 +2034,7 @@ function skipIntro() {
 
 <!-- FOOTER -->
 <footer>
-  <div class="ft-center" style="order:1">
+  <div class="ft-center">
     <div class="ft-pg-credit">A transmission from</div>
     <div class="ft-pg-name">Premier Gem</div>
     <div class="ft-pg-tag">Beyond fiction.</div>
@@ -1985,14 +2044,14 @@ function skipIntro() {
       that cannot be manufactured.
     </div>
   </div>
-  <div class="ft-l" style="order:2;font-size:8px;opacity:0.4;max-width:240px">
+  <div class="ft-l" style="font-size:8px;opacity:0.4;max-width:240px">
     © CYCLE 2187 SYNTH CITY MEDIA GROUP<br>ALL CONTENT BUREAU APPROVED
   </div>
-  <div class="ft-r" style="order:3">synthcity.tv</div>
+  <div class="ft-r">synthcity.tv</div>
 </footer>
 
 <!-- VIDEO MODAL -->
-<div class="modal-overlay" id="videoModal" onclick="closeModal(event)">
+<div class="modal-overlay confined-fixed" id="videoModal" onclick="closeModal(event)">
   <div class="modal-header">
     <div class="modal-ep-label" id="modalEpLabel">EP. 01</div>
     <button class="modal-close" onclick="closeModalDirect()">✕ CLOSE TRANSMISSION</button>
@@ -2006,7 +2065,7 @@ function skipIntro() {
 </div>
 
 <!-- TRANSITION OVERLAY — p5.js glitch -->
-<div class="t-overlay" id="tOverlay">
+<div class="t-overlay confined-fixed" id="tOverlay">
   <div id="glitchCanvasWrap" style="position:absolute;inset:0;z-index:0"></div>
   <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;pointer-events:none">
     <div class="t-text" id="tText">SIGNAL INTERRUPTED</div>
@@ -2411,6 +2470,8 @@ window.addEventListener('scroll', updateNewsHeroMuteBtnVisibility);
 window.addEventListener('resize', updateNewsHeroMuteBtnVisibility);
 document.addEventListener('DOMContentLoaded', function() {
   setTimeout(updateNewsHeroMuteBtnVisibility, 500);
+  const cs = document.getElementById('consoleScreen');
+  if (cs) cs.addEventListener('scroll', updateNewsHeroMuteBtnVisibility);
 });
 
 // Mute toggle for news hero slideshow
@@ -2726,6 +2787,7 @@ function triggerGlitch() {
 
   const ov = document.createElement('div');
   ov.id = 'accessOverlay';
+  ov.className = 'confined-fixed';
   ov.style.cssText = `
     position:fixed;inset:0;z-index:99999;
     background:#000;
@@ -2855,7 +2917,7 @@ function triggerGlitch() {
   center.appendChild(enterBox);
   ov.appendChild(center);
   ov.appendChild(footer);
-  document.body.appendChild(ov);
+  (document.getElementById('consoleScreen') || document.body).appendChild(ov);
   document.body.style.overflow = 'hidden';
 
   // Glitch canvas animation
@@ -2940,5 +3002,11 @@ function triggerGlitch() {
 }
 
 </script>
+
+    </div><!-- /#consoleScreen -->
+    <img id="consoleFrameImg" src="https://superborn-dev.s3.amazonaws.com/assets/images/neptune-screen.png" alt="">
+  </div><!-- /#consoleFrameBox -->
+</div><!-- /#consoleFrameWrap -->
+
 </body>
 </html>
