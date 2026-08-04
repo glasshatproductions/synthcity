@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RARITY DETECTOR — SYNTHETIC COMPLIANCE BUREAU</title>
+<meta name="description" content="Upload any image. The Bureau analyzes its rarity in Cycle 2187.">
+<meta property="og:title" content="RARITY DETECTOR — Is Your Item Rare in the Future?">
+<meta property="og:description" content="Upload any image. The Bureau classifies its rarity across all known timelines. Transmitting from Cycle 2187.">
+<meta property="og:image" content="https://superborn-dev.s3.amazonaws.com/assets/images/is-your-diamond-rare.png">
+<meta property="og:url" content="https://raritydetector.com">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RARITY DETECTOR — Is Your Item Rare in the Future?">
+<meta name="twitter:description" content="Upload any image. The Bureau classifies its rarity across all known timelines.">
+<meta name="twitter:image" content="https://superborn-dev.s3.amazonaws.com/assets/images/is-your-diamond-rare.png">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#ff2d78;--cyan:#00f5ff;--gold:rgba(200,169,110,0.9);
+  --bg:#04050a;--text:#e8e4d8;--dim:rgba(232,228,216,0.35);
+  --border:rgba(0,245,255,0.15);
+  --glow-cyan:0 0 12px rgba(0,245,255,0.4);
+  --glow-pink:0 0 12px rgba(255,45,120,0.4);
+  --glow-gold:0 0 12px rgba(200,169,110,0.35);
+  --mono:'Space Mono',monospace;--display:'Bebas Neue',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:var(--bg);color:var(--text);font-family:var(--mono);overflow-x:hidden;min-height:100vh;}
+
+/* Scanlines */
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px);pointer-events:none;z-index:9998;}
+
+/* Radial glow at top — ambient system light */
+body::after{content:'';position:fixed;top:0;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(ellipse at 50% 0%,rgba(0,245,255,0.04),transparent 70%);pointer-events:none;z-index:0;}
+
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes txPulse{0%,100%{box-shadow:0 0 8px rgba(255,45,120,0.3),inset 0 0 8px rgba(255,45,120,0.05)}50%{box-shadow:0 0 22px rgba(255,45,120,0.6),inset 0 0 16px rgba(255,45,120,0.1)}}
+@keyframes txFlicker{0%,100%{opacity:1}89%{opacity:1}90%{opacity:0.6}92%{opacity:1}97%{opacity:0.8}98%{opacity:1}}
+.tx-btn{
+  display:block;width:100%;
+  font-family:var(--mono);font-size:10px;letter-spacing:6px;
+  color:rgba(255,45,120,0.9);
+  border:1px solid rgba(255,45,120,0.5);
+  background:rgba(255,45,120,0.04);
+  padding:18px 20px;
+  text-align:center;text-decoration:none;
+  cursor:pointer;
+  animation:txPulse 2.8s ease-in-out infinite, txFlicker 9s infinite;
+  transition:letter-spacing 0.3s ease;
+  position:relative;
+}
+.tx-btn:hover{letter-spacing:8px;background:rgba(255,45,120,0.08);}
+.tx-btn-dot{display:inline-block;width:6px;height:6px;background:var(--pink);border-radius:50%;margin-right:10px;animation:blink 1s step-end infinite;vertical-align:middle;}
+.tx-btn-label{font-size:7px;letter-spacing:3px;color:rgba(255,45,120,0.4);text-align:center;margin-bottom:10px;display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:0.4;transform:scale(1)}50%{opacity:1;transform:scale(1.04)}}
+@keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes temporalPulse{0%,100%{opacity:0.6;border-color:rgba(255,200,0,0.25)}50%{opacity:1;border-color:rgba(255,200,0,0.6)}}
+@keyframes resultReveal{from{opacity:0;letter-spacing:10px}to{opacity:1;letter-spacing:4px}}
+@keyframes certReveal{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes integrityBar{from{width:0}to{width:93.6%}}
+@keyframes signalBar{from{width:0}to{width:78%}}
+@keyframes waveform{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.4)}}
+@keyframes scanPulse{0%,100%{r:6;opacity:0.8}50%{r:12;opacity:0.3}}
+@keyframes titleGlitch{
+  0%,87%,100%{text-shadow:none;transform:translate(0,0);}
+  88%{text-shadow:3px 0 rgba(255,45,120,0.6),-3px 0 rgba(0,245,255,0.6);transform:translate(2px,0);}
+  90%{text-shadow:-2px 0 rgba(0,245,255,0.5);transform:translate(-1px,0);}
+  92%{text-shadow:none;transform:translate(0,0);}
+}
+@keyframes scbGlitch{
+  0%,85%,100%{transform:translate(0,0);text-shadow:none;opacity:1;}
+  86%{transform:translate(3px,0);text-shadow:3px 0 rgba(255,45,120,0.7),-3px 0 rgba(0,245,255,0.7);}
+  88%{transform:translate(-2px,0);text-shadow:-2px 0 rgba(0,245,255,0.6);}
+  90%{transform:translate(0,0);text-shadow:none;}
+}
+
+/* ── NAV ── */
+.scb-nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(4,5,10,0.97);
+  border-bottom:1px solid rgba(0,245,255,0.2);
+  box-shadow:0 1px 20px rgba(0,245,255,0.06);
+  padding:0 16px;height:52px;
+  display:flex;align-items:center;gap:10px;
+  backdrop-filter:blur(12px);
+}
+.nav-back{font-size:8px;letter-spacing:2px;color:var(--dim);text-decoration:none;padding-right:12px;border-right:1px solid var(--border);white-space:nowrap;flex-shrink:0;transition:color .2s;}
+.nav-back:hover{color:var(--pink);}
+.scb-logo{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.scb-logo-name{font-size:22px;letter-spacing:2px;font-weight:700;font-family:'Arial Narrow','Helvetica Neue',sans-serif;color:#fff;line-height:1;text-shadow:0 0 16px rgba(255,255,255,0.3);}
+.scb-logo-sub{font-size:7px;letter-spacing:1px;color:var(--dim);line-height:1.5;border-left:1px solid var(--border);padding-left:8px;}
+.nav-right{margin-left:auto;text-align:right;flex-shrink:0;}
+.nav-right-top{font-size:9px;letter-spacing:3px;color:var(--cyan);display:flex;align-items:center;gap:6px;justify-content:flex-end;text-shadow:var(--glow-cyan);}
+.nav-right-bot{font-size:7px;letter-spacing:2px;color:rgba(0,245,255,0.4);margin-top:2px;}
+.nav-dot{width:5px;height:5px;background:var(--cyan);border-radius:50%;animation:blink 1.2s step-end infinite;box-shadow:var(--glow-cyan);}
+@media(max-width:520px){.scb-logo-sub{display:none;}.nav-back{display:none;}}
+
+/* ── CORNER MARKS ── */
+.corner-mark{position:absolute;width:12px;height:12px;pointer-events:none;}
+.corner-mark.tl{top:0;left:0;border-top:1px solid rgba(0,245,255,0.6);border-left:1px solid rgba(0,245,255,0.6);filter:drop-shadow(0 0 4px rgba(0,245,255,0.4));}
+.corner-mark.tr{top:0;right:0;border-top:1px solid rgba(0,245,255,0.6);border-right:1px solid rgba(0,245,255,0.6);filter:drop-shadow(0 0 4px rgba(0,245,255,0.4));}
+.corner-mark.bl{bottom:0;left:0;border-bottom:1px solid rgba(0,245,255,0.6);border-left:1px solid rgba(0,245,255,0.6);filter:drop-shadow(0 0 4px rgba(0,245,255,0.4));}
+.corner-mark.br{bottom:0;right:0;border-bottom:1px solid rgba(0,245,255,0.6);border-right:1px solid rgba(0,245,255,0.6);filter:drop-shadow(0 0 4px rgba(0,245,255,0.4));}
+
+/* ── WRAP ── */
+.wrap{max-width:720px;margin:0 auto;padding:16px 14px 80px;}
+
+/* Plus corner marks on page edges */
+.page-mark{position:fixed;font-size:10px;color:rgba(0,245,255,0.2);pointer-events:none;z-index:100;}
+.page-mark.tl{top:56px;left:8px;}
+.page-mark.tr{top:56px;right:8px;}
+.page-mark.bl{bottom:40px;left:8px;}
+.page-mark.br{bottom:40px;right:8px;}
+
+/* ── HEADER ── */
+.det-header{
+  padding:20px 16px 18px;
+  position:relative;
+  border:1px solid rgba(0,245,255,0.12);
+  background:rgba(0,245,255,0.01);
+  margin-bottom:14px;
+  box-shadow:0 0 30px rgba(0,245,255,0.04),inset 0 0 30px rgba(0,245,255,0.02);
+}
+.det-version{font-size:8px;letter-spacing:3px;color:rgba(0,245,255,0.5);margin-bottom:10px;text-shadow:var(--glow-cyan);}
+.det-title{
+  font-family:var(--display);
+  font-size:clamp(52px,11vw,96px);
+  letter-spacing:3px;
+  color:var(--cyan);
+  line-height:0.9;
+  margin-bottom:12px;
+  animation:titleGlitch 6s infinite;
+  text-shadow:0 0 30px rgba(0,245,255,0.5),0 0 60px rgba(0,245,255,0.2);
+}
+.det-sub{font-size:9px;letter-spacing:1px;color:rgba(232,228,216,0.5);line-height:1.9;text-transform:uppercase;}
+
+/* ── SYSTEM STATUS PANEL ── */
+.sys-panel{
+  border:1px solid rgba(0,245,255,0.2);
+  background:rgba(0,245,255,0.02);
+  padding:14px 16px;margin-bottom:14px;position:relative;
+  box-shadow:0 0 20px rgba(0,245,255,0.04),inset 0 0 20px rgba(0,245,255,0.02);
+}
+.sys-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;}
+.sys-item{}
+.sys-label{font-size:7px;letter-spacing:3px;color:var(--dim);margin-bottom:4px;}
+.sys-bar{height:2px;background:rgba(255,255,255,0.06);overflow:hidden;margin-bottom:3px;}
+.sys-bar-fill{height:100%;}
+.sys-val{font-size:8px;letter-spacing:2px;}
+.sys-active{color:var(--cyan);text-shadow:var(--glow-cyan);}
+.sys-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid rgba(0,245,255,0.08);font-size:7px;letter-spacing:2px;color:rgba(0,245,255,0.3);}
+
+/* Waveform */
+.waveform{display:flex;align-items:center;gap:2px;height:20px;}
+.waveform-bar{width:2px;background:rgba(0,245,255,0.5);border-radius:1px;animation:waveform 1s ease-in-out infinite;box-shadow:0 0 4px rgba(0,245,255,0.3);}
+
+/* ── TEMPORAL BANNER ── */
+.temporal-panel{
+  border:1px solid rgba(255,200,0,0.35);
+  background:rgba(255,200,0,0.03);
+  padding:12px 16px;margin-bottom:16px;
+  display:grid;grid-template-columns:auto 1fr auto;
+  gap:12px;align-items:center;
+  animation:temporalPulse 3s ease-in-out infinite;
+  position:relative;
+  box-shadow:0 0 20px rgba(255,200,0,0.05);
+}
+.temporal-icon{font-size:22px;color:rgba(255,200,0,0.9);animation:pulse 2s ease-in-out infinite;flex-shrink:0;text-shadow:0 0 12px rgba(255,200,0,0.5);}
+.temporal-text{}
+.temporal-title{font-size:9px;letter-spacing:3px;color:rgba(255,200,0,0.95);font-weight:700;margin-bottom:4px;text-shadow:0 0 8px rgba(255,200,0,0.4);}
+.temporal-sub{font-size:7px;letter-spacing:1px;color:rgba(255,200,0,0.55);line-height:1.8;}
+.temporal-log{text-align:right;font-size:7px;letter-spacing:1px;color:rgba(255,200,0,0.35);line-height:2;}
+.temporal-log-bar{height:2px;background:rgba(255,200,0,0.1);margin-top:4px;overflow:hidden;}
+.temporal-log-fill{height:100%;background:rgba(255,200,0,0.6);animation:integrityBar 3s ease forwards;box-shadow:0 0 6px rgba(255,200,0,0.4);}
+
+/* ── SECTION LABEL ── */
+.section-header{margin-bottom:14px;padding-left:8px;}
+.section-micro{font-size:7px;letter-spacing:3px;color:var(--dim);margin-bottom:4px;}
+.section-title{font-family:var(--display);font-size:clamp(20px,4vw,28px);letter-spacing:6px;color:rgba(232,228,216,0.7);}
+.section-filter{font-size:7px;letter-spacing:2px;color:rgba(0,245,255,0.35);text-align:right;}
+
+/* ── PHASE SYSTEM ── */
+.phase{display:none;}
+.phase.active{display:block;animation:fadeUp 0.4s ease forwards;}
+
+/* ── CHOICE CARDS — full width stacked ── */
+.choice-card-full{
+  border:1px solid rgba(0,245,255,0.15);
+  background:rgba(4,5,10,0.8);
+  margin-bottom:14px;
+  cursor:pointer;
+  transition:all 0.25s;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr auto;
+  min-height:200px;
+  box-shadow:0 0 20px rgba(0,245,255,0.03);
+}
+.choice-card-full.natural{border-color:rgba(200,169,110,0.3);box-shadow:0 0 20px rgba(200,169,110,0.04);}
+.choice-card-full.natural:hover{border-color:rgba(200,169,110,0.7);background:rgba(200,169,110,0.04);box-shadow:0 0 30px rgba(200,169,110,0.08);}
+.choice-card-full.synthetic{border-color:rgba(0,245,255,0.25);box-shadow:0 0 20px rgba(0,245,255,0.04);}
+.choice-card-full.synthetic:hover{border-color:rgba(0,245,255,0.6);background:rgba(0,245,255,0.03);box-shadow:0 0 30px rgba(0,245,255,0.08);}
+
+.card-left{padding:20px 18px;display:flex;flex-direction:column;justify-content:space-between;}
+.card-tag{font-size:8px;letter-spacing:3px;padding:4px 10px;display:inline-block;margin-bottom:12px;font-weight:700;}
+.natural .card-tag{color:rgba(255,45,120,0.8);border:1px solid rgba(255,45,120,0.3);background:rgba(255,45,120,0.05);}
+.synthetic .card-tag{color:rgba(0,245,255,0.8);border:1px solid rgba(0,245,255,0.25);background:rgba(0,245,255,0.04);}
+.card-title{font-family:var(--display);font-size:clamp(28px,6vw,44px);letter-spacing:3px;color:#fff;line-height:1;margin-bottom:6px;}
+.card-belief{font-size:9px;letter-spacing:1px;color:rgba(232,228,216,0.4);margin-bottom:14px;line-height:1.7;text-transform:uppercase;}
+.card-status{font-size:8px;letter-spacing:1.5px;line-height:2;margin-bottom:14px;}
+.natural .card-status{color:rgba(255,45,120,0.6);}
+.synthetic .card-status{color:rgba(0,245,255,0.55);}
+.card-meta{display:flex;gap:16px;}
+.card-meta-item{}
+.card-meta-label{font-size:6px;letter-spacing:2px;color:rgba(232,228,216,0.2);margin-bottom:2px;}
+.card-meta-val{font-size:9px;letter-spacing:1px;}
+.natural .card-meta-val{color:rgba(255,45,120,0.7);}
+.synthetic .card-meta-val{color:rgba(0,245,255,0.6);}
+
+.card-right{
+  width:140px;display:flex;flex-direction:column;
+  align-items:center;justify-content:space-between;
+  padding:16px 12px;
+  border-left:1px solid rgba(255,255,255,0.05);
+  position:relative;
+}
+@media(max-width:420px){.card-right{width:100px;}}
+.card-diamond-wrap{flex:1;display:flex;align-items:center;justify-content:center;}
+.card-diamond-wrap svg *{vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;}
+.origin-btn{
+  flex:1;font-family:var(--mono);font-size:8px;letter-spacing:2px;
+  color:rgba(232,228,216,0.4);border:1px solid rgba(232,228,216,0.1);
+  background:transparent;padding:10px 6px;cursor:pointer;
+  text-align:center;transition:all 0.2s ease;
+}
+.origin-btn:hover{color:rgba(232,228,216,0.8);border-color:rgba(232,228,216,0.3);}
+.origin-btn-active{color:rgba(232,228,216,0.9)!important;border-color:rgba(232,228,216,0.4)!important;background:rgba(232,228,216,0.04)!important;}
+.origin-btn.natural-active{color:rgba(200,169,110,0.9)!important;border-color:rgba(200,169,110,0.5)!important;background:rgba(200,169,110,0.05)!important;}
+.origin-btn.synthetic-active{color:rgba(0,245,255,0.9)!important;border-color:rgba(0,245,255,0.4)!important;background:rgba(0,245,255,0.04)!important;}
+.card-select-btn{
+  width:100%;font-size:8px;letter-spacing:3px;font-weight:700;
+  padding:10px 8px;text-align:center;cursor:pointer;
+  text-transform:uppercase;border:none;background:transparent;
+  font-family:var(--mono);transition:letter-spacing 0.3s ease;
+}
+.natural .card-select-btn{
+  color:rgba(200,169,110,0.9);
+  border:1px solid rgba(200,169,110,0.4);
+  animation:naturalBtnPulse 2.6s ease-in-out infinite, txFlicker 11s infinite;
+}
+.synthetic .card-select-btn{
+  color:rgba(0,245,255,0.9);
+  border:1px solid rgba(0,245,255,0.35);
+  animation:syntheticBtnPulse 2.6s ease-in-out infinite, txFlicker 13s infinite;
+}
+.natural .card-select-btn:hover{letter-spacing:5px;}
+.synthetic .card-select-btn:hover{letter-spacing:5px;}
+@keyframes naturalBtnPulse{
+  0%,100%{box-shadow:0 0 6px rgba(200,169,110,0.2),inset 0 0 6px rgba(200,169,110,0.04);}
+  50%{box-shadow:0 0 18px rgba(200,169,110,0.5),inset 0 0 12px rgba(200,169,110,0.08);}
+}
+@keyframes syntheticBtnPulse{
+  0%,100%{box-shadow:0 0 6px rgba(0,245,255,0.2),inset 0 0 6px rgba(0,245,255,0.04);}
+  50%{box-shadow:0 0 18px rgba(0,245,255,0.5),inset 0 0 12px rgba(0,245,255,0.08);}
+}
+
+/* Vertical side text */
+.card-side-text{
+  position:absolute;left:-28px;top:50%;transform:translateY(-50%) rotate(-90deg);
+  font-size:6px;letter-spacing:4px;color:rgba(232,228,216,0.12);white-space:nowrap;
+}
+
+/* ── BOTTOM STATUS PANEL ── */
+.bottom-panel{
+  border:1px solid rgba(0,245,255,0.18);
+  background:rgba(0,245,255,0.015);
+  padding:14px;margin-top:4px;
+  display:grid;grid-template-columns:auto 1fr 1fr;
+  gap:14px;align-items:center;
+  box-shadow:0 0 20px rgba(0,245,255,0.04);
+}
+.globe-wrap{width:60px;height:60px;position:relative;flex-shrink:0;}
+.relay-col{font-size:7px;letter-spacing:2px;line-height:2.2;color:var(--dim);}
+.relay-val{color:var(--cyan);}
+.relay-val.orange{color:rgba(255,200,0,0.8);}
+.relay-val.fragile{color:rgba(255,100,50,0.8);}
+.quality-col{}
+.quality-label{font-size:7px;letter-spacing:2px;color:var(--dim);margin-bottom:4px;}
+.quality-bar{height:2px;background:rgba(255,255,255,0.06);overflow:hidden;margin-bottom:8px;}
+.quality-fill{height:100%;background:var(--cyan);}
+.quality-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:7px;letter-spacing:1px;color:var(--dim);}
+.quality-stats span{color:rgba(232,228,216,0.6);}
+
+/* ── UPLOAD ── */
+.upload-zone{
+  border:2px dashed rgba(0,245,255,0.25);
+  background:rgba(0,245,255,0.01);
+  padding:44px 20px;text-align:center;
+  cursor:pointer;transition:all 0.2s;margin-bottom:12px;
+  position:relative;
+}
+.upload-zone:hover{border-color:rgba(255,45,120,0.6);background:rgba(255,45,120,0.03);box-shadow:0 0 20px rgba(255,45,120,0.05);}
+.upload-label{font-size:12px;letter-spacing:3px;color:rgba(232,228,216,0.8);margin-bottom:6px;font-weight:700;}
+.upload-sub{font-size:9px;letter-spacing:2px;color:rgba(232,228,216,0.25);}
+.upload-preview{width:100%;max-height:200px;object-fit:contain;display:none;margin-top:14px;opacity:0.65;}
+.upload-icon{font-size:32px;color:rgba(0,245,255,0.3);margin-bottom:12px;text-shadow:var(--glow-cyan);}
+
+.btn-analyze{
+  width:100%;font-family:var(--display);font-size:clamp(18px,4vw,24px);
+  letter-spacing:8px;font-weight:400;
+  color:#fff;background:rgba(255,45,120,0.08);
+  border:1px solid rgba(255,45,120,0.8);
+  padding:20px;cursor:pointer;
+  text-transform:uppercase;transition:all 0.25s;display:none;
+  box-shadow:0 0 24px rgba(255,45,120,0.15),inset 0 0 20px rgba(255,45,120,0.05);
+  text-shadow:0 0 20px rgba(255,45,120,0.5);
+}
+.btn-analyze:hover{
+  background:rgba(255,45,120,0.15);
+  border-color:var(--pink);
+  box-shadow:0 0 40px rgba(255,45,120,0.3),inset 0 0 30px rgba(255,45,120,0.08);
+  letter-spacing:10px;
+}
+.back-link{font-size:9px;letter-spacing:3px;color:rgba(232,228,216,0.45);cursor:pointer;text-align:center;margin-top:16px;display:block;transition:color 0.2s;}
+.back-link:hover{color:rgba(232,228,216,0.8);}
+
+/* ── SCANNING ── */
+.scan-wrap{padding:24px 0;text-align:center;}
+.scan-icon{font-size:52px;color:var(--gold);animation:pulse 1.2s ease-in-out infinite;margin-bottom:16px;}
+.scan-title{font-size:10px;letter-spacing:4px;color:var(--cyan);margin-bottom:6px;}
+.scan-step{font-size:8px;letter-spacing:2px;color:var(--dim);min-height:18px;margin-bottom:20px;}
+.scan-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.scan-bar-label{font-size:7px;letter-spacing:2px;color:rgba(232,228,216,0.25);width:130px;text-align:right;flex-shrink:0;}
+.scan-bar-track{flex:1;height:2px;background:rgba(232,228,216,0.06);overflow:hidden;}
+.scan-bar-fill{height:100%;width:0%;transition:width 0.6s ease;}
+.scan-bar-pct{font-size:7px;letter-spacing:1px;color:var(--dim);width:28px;}
+
+/* ── RESULTS ── */
+.result-badge-natural{font-family:var(--display);font-size:clamp(32px,7vw,60px);letter-spacing:4px;color:rgba(200,169,110,0.95);text-align:center;margin-bottom:4px;animation:resultReveal 0.7s ease forwards;}
+.result-badge-synthetic{font-family:var(--display);font-size:clamp(32px,7vw,60px);letter-spacing:4px;color:rgba(0,245,255,0.9);text-align:center;margin-bottom:4px;animation:resultReveal 0.7s ease forwards;}
+.result-sub{font-size:8px;letter-spacing:4px;text-align:center;margin-bottom:20px;}
+.stats-table{margin-bottom:16px;}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:8px;letter-spacing:2px;}
+.stat-key{color:rgba(232,228,216,0.28);}
+.stat-val{text-align:right;}
+.stat-val.gold{color:rgba(200,169,110,0.85);}
+.stat-val.cyan{color:rgba(0,245,255,0.7);}
+.stat-val.pink{color:var(--pink);}
+.stat-val.dim{color:rgba(232,228,216,0.4);}
+.cert{padding:22px;text-align:center;margin-bottom:16px;animation:certReveal 0.8s ease 0.3s both;position:relative;}
+.cert-natural{border:1px solid rgba(200,169,110,0.2);background:rgba(200,169,110,0.02);}
+.cert-synthetic{border:1px solid rgba(0,245,255,0.15);background:rgba(0,245,255,0.02);}
+.cert-header{font-size:7px;letter-spacing:4px;margin-bottom:3px;}
+.cert-natural .cert-header{color:rgba(200,169,110,0.45);}
+.cert-synthetic .cert-header{color:rgba(0,245,255,0.4);}
+.cert-sub{font-size:6px;letter-spacing:3px;color:rgba(232,228,216,0.2);margin-bottom:16px;}
+.cert-title{font-family:var(--display);font-size:clamp(22px,4vw,36px);letter-spacing:4px;margin-bottom:12px;}
+.cert-natural .cert-title{color:rgba(200,169,110,0.9);}
+.cert-synthetic .cert-title{color:rgba(0,245,255,0.8);}
+.cert-stats{font-size:7px;letter-spacing:2px;color:rgba(232,228,216,0.3);line-height:2.2;margin-bottom:12px;}
+.cert-badge{font-size:8px;letter-spacing:3px;padding:6px 14px;display:inline-block;margin-bottom:12px;}
+.cert-natural .cert-badge{border:1px solid rgba(255,45,120,0.25);color:rgba(255,45,120,0.6);}
+.cert-synthetic .cert-badge{border:1px solid rgba(0,245,255,0.2);color:rgba(0,245,255,0.5);}
+.cert-footer{font-size:7px;letter-spacing:1px;color:rgba(232,228,216,0.18);line-height:1.9;font-style:italic;}
+.verdict{border:1px solid rgba(255,45,120,0.1);background:rgba(255,45,120,0.02);padding:14px 16px;margin-bottom:16px;font-size:8px;letter-spacing:1px;color:rgba(232,228,216,0.35);line-height:2;font-style:italic;}
+.verdict-label{font-size:7px;letter-spacing:3px;color:rgba(255,45,120,0.35);margin-bottom:6px;font-style:normal;}
+.verdict-synthetic{border-color:rgba(0,245,255,0.1);background:rgba(0,245,255,0.02);}
+.verdict-synthetic .verdict-label{color:rgba(0,245,255,0.35);}
+.emotional-line{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:300;font-size:clamp(16px,3.5vw,22px);color:rgba(232,228,216,0.6);text-align:center;line-height:1.7;margin-bottom:24px;padding:0 8px;}
+.cta-stack{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.cta-btn{width:100%;font-family:var(--display);font-size:clamp(16px,3.5vw,20px);letter-spacing:6px;font-weight:400;color:#fff;background:rgba(255,45,120,0.08);border:1px solid rgba(255,45,120,0.7);padding:18px;cursor:pointer;text-transform:uppercase;transition:all 0.25s;text-decoration:none;display:block;text-align:center;box-shadow:0 0 20px rgba(255,45,120,0.12),inset 0 0 20px rgba(255,45,120,0.04);text-shadow:0 0 16px rgba(255,45,120,0.4);}
+.cta-btn:hover{background:rgba(255,45,120,0.15);border-color:var(--pink);box-shadow:0 0 36px rgba(255,45,120,0.25);letter-spacing:8px;}
+.cta-btn.secondary{border-color:rgba(232,228,216,0.15);color:rgba(232,228,216,0.5);font-size:clamp(10px,2.5vw,13px);background:transparent;box-shadow:none;text-shadow:none;letter-spacing:4px;}
+.cta-btn.secondary:hover{border-color:rgba(232,228,216,0.35);color:var(--text);letter-spacing:5px;}
+.cta-btn.cyan-btn{border-color:rgba(0,245,255,0.5);color:var(--cyan);background:rgba(0,245,255,0.05);box-shadow:0 0 20px rgba(0,245,255,0.1),inset 0 0 20px rgba(0,245,255,0.03);text-shadow:var(--glow-cyan);}
+.cta-btn.cyan-btn:hover{background:rgba(0,245,255,0.1);border-color:var(--cyan);box-shadow:0 0 36px rgba(0,245,255,0.2);}
+.cta-stack{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.reanalyze{font-size:12px;letter-spacing:3px;color:rgba(232,228,216,0.18);cursor:pointer;text-align:center;margin-top:8px;display:block;}
+.reanalyze:hover{color:var(--dim);}
+.scb-watermark{text-align:center;padding:20px 0 4px;font-size:7px;letter-spacing:3px;color:rgba(232,228,216,0.07);}
+
+/* Glitch overlay */
+#glitchOverlay{position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:0;}
+
+/* Relay bar */
+.relay-bar{position:fixed;bottom:0;left:0;right:0;z-index:300;background:rgba(4,5,10,0.97);border-top:1px solid rgba(0,245,255,0.12);box-shadow:0 -1px 20px rgba(0,245,255,0.05);padding:6px 20px;display:flex;justify-content:space-between;align-items:center;}
+.relay-txt{font-size:7px;letter-spacing:2px;color:rgba(0,245,255,0.2);}
+.relay-dot{width:4px;height:4px;background:var(--cyan);border-radius:50%;animation:blink 1.4s step-end infinite;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<canvas id="glitchOverlay"></canvas>
+
+<!-- Page corner marks -->
+<div class="page-mark tl">+</div>
+<div class="page-mark tr">+</div>
+<div class="page-mark bl">+</div>
+<div class="page-mark br">+</div>
+
+<!-- Relay bar -->
+<div class="relay-bar">
+  <div class="relay-dot"></div>
+  <div class="relay-txt" id="relayTxt">TEMPORAL RELAY: ACTIVE · ORIGIN: CYCLE 2187 · YOUR TIME: RECEIVING</div>
+  <div class="relay-dot"></div>
+</div>
+
+<!-- NAV -->
+<nav class="scb-nav">
+  <div class="scb-logo">
+    <svg width="28" height="28" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation:scbGlitch 5s infinite;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(255,255,255,0.4)) drop-shadow(0 0 12px rgba(255,255,255,0.2))">
+      <g filter="url(#glow)">
+        <path d="M32 6L56 22L47 52H17L8 22L32 6Z" stroke="rgba(232,228,216,0.95)" stroke-width="3"/>
+        <path d="M8 22H56" stroke="rgba(232,228,216,0.95)" stroke-width="2"/>
+        <path d="M32 6L23 22L32 52L41 22L32 6Z" stroke="rgba(232,228,216,0.95)" stroke-width="2"/>
+        <path d="M23 22L17 52" stroke="rgba(232,228,216,0.95)" stroke-width="2"/>
+        <path d="M41 22L47 52" stroke="rgba(232,228,216,0.95)" stroke-width="2"/>
+      </g>
+      <defs>
+        <filter id="glow" x="-20" y="-20" width="104" height="104" filterUnits="userSpaceOnUse">
+          <feGaussianBlur stdDeviation="2.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+    </svg>
+    <div class="scb-logo-name">SCB</div>
+    <div class="scb-logo-sub">SYNTHETIC COMPLIANCE BUREAU<br>CARBON ANALYSIS NETWORK</div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-right-top"><div class="nav-dot"></div>CYCLE 2187 // ONLINE</div>
+    <div class="nav-right-bot">SECURE CHANNEL ESTABLISHED</div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="det-header">
+    <div class="det-version">SCB.DETECTOR // v7.3.2</div>
+    <div class="det-title">RARITY DETECTOR</div>
+    <!-- Plain language orientation — larger, readable, not mono -->
+    <div style="font-family:'Rajdhani',sans-serif;font-size:clamp(15px,3.5vw,19px);font-weight:300;color:rgba(232,228,216,0.75);line-height:1.7;margin-bottom:6px;letter-spacing:0.3px">
+      Upload any image. The Bureau analyzes its rarity in Cycle 2187.
+    </div>
+    <div class="det-sub" style="font-size:8px;letter-spacing:1px;color:rgba(232,228,216,0.28);line-height:1.9">DIAMONDS · JEWELRY · COLLECTIBLES · ANY MATERIAL · BIOLOGICAL SPECIMENS</div>
+  </div>
+
+  <!-- PHASE 1: SINGLE ENTRY CARD -->
+  <div class="phase active" id="phase1">
+
+    <!-- Single entry card -->
+    <div class="choice-card-full" style="border-color:rgba(200,169,110,0.25);min-height:200px;cursor:default;overflow:visible;margin-bottom:12px" id="entryCard">
+      <div class="corner-mark tl" style="border-color:rgba(200,169,110,0.5)"></div>
+      <div class="corner-mark br" style="border-color:rgba(200,169,110,0.5)"></div>
+      <div class="card-side-text">SCB.RARITY.DETECTOR // CYCLE 2187</div>
+
+      <div class="card-left" style="justify-content:center;gap:14px;padding:22px 18px">
+
+        <!-- Ambient Bureau layer — dim, small -->
+        <div style="font-size:7px;letter-spacing:3px;color:rgba(200,169,110,0.4)">◈ MATERIAL ORIGIN UNVERIFIED — BUREAU WILL CLASSIFY</div>
+
+        <!-- Action layer — bright, large, clear -->
+        <div>
+          <div style="font-family:var(--display);font-size:clamp(22px,5vw,36px);letter-spacing:3px;color:#fff;line-height:1.1;margin-bottom:6px">ANALYZE ANY MATERIAL</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:clamp(13px,3vw,16px);font-weight:300;color:rgba(232,228,216,0.6);letter-spacing:0.5px;line-height:1.6">Natural or synthetic — the Bureau classifies<br>anything across all known timelines.</div>
+        </div>
+
+        <!-- Image preview — reveals after upload -->
+        <img id="phase1Preview" src="" alt="" style="display:none;width:100%;max-height:140px;object-fit:contain;opacity:0.8;filter:grayscale(20%) contrast(1.1);border:1px solid rgba(200,169,110,0.15)">
+
+        <!-- Origin selector — reveals after upload -->
+        <div id="originSelector" style="display:none">
+          <div style="font-size:7px;letter-spacing:3px;color:rgba(232,228,216,0.2);margin-bottom:8px">MATERIAL ORIGIN — OPTIONAL</div>
+          <div style="display:flex;gap:6px">
+            <button class="origin-btn" id="originNatural" onclick="setOrigin('natural')">◈ NATURAL</button>
+            <button class="origin-btn" id="originSynthetic" onclick="setOrigin('synthetic')">◈ SYNTHETIC</button>
+            <button class="origin-btn origin-btn-active" id="originUnknown" onclick="setOrigin('unknown')">◈ UNKNOWN</button>
+          </div>
+        </div>
+
+        <!-- Meta — ambient layer, stays dim -->
+        <div class="card-meta">
+          <div class="card-meta-item">
+            <div class="card-meta-label">SCAN PROTOCOL</div>
+            <div class="card-meta-val" style="color:rgba(200,169,110,0.6);font-size:8px">AI VISION</div>
+          </div>
+          <div class="card-meta-item">
+            <div class="card-meta-label">TEMPORAL ORIGIN</div>
+            <div class="card-meta-val" style="color:rgba(200,169,110,0.6);font-size:8px">CYCLE 2187</div>
+          </div>
+          <div class="card-meta-item">
+            <div class="card-meta-label">RARITY INDEX</div>
+            <div class="card-meta-val" style="color:rgba(200,169,110,0.6);font-size:8px" id="rarity-pending">PENDING</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right side — geological glyph -->
+      <div class="card-right" style="justify-content:center;padding:20px 10px">
+        <svg width="72" height="72" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 8px rgba(255,45,120,0.7)) drop-shadow(0 0 20px rgba(255,45,120,0.3));animation:pulse 3s ease-in-out infinite">
+          <circle cx="50" cy="50" r="34" stroke="rgba(255,45,120,0.25)" stroke-width="1" stroke-dasharray="5 7"/>
+          <path d="M50 12 L78 28 L83 60 L61 84 L29 79 L14 50 L25 22 Z" stroke="#FF2D78" stroke-width="2.5" fill="rgba(255,45,120,0.04)" stroke-linejoin="round"/>
+          <path d="M25 22 L50 50 L78 28 M14 50 L50 50 L83 60 M29 79 L50 50 L61 84" stroke="rgba(255,45,120,0.55)" stroke-width="1.5"/>
+          <circle cx="50" cy="50" r="3" fill="#FF2D78"/>
+          <path d="M42 8 L58 8 M42 92 L58 92 M8 42 L8 58 M92 42 L92 58" stroke="rgba(255,45,120,0.4)" stroke-width="1.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ANALYZE BUTTON — above upload, cyan glow -->
+    <div id="phase1AnalyzeWrap" style="display:none;margin-bottom:10px">
+      <div style="font-size:7px;letter-spacing:3px;color:rgba(0,245,255,0.3);margin-bottom:8px;text-align:center">STEP 2 — RUN BUREAU ANALYSIS</div>
+      <button class="btn-analyze" onclick="runPhase1Scan()" style="
+        display:block;width:100%;
+        font-size:clamp(18px,4vw,26px);
+        letter-spacing:8px;
+        padding:22px;
+        font-family:var(--display);
+        color:var(--cyan);
+        background:rgba(0,245,255,0.05);
+        border:1px solid rgba(0,245,255,0.8);
+        box-shadow:0 0 28px rgba(0,245,255,0.2),inset 0 0 20px rgba(0,245,255,0.05);
+        text-shadow:0 0 20px rgba(0,245,255,0.8),0 0 40px rgba(0,245,255,0.3);
+      ">BEGIN ANALYSIS</button>
+    </div>
+
+    <!-- UPLOAD BUTTON — below analyze button after image selected -->
+    <input type="file" id="fileInputP1" accept="image/*" style="display:none" onchange="handlePhase1Upload(event)">
+    <div style="margin-bottom:10px">
+      <div style="font-size:7px;letter-spacing:3px;color:rgba(232,228,216,0.2);margin-bottom:8px;text-align:center">STEP 1 — UPLOAD YOUR IMAGE</div>
+      <button onclick="document.getElementById('fileInputP1').click()" style="
+        width:100%;font-family:'Rajdhani',sans-serif;font-size:clamp(15px,3.5vw,18px);
+        font-weight:600;letter-spacing:3px;
+        color:#fff;border:1px solid rgba(255,45,120,0.8);
+        background:rgba(255,45,120,0.06);padding:18px 20px;cursor:pointer;
+        text-align:center;
+        animation:txPulse 2.6s ease-in-out infinite,txFlicker 11s infinite;
+        transition:all 0.3s ease;
+        display:flex;align-items:center;justify-content:center;gap:12px;
+        white-space:nowrap;
+        box-shadow:0 0 20px rgba(255,45,120,0.15),inset 0 0 20px rgba(255,45,120,0.04);
+        text-shadow:0 0 16px rgba(255,45,120,0.4);
+      " id="uploadTriggerBtn">
+        <span style="font-size:20px;line-height:1;color:rgba(255,45,120,0.9);text-shadow:0 0 10px rgba(255,45,120,0.8)">◈</span>
+        <span id="uploadBtnLabel">TAP HERE TO UPLOAD AN IMAGE</span>
+      </button>
+      <div style="font-size:7px;letter-spacing:2px;color:rgba(232,228,216,0.18);text-align:center;margin-top:6px">JPG · PNG · HEIC · MAX 20MB · ANY SUBJECT</div>
+    </div>
+
+    <!-- BOTTOM STATUS PANEL -->
+    <div class="bottom-panel">
+      <div class="corner-mark tl"></div><div class="corner-mark br"></div>
+      <div class="globe-wrap">
+        <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+          <circle cx="30" cy="30" r="24" stroke="rgba(0,245,255,0.2)" stroke-width="1"/>
+          <circle cx="30" cy="30" r="16" stroke="rgba(0,245,255,0.12)" stroke-width="0.8" stroke-dasharray="3 3"/>
+          <circle cx="30" cy="30" r="8" stroke="rgba(0,245,255,0.3)" stroke-width="1"/>
+          <circle cx="30" cy="30" r="3" fill="rgba(0,245,255,0.6)"/>
+          <line x1="6" y1="30" x2="54" y2="30" stroke="rgba(0,245,255,0.1)" stroke-width="0.6"/>
+          <line x1="30" y1="6" x2="30" y2="54" stroke="rgba(0,245,255,0.1)" stroke-width="0.6"/>
+        </svg>
+      </div>
+      <div class="relay-col">
+        TEMPORAL RELAY<br>
+        <span class="relay-val orange">FLUCTUATING</span><br>
+        SCB CROSS-TIME PROTOCOL<br>
+        <span class="relay-val" id="relayTimestamp">2187.07.12 :: --:--:-- UTC</span>
+      </div>
+      <div class="quality-col">
+        <div class="quality-label">TRANSMISSION QUALITY</div>
+        <div class="quality-bar"><div class="quality-fill" style="width:68%"></div></div>
+        <div class="quality-stats">
+          DATA PACKETS <span id="dataPackets">982.221K</span>
+          UPTIME <span id="uptime">00:00:00</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:7px;letter-spacing:2px;color:rgba(232,228,216,0.08);text-align:center;margin-top:12px;line-height:2">
+      © PROPERTY OF THE SYNTHETIC COMPLIANCE BUREAU · ALL DATA SUBJECT TO BUREAU PROTOCOL 7
+    </div>
+
+  </div>
+
+  <!-- PHASE 2: UPLOAD -->
+  <div class="phase" id="phase2">
+    <div style="font-size:9px;letter-spacing:4px;color:rgba(232,228,216,0.3);text-align:center;margin-bottom:6px" id="uploadLabel">SUBMIT IMAGE FOR ANALYSIS</div>
+    <div style="font-size:8px;letter-spacing:2px;color:rgba(232,228,216,0.18);text-align:center;margin-bottom:20px">SYNTHETIC COMPLIANCE BUREAU CERTIFIED</div>
+    <div style="position:relative;margin-bottom:12px">
+      <div class="corner-mark tl"></div><div class="corner-mark br"></div>
+      <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-icon">◈</div>
+        <div class="upload-label" id="uploadFilename">TAP TO UPLOAD AN IMAGE</div>
+        <div class="upload-sub">JPG, PNG, HEIC · MAX 20MB</div>
+        <img class="upload-preview" id="uploadPreview" src="" alt="">
+      </div>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleUpload(event)">
+    <button class="btn-analyze" id="analyzeBtn" onclick="runScan()">INITIATE BUREAU ANALYSIS</button>
+    <span class="back-link" onclick="goToPhase(1)" style="border:1px solid rgba(232,228,216,0.12);padding:10px 20px;margin-top:12px;letter-spacing:4px">← CHANGE MATERIAL TYPE</span>
+
+    <!-- SYSTEM STATUS -->
+    <div class="sys-panel" style="margin-top:16px;margin-bottom:10px">
+      <div class="corner-mark tl"></div><div class="corner-mark tr"></div>
+      <div class="corner-mark bl"></div><div class="corner-mark br"></div>
+      <div class="sys-grid">
+        <div class="sys-item">
+          <div class="sys-label">INTEGRITY</div>
+          <div class="sys-bar"><div class="sys-bar-fill" style="width:0%;animation:integrityBar 2s ease 0.5s forwards;background:var(--cyan)"></div></div>
+          <div class="sys-val sys-active">93.6%</div>
+        </div>
+        <div class="sys-item">
+          <div class="sys-label">SIGNAL QUALITY</div>
+          <div class="sys-bar"><div class="sys-bar-fill" style="width:0%;animation:signalBar 2s ease 0.8s forwards;background:rgba(200,169,110,0.7)"></div></div>
+          <div class="sys-val" style="color:rgba(200,169,110,0.8)">78%</div>
+        </div>
+        <div class="sys-item">
+          <div class="sys-label">LINK STABILITY</div>
+          <div class="sys-val sys-active">ACTIVE</div>
+        </div>
+        <div class="sys-item">
+          <div class="sys-label">ENCRYPTION</div>
+          <div class="sys-val sys-active">ACTIVE</div>
+        </div>
+      </div>
+      <div class="sys-bottom">
+        <span>SCB PROTOCOL 7.3.2</span>
+        <div class="waveform" id="waveform"></div>
+        <span>UPLINK SECURE <span style="color:var(--cyan)">●</span></span>
+      </div>
+    </div>
+
+    <!-- TEMPORAL ANOMALY -->
+    <div class="temporal-panel" style="margin-bottom:0">
+      <div class="corner-mark tl" style="border-color:rgba(255,200,0,0.4)"></div>
+      <div class="corner-mark br" style="border-color:rgba(255,200,0,0.4)"></div>
+      <div class="temporal-icon">⚠</div>
+      <div class="temporal-text">
+        <div class="temporal-title">TEMPORAL ANOMALY DETECTED</div>
+        <div class="temporal-sub">THIS INTERFACE ORIGINATES FROM CYCLE 2187<br>THIS SESSION IS BEING LOGGED BY THE SCB</div>
+      </div>
+      <div class="temporal-log">
+        LOG ID<br>
+        <span style="color:rgba(255,200,0,0.7)">2187-07-A</span><br>
+        <div class="temporal-log-bar"><div class="temporal-log-fill"></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PHASE 3: SCANNING -->
+  <div class="phase" id="phase3">
+    <div style="position:relative;padding:24px 20px;border:1px solid var(--border)">
+      <div class="corner-mark tl"></div><div class="corner-mark br"></div>
+      <div class="scan-wrap">
+        <div class="scan-icon">◈</div>
+        <div class="scan-title">BUREAU ANALYSIS IN PROGRESS</div>
+        <div class="scan-step" id="scanStep">Initializing carbon origin scan...</div>
+        <div class="scan-bar-row"><div class="scan-bar-label">CARBON ORIGIN</div><div class="scan-bar-track"><div class="scan-bar-fill" id="bar1" style="background:rgba(200,169,110,0.7)"></div></div><div class="scan-bar-pct" id="pct1">0%</div></div>
+        <div class="scan-bar-row"><div class="scan-bar-label">FORMATION DEPTH</div><div class="scan-bar-track"><div class="scan-bar-fill" id="bar2" style="background:rgba(200,169,110,0.55)"></div></div><div class="scan-bar-pct" id="pct2">0%</div></div>
+        <div class="scan-bar-row"><div class="scan-bar-label">ISOTOPE RATIO</div><div class="scan-bar-track"><div class="scan-bar-fill" id="bar3" style="background:rgba(0,245,255,0.6)"></div></div><div class="scan-bar-pct" id="pct3">0%</div></div>
+        <div class="scan-bar-row"><div class="scan-bar-label">SYNTHETIC MATCH</div><div class="scan-bar-track"><div class="scan-bar-fill" id="bar4" style="background:rgba(255,45,120,0.7)"></div></div><div class="scan-bar-pct" id="pct4">0%</div></div>
+        <div class="scan-bar-row"><div class="scan-bar-label">TEMPORAL RARITY INDEX</div><div class="scan-bar-track"><div class="scan-bar-fill" id="bar5" style="background:rgba(0,245,255,0.4)"></div></div><div class="scan-bar-pct" id="pct5">0%</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 4A: NATURAL RESULT -->
+  <div class="phase" id="phase4a">
+    <div class="result-badge-natural">NATURAL ORIGIN</div>
+    <div class="result-sub" style="color:rgba(200,169,110,0.5)">CONFIRMED — EARTH FORMATION // REMOVED FROM THE RECORD</div>
+    <div style="position:relative;margin-bottom:16px;border:1px solid var(--border)">
+      <div class="corner-mark tl"></div><div class="corner-mark br"></div>
+      <div class="stats-table" style="padding:16px 20px">
+        <div class="stat-row"><span class="stat-key">DIAMOND TYPE</span><span class="stat-val gold">NATURAL — EARTH FORMED</span></div>
+        <div class="stat-row"><span class="stat-key">CARBON ORIGIN</span><span class="stat-val gold">EARTH MANTLE</span></div>
+        <div class="stat-row"><span class="stat-key">FORMATION DEPTH</span><span class="stat-val dim">725 KM+</span></div>
+        <div class="stat-row"><span class="stat-key">ESTIMATED AGE</span><span class="stat-val dim">3.2 BILLION YEARS</span></div>
+        <div class="stat-row"><span class="stat-key">RARITY INDEX</span><span class="stat-val gold">CRITICAL</span></div>
+        <div class="stat-row"><span class="stat-key">SYNTHETIC MATCH</span><span class="stat-val pink">NONE FOUND</span></div>
+        <div class="stat-row"><span class="stat-key">BUREAU STATUS</span><span class="stat-val pink">⊘ SUPPRESSED — REMOVED FROM RECORD</span></div>
+        <div class="stat-row"><span class="stat-key">TEMPORAL RARITY</span><span class="stat-val gold">PRACTICALLY EXTINCT — CYCLE 2187</span></div>
+      </div>
+    </div>
+    <div class="cert cert-natural">
+      <div class="corner-mark tl" style="border-color:rgba(200,169,110,0.3)"></div>
+      <div class="corner-mark br" style="border-color:rgba(200,169,110,0.3)"></div>
+      <div class="cert-header">SYNTHETIC COMPLIANCE BUREAU</div>
+      <div class="cert-sub">NATURAL STONE REGISTRY — CYCLE 2187 · CLASSIFICATION: UNREGISTERED</div>
+      <div class="cert-title">NATURAL DIAMOND</div>
+      <div class="cert-stats">CARBON ORIGIN: EARTH MANTLE · DEPTH: 725KM+<br>FORMATION AGE: 3.2 BILLION YEARS<br>RARITY CLASSIFICATION: CRITICAL<br>TEMPORAL STATUS: NO OFFICIAL EXISTENCE IN CYCLE 2187</div>
+      <div class="cert-badge">⊘ REMOVED FROM THE PUBLIC RECORD</div>
+      <div class="cert-footer">"In Cycle 2187, this stone has no official existence.<br>In your time, you still have one."</div>
+    </div>
+    <div class="verdict">
+      <div class="verdict-label">SCB ASSESSMENT // CYCLE 2187</div>
+      "This stone registers a natural earth origin. Carbon formation predates synthetic production by approximately 3.2 billion years. The Bureau has no record of this specimen. That is not an error. That is policy."
+    </div>
+
+    <!-- INCOMING TRANSMISSION -->
+    <div style="margin-bottom:14px">
+      <span class="tx-btn-label">FILE K-9 // BUREAU SUPPRESSED</span>
+      <a href="/" class="tx-btn">
+        <span class="tx-btn-dot"></span>INCOMING TRANSMISSION
+      </a>
+    </div>
+
+    <div style="border:1px solid rgba(255,45,120,0.18);background:rgba(255,45,120,0.03);padding:14px 18px;margin-bottom:14px;position:relative">
+      <div class="corner-mark tl" style="border-color:rgba(255,45,120,0.25)"></div>
+      <div class="corner-mark br" style="border-color:rgba(255,45,120,0.25)"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="width:5px;height:5px;background:var(--pink);border-radius:50%;animation:blink 1s step-end infinite;flex-shrink:0"></div>
+        <div style="font-size:7px;letter-spacing:3px;color:rgba(255,45,120,0.6);font-weight:700">YOUR SESSION HAS BEEN LOGGED IN CYCLE 2187</div>
+      </div>
+      <div style="font-size:8px;letter-spacing:1px;color:rgba(232,228,216,0.25);line-height:1.8">The Bureau has been notified of this specimen.</div>
+    </div>
+    <div class="cta-stack">
+      <a href="/" class="cta-btn">SEE HOW RARE IT IS IN 2187 →</a>
+      <a href="https://premiergem.com/desert-diamonds" class="cta-btn secondary">HOLD SOMETHING RARE — PREMIER GEM</a>
+    </div>
+
+    <span class="reanalyze" onclick="resetDetector()">← ANALYZE ANOTHER DIAMOND</span>
+    <div class="scb-watermark">© SYNTHETIC COMPLIANCE BUREAU · CYCLE 2187 · ALL DATA LOGGED</div>
+  </div>
+
+  <!-- PHASE 4B: SYNTHETIC RESULT -->
+  <div class="phase" id="phase4b">
+    <div class="result-badge-synthetic">SYNTHETIC ORIGIN</div>
+    <div class="result-sub" style="color:rgba(0,245,255,0.4)">CONFIRMED — BUREAU COMPLIANT</div>
+    <div style="position:relative;margin-bottom:16px;border:1px solid var(--border)">
+      <div class="corner-mark tl"></div><div class="corner-mark br"></div>
+      <div class="stats-table" style="padding:16px 20px">
+        <div class="stat-row"><span class="stat-key">DIAMOND TYPE</span><span class="stat-val cyan">LAB-GROWN — CVD PROCESS</span></div>
+        <div class="stat-row"><span class="stat-key">PRODUCTION METHOD</span><span class="stat-val dim">CHEMICAL VAPOR DEPOSITION</span></div>
+        <div class="stat-row"><span class="stat-key">PRODUCTION TIME</span><span class="stat-val dim">6–10 WEEKS</span></div>
+        <div class="stat-row"><span class="stat-key">MARKET EQUIVALENT</span><span class="stat-val dim">847 BILLION CARATS</span></div>
+        <div class="stat-row"><span class="stat-key">RARITY INDEX</span><span class="stat-val cyan">NONE</span></div>
+        <div class="stat-row"><span class="stat-key">SYNTHETIC MATCH</span><span class="stat-val cyan">847B IDENTICAL STONES</span></div>
+        <div class="stat-row"><span class="stat-key">BUREAU STATUS</span><span class="stat-val cyan">✓ APPROVED — COMPLIANT</span></div>
+        <div class="stat-row"><span class="stat-key">TEMPORAL RARITY</span><span class="stat-val cyan">STANDARD — DOMINANT IN CYCLE 2187</span></div>
+      </div>
+    </div>
+    <div class="cert cert-synthetic">
+      <div class="corner-mark tl" style="border-color:rgba(0,245,255,0.25)"></div>
+      <div class="corner-mark br" style="border-color:rgba(0,245,255,0.25)"></div>
+      <div class="cert-header">SYNTHETIC COMPLIANCE BUREAU</div>
+      <div class="cert-sub">SYNTHETIC STONE REGISTRY — CYCLE 2187 · CLASSIFICATION: APPROVED</div>
+      <div class="cert-title">SYNTHETIC DIAMOND</div>
+      <div class="cert-stats">ORIGIN: LABORATORY · METHOD: CVD<br>PRODUCTION TIME: 6–10 WEEKS<br>BUREAU CLASSIFICATION: COMPLIANT<br>IDENTICAL STONES IN CYCLE 2187: 847,000,000,000</div>
+      <div class="cert-badge">✓ BUREAU APPROVED</div>
+      <div class="cert-footer">"In Cycle 2187, this is the only diamond that exists.<br>In your time, you still have a choice."</div>
+    </div>
+    <div class="verdict verdict-synthetic">
+      <div class="verdict-label">SCB ASSESSMENT // CYCLE 2187</div>
+      "Synthetic origin confirmed. Bureau-compliant. Indistinguishable from 847 billion carats produced this quarter. You have made a responsible choice. Emotional attachment to this stone is not advised."
+    </div>
+    <div class="emotional-line">"In 2187, this is the only diamond that exists.<br>In yours, you still have a choice."</div>
+
+    <div style="border:1px solid rgba(255,45,120,0.18);background:rgba(255,45,120,0.03);padding:14px 18px;margin-bottom:14px;position:relative">
+      <div class="corner-mark tl" style="border-color:rgba(255,45,120,0.25)"></div>
+      <div class="corner-mark br" style="border-color:rgba(255,45,120,0.25)"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="width:5px;height:5px;background:var(--pink);border-radius:50%;animation:blink 1s step-end infinite;flex-shrink:0"></div>
+        <div style="font-size:7px;letter-spacing:3px;color:rgba(255,45,120,0.6);font-weight:700">YOUR SESSION HAS BEEN LOGGED IN CYCLE 2187</div>
+      </div>
+      <div style="font-size:8px;letter-spacing:1px;color:rgba(232,228,216,0.25);line-height:1.8">The Bureau has been notified of this specimen.</div>
+    </div>
+    <div class="cta-stack">
+      <a href="/" class="cta-btn cyan-btn">SEE HOW RARE IT IS IN 2187 →</a>
+      <a href="https://premiergem.com/desert-diamonds" class="cta-btn secondary">DISCOVER RARITY BY NATURE — PREMIER GEM</a>
+    </div>
+
+    <span class="reanalyze" onclick="resetDetector()">← ANALYZE ANOTHER SPECIMEN</span>
+    <div class="scb-watermark">© SYNTHETIC COMPLIANCE BUREAU · CYCLE 2187 · ALL DATA LOGGED</div>
+  </div>
+
+</div>
+
+<script>
+// Waveform bars
+(function(){
+  const wf = document.getElementById('waveform');
+  if(!wf) return;
+  const heights = [4,8,12,6,16,10,7,14,5,11,9,13,6,15,8];
+  heights.forEach((h,i) => {
+    const b = document.createElement('div');
+    b.style.cssText = `width:2px;height:${h}px;background:rgba(0,245,255,0.4);border-radius:1px;animation:waveform ${0.6+i*0.1}s ease-in-out infinite alternate`;
+    wf.appendChild(b);
+  });
+})();
+
+// Relay timestamp
+function updateTimestamp(){
+  const el = document.getElementById('relayTimestamp');
+  if(!el) return;
+  const n = new Date();
+  const t = String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
+  el.textContent = `2187.07.12 :: ${t} UTC`;
+}
+updateTimestamp(); setInterval(updateTimestamp, 1000);
+
+// Uptime counter
+let uptimeSecs = 0;
+setInterval(()=>{
+  uptimeSecs++;
+  const h = Math.floor(uptimeSecs/3600), m = Math.floor((uptimeSecs%3600)/60), s = uptimeSecs%60;
+  const el = document.getElementById('uptime');
+  if(el) el.textContent = String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}, 1000);
+
+// Data packets counter
+let packets = 982221;
+setInterval(()=>{
+  packets += Math.floor(Math.random()*50+10);
+  const el = document.getElementById('dataPackets');
+  if(el) el.textContent = (packets/1000).toFixed(3)+'K';
+}, 800);
+
+let selectedType = 'unknown';
+let uploadedImageBase64 = null;
+let uploadedMimeType = "image/jpeg";
+
+// Phase 1 — handle image upload
+function handlePhase1Upload(e){
+  const file = e.target.files[0]; if(!file) return;
+  const preview = document.getElementById('phase1Preview');
+  const btnLabel = document.getElementById('uploadBtnLabel');
+  const originSel = document.getElementById('originSelector');
+  const analyzeWrap = document.getElementById('phase1AnalyzeWrap');
+
+  const displayName = file.name.length>28 ? file.name.substring(0,28)+'...' : file.name;
+  // Collapse upload button to a quiet confirmation — no filename clutter
+  const triggerBtn = document.getElementById('uploadTriggerBtn');
+  if(triggerBtn){
+    triggerBtn.style.padding = '8px 16px';
+    triggerBtn.style.fontSize = '7px';
+    triggerBtn.style.letterSpacing = '2px';
+    triggerBtn.style.borderColor = 'rgba(200,169,110,0.25)';
+    triggerBtn.style.background = 'rgba(200,169,110,0.02)';
+    triggerBtn.style.animation = 'none';
+    triggerBtn.style.justifyContent = 'center';
+  }
+  if(btnLabel) btnLabel.textContent = '✓ IMAGE RECEIVED — TAP TO CHANGE';
+
+  const img = new Image();
+  const reader = new FileReader();
+  reader.onload = ev => {
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 800;
+      let w = img.width, h = img.height;
+      if(w > MAX || h > MAX){
+        if(w > h){ h = Math.round(h * MAX/w); w = MAX; }
+        else { w = Math.round(w * MAX/h); h = MAX; }
+      }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const compressed = canvas.toDataURL('image/jpeg', 0.7);
+      uploadedImageBase64 = compressed.split(',')[1];
+      uploadedMimeType = 'image/jpeg';
+      if(preview){ preview.src = compressed; preview.style.display='block'; }
+      if(originSel) originSel.style.display='block';
+      if(analyzeWrap) analyzeWrap.style.display='block';
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// Phase 1 — set origin hint
+function setOrigin(type){
+  selectedType = type;
+  // Reset all buttons
+  ['originNatural','originSynthetic','originUnknown'].forEach(id=>{
+    const b = document.getElementById(id);
+    if(b){ b.classList.remove('origin-btn-active','natural-active','synthetic-active'); }
+  });
+  // Activate selected
+  const map = {natural:'originNatural',synthetic:'originSynthetic',unknown:'originUnknown'};
+  const cls = {natural:'natural-active',synthetic:'synthetic-active',unknown:'origin-btn-active'};
+  const btn = document.getElementById(map[type]);
+  if(btn) btn.classList.add(cls[type]);
+}
+
+// Phase 1 — run scan directly from phase 1
+function runPhase1Scan(){
+  if(!uploadedImageBase64){ alert('Please upload an image first.'); return; }
+  runScan();
+}
+
+// Legacy selectType — kept for phase 2 back button compatibility
+function selectType(type){ selectedType = type; }
+
+function goToPhase(n){
+  window.dispatchEvent(new Event('phaseChange'));
+  document.querySelectorAll('.phase').forEach(p=>p.classList.remove('active'));
+  const el = document.getElementById('phase'+n);
+  if(el){el.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'});}
+}
+
+function handleUpload(e){
+  const file = e.target.files[0]; if(!file) return;
+  const preview = document.getElementById('uploadPreview');
+  const btn = document.getElementById('analyzeBtn');
+  const fn = document.getElementById('uploadFilename');
+  const zone = document.querySelector('.upload-zone');
+
+  if(fn) fn.textContent = file.name.length>30 ? file.name.substring(0,30)+'...' : file.name;
+  if(zone) zone.style.borderColor='rgba(200,169,110,0.4)';
+
+  // Compress image before storing — resize to max 800px, quality 0.7
+  const img = new Image();
+  const reader = new FileReader();
+  reader.onload = ev => {
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 800;
+      let w = img.width, h = img.height;
+      if(w > MAX || h > MAX) {
+        if(w > h){ h = Math.round(h * MAX/w); w = MAX; }
+        else { w = Math.round(w * MAX/h); h = MAX; }
+      }
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      const compressed = canvas.toDataURL('image/jpeg', 0.7);
+      // Store globally so it survives phase transitions
+      uploadedImageBase64 = compressed.split(',')[1];
+      uploadedMimeType = 'image/jpeg';
+      if(preview){ preview.src = compressed; preview.style.display = 'block'; }
+      if(btn) btn.style.display = 'block';
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function runScan(){
+  goToPhase(3);
+
+  // Start animated bars
+  const isNatural = selectedType === 'natural';
+  const targets = isNatural ? [94,89,91,3,97] : [2,1,4,97,8];
+  const stepEl = document.getElementById('scanStep');
+  const aiSteps = [
+    'Initializing carbon origin scan...',
+    'Activating SCB neural analysis...',
+    'Cross-referencing Bureau visual database...',
+    'Running AI origin classification...',
+    'Analyzing molecular structure...',
+    'Computing temporal rarity index...',
+    'Finalizing Bureau AI report...',
+    'Awaiting Bureau clearance...',
+    'Processing classification data...',
+    'Almost complete...',
+  ];
+  let s = 0;
+  const sv = setInterval(() => {
+    if (s < aiSteps.length && stepEl) {
+      stepEl.textContent = aiSteps[s++];
+    } else {
+      // Cycle back to keep it moving
+      s = 6;
+    }
+  }, 1800);
+
+  // Animate bars
+  ['bar1','bar2','bar3','bar4','bar5'].forEach((id,i) => {
+    const bar=document.getElementById(id), pct=document.getElementById('pct'+(i+1));
+    let cur=0; const target=targets[i];
+    setTimeout(() => {
+      const iv=setInterval(() => {
+        cur=Math.min(cur+2,target);
+        if(bar) bar.style.width=cur+'%';
+        if(pct) pct.textContent=cur+'%';
+        if(cur>=target) clearInterval(iv);
+      },25);
+    }, i*280);
+  });
+
+  // Get uploaded image data from global store
+  const imageBase64 = uploadedImageBase64;
+  const mimeType = uploadedMimeType || 'image/jpeg';
+  console.log('Image data available:', !!imageBase64, 'length:', imageBase64?.length);
+  if (!imageBase64) { console.warn('NO IMAGE DATA — falling back to manual'); }
+
+  // Run AI analysis if image uploaded
+  let aiResult = null;
+  if (imageBase64) {
+    aiResult = await analyzeWithAI(imageBase64, mimeType, selectedType);
+  }
+
+  clearInterval(sv);
+
+  if (aiResult) {
+    // Use AI result
+    renderAIResult(aiResult, imageBase64, mimeType);
+  } else {
+    // Fallback — show manual result with a note
+    console.log('AI unavailable, using manual result');
+    const stepElFinal = document.getElementById('scanStep');
+    if(stepElFinal) stepElFinal.textContent = 'Analysis complete.';
+    goToPhase(isNatural ? '4a' : '4b');
+  }
+}
+
+function resetDetector(){
+  selectedType='unknown';
+  uploadedImageBase64=null;
+  uploadedMimeType='image/jpeg';
+
+  // Reset phase 1 new elements
+  if(btnLabel) btnLabel.textContent = 'TAP HERE TO UPLOAD AN IMAGE';
+  const uploadWrap = document.getElementById('uploadTriggerBtn');
+  if(uploadWrap){
+    uploadWrap.style.padding='18px 20px';
+    uploadWrap.style.fontSize='';
+    uploadWrap.style.letterSpacing='3px';
+    uploadWrap.style.borderColor='rgba(200,169,110,0.7)';
+    uploadWrap.style.background='rgba(200,169,110,0.08)';
+    uploadWrap.style.animation='naturalBtnPulse 2.6s ease-in-out infinite,txFlicker 11s infinite';
+  }
+  const fi1=document.getElementById('fileInputP1'); if(fi1)fi1.value='';
+  const prev1=document.getElementById('phase1Preview'); if(prev1){prev1.style.display='none';prev1.src='';}
+  const fn1=document.getElementById('phase1Filename'); if(fn1)fn1.textContent='TAP TO UPLOAD AN IMAGE';
+  const zone1=document.getElementById('phase1UploadZone'); if(zone1)zone1.style.borderColor='';
+  const originSel=document.getElementById('originSelector'); if(originSel)originSel.style.display='none';
+  const analyzeWrap=document.getElementById('phase1AnalyzeWrap'); if(analyzeWrap)analyzeWrap.style.display='none';
+  // Reset origin buttons
+  setOrigin('unknown');
+
+  // Reset phase 2 legacy elements
+  const fi=document.getElementById('fileInput'); if(fi)fi.value='';
+  const prev=document.getElementById('uploadPreview'); if(prev){prev.style.display='none';prev.src='';}
+  const btn=document.getElementById('analyzeBtn'); if(btn)btn.style.display='none';
+  const fn=document.getElementById('uploadFilename'); if(fn)fn.textContent='TAP TO UPLOAD AN IMAGE';
+  const zone=document.querySelector('.upload-zone'); if(zone)zone.style.borderColor='';
+
+  ['bar1','bar2','bar3','bar4','bar5'].forEach((id,i)=>{
+    const b=document.getElementById(id);if(b)b.style.width='0%';
+    const p=document.getElementById('pct'+(i+1));if(p)p.textContent='0%';
+  });
+
+  // Remove AI result div if present
+  const aiDiv=document.getElementById('phaseAI'); if(aiDiv)aiDiv.remove();
+
+  goToPhase(1);
+}
+
+// ── AI VISION ANALYSIS ──
+async function analyzeWithAI(imageBase64, mimeType, selectedType) {
+  try {
+    console.log('Calling Netlify function, image length:', imageBase64?.length);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
+
+    const response = await fetch('/.netlify/functions/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageBase64, mimeType, selectedType }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeout);
+    const text = await response.text();
+    console.log('Function response status:', response.status, 'body preview:', text.substring(0,100));
+
+    if (!response.ok) {
+      console.error('Function error:', response.status, text);
+      return null;
+    }
+    return JSON.parse(text);
+  } catch(err) {
+    if (err.name === 'AbortError') {
+      console.error('Request timed out');
+    } else {
+      console.error('AI analysis error:', err.message);
+    }
+    return null;
+  }
+}
+
+// Render AI result
+function renderAIResult(result, imageBase64, mimeType) {
+  document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+
+  const resultDiv = document.createElement('div');
+  resultDiv.className = 'phase active';
+  resultDiv.id = 'phaseAI';
+
+  const isNatural   = result.diamondType === 'natural';
+  const isSynthetic = result.diamondType === 'synthetic';
+  const isDiamond   = result.isDiamond;
+
+  // Color scheme by type
+  const color       = isNatural ? 'rgba(200,169,110,0.9)'  : isSynthetic ? 'rgba(0,245,255,0.8)'  : 'rgba(232,228,216,0.8)';
+  const colorDim    = isNatural ? 'rgba(200,169,110,0.4)'  : isSynthetic ? 'rgba(0,245,255,0.35)' : 'rgba(232,228,216,0.3)';
+  const borderColor = isNatural ? 'rgba(200,169,110,0.2)'  : isSynthetic ? 'rgba(0,245,255,0.15)' : 'rgba(232,228,216,0.1)';
+  const bgColor     = isNatural ? 'rgba(200,169,110,0.03)' : isSynthetic ? 'rgba(0,245,255,0.02)' : 'rgba(232,228,216,0.02)';
+
+  // Tier config
+  const tier = result.tierIndex != null ? result.tierIndex : null;
+  const tierConfig = {
+    0: { color: 'rgba(0,245,255,0.5)',    label: 'TIER 0 — INFINITE SUPPLY'             },
+    1: { color: 'rgba(0,245,255,0.65)',   label: 'TIER 1 — COMMON ACROSS ALL TIMELINES' },
+    2: { color: 'rgba(232,228,216,0.5)',  label: 'TIER 2 — FADING WITHIN 50 YEARS'      },
+    3: { color: 'rgba(232,228,216,0.7)',  label: 'TIER 3 — UNCOMMON BY 2075'            },
+    4: { color: 'rgba(255,200,80,0.75)',  label: 'TIER 4 — RARE BY 2100'                },
+    5: { color: 'rgba(255,160,40,0.85)',  label: 'TIER 5 — SCARCE IN THE NEAR FUTURE'   },
+    6: { color: 'rgba(200,169,110,0.9)',  label: 'TIER 6 — SUBSTANTIALLY RARE BY 2187'  },
+    7: { color: 'rgba(200,169,110,1)',    label: 'TIER 7 — CRITICALLY RARE BEYOND 2187' },
+  };
+  const tc        = tier != null ? (tierConfig[tier] || tierConfig[6]) : { color: 'rgba(232,228,216,0.4)', label: 'TIER UNKNOWN' };
+  const tierColor = tc.color;
+  const tierLabel = tc.label;
+
+  // Bureau status styling
+  const statusColorMap = {
+    'SUPPRESSED':   'var(--pink)',
+    'UNREGISTERED': 'rgba(255,45,120,0.7)',
+    'APPROVED':     'var(--cyan)',
+    'ARCHIVED':     'rgba(255,200,80,0.8)',
+    'OBSOLETE':     'rgba(232,228,216,0.3)',
+    'UNKNOWN':      'rgba(232,228,216,0.35)'
+  };
+  const statusColor = statusColorMap[result.bureauStatus] || 'rgba(232,228,216,0.35)';
+  const statusIcon  = (result.bureauStatus === 'SUPPRESSED' || result.bureauStatus === 'UNREGISTERED') ? '⊘ '
+                    : result.bureauStatus === 'APPROVED' ? '✓ ' : '';
+
+  const badge    = isNatural ? 'NATURAL ORIGIN'
+                 : isSynthetic ? 'SYNTHETIC ORIGIN'
+                 : result.bureauClassification || 'SPECIMEN ANALYZED';
+  const subBadge = isNatural ? 'CONFIRMED — EARTH FORMATION // REMOVED FROM THE RECORD'
+                 : isSynthetic ? 'CONFIRMED — BUREAU COMPLIANT'
+                 : (result.subjectDetected || 'UNKNOWN').toUpperCase();
+
+  const transmission = result.rarityTransmission || '';
+  const descriptor   = result.tierDescriptor || '';
+
+  resultDiv.innerHTML = `
+
+    <!-- BEAT 1 — CLASSIFICATION HEADER -->
+    <div style="text-align:center;margin-bottom:24px;animation:resultReveal 0.6s ease forwards">
+      <div style="font-family:var(--display);font-size:clamp(26px,7vw,54px);letter-spacing:4px;color:${color};margin-bottom:5px">${badge}</div>
+      <div style="font-size:7px;letter-spacing:4px;color:${colorDim}">${subBadge}</div>
+    </div>
+
+    <!-- SPECIMEN IMAGE -->
+    ${imageBase64 ? `
+    <div style="position:relative;margin-bottom:20px;border:1px solid ${borderColor};padding:12px;text-align:center;background:${bgColor}">
+      <div class="corner-mark tl" style="border-color:${borderColor}"></div>
+      <div class="corner-mark tr" style="border-color:${borderColor}"></div>
+      <div class="corner-mark bl" style="border-color:${borderColor}"></div>
+      <div class="corner-mark br" style="border-color:${borderColor}"></div>
+      <div style="font-size:7px;letter-spacing:3px;color:${colorDim};margin-bottom:8px">SUBMITTED SPECIMEN · SCB.SCAN.COMPLETE</div>
+      <img src="data:${mimeType};base64,${imageBase64}" style="max-width:100%;max-height:220px;object-fit:contain;opacity:0.72;filter:grayscale(20%) contrast(1.1) brightness(0.9)">
+      <div style="margin-top:8px;font-size:7px;letter-spacing:2px;color:${colorDim}">SESSION ID: ${Math.random().toString(36).substr(2,8).toUpperCase()} · LOGGED · CYCLE 2187</div>
+    </div>` : ''}
+
+    <!-- BEAT 2 — TIER RATING BLOCK -->
+    <div style="border:1px solid ${borderColor};background:${bgColor};padding:20px;margin-bottom:14px;position:relative;animation:certReveal 0.7s ease 0.15s both">
+      <div class="corner-mark tl" style="border-color:${borderColor}"></div>
+      <div class="corner-mark br" style="border-color:${borderColor}"></div>
+      <div style="font-size:7px;letter-spacing:3px;color:${colorDim};margin-bottom:12px">SCB TEMPORAL RARITY INDEX · CYCLE 2187</div>
+      <div style="display:flex;gap:3px;margin-bottom:12px;align-items:flex-end;height:24px">
+        ${[0,1,2,3,4,5,6,7].map(i => {
+          const filled = tier != null && i <= tier;
+          const h      = 8 + i * 2;
+          const clr    = filled ? tierColor : 'rgba(255,255,255,0.06)';
+          const op     = filled ? (0.4 + i * 0.08) : 1;
+          return `<div style="flex:1;height:${h}px;background:${clr};opacity:${op};border-radius:1px"></div>`;
+        }).join('')}
+      </div>
+      <div style="font-size:11px;letter-spacing:3px;color:${tierColor};font-weight:700;margin-bottom:6px">${tierLabel}</div>
+      ${descriptor ? `<div style="font-size:8px;letter-spacing:1.5px;color:rgba(232,228,216,0.45);line-height:1.7">${descriptor}</div>` : ''}
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:7px;letter-spacing:2px;color:rgba(232,228,216,0.25)">${result.bureauClassification || '—'}</span>
+        <span style="font-size:7px;letter-spacing:2px;color:${statusColor};font-weight:700">${statusIcon}${result.bureauStatus || '—'}</span>
+      </div>
+    </div>
+
+    <!-- BEAT 3 — AI ANALYSIS -->
+    <div style="border:1px solid ${borderColor};background:${bgColor};padding:18px 20px;margin-bottom:14px;position:relative;animation:certReveal 0.7s ease 0.3s both">
+      <div class="corner-mark tl" style="border-color:${borderColor}"></div>
+      <div class="corner-mark br" style="border-color:${borderColor}"></div>
+      <div style="font-size:7px;letter-spacing:3px;color:${colorDim};margin-bottom:10px">SCB CARBON ANALYSIS NETWORK · TRANSMISSION FROM CYCLE 2187</div>
+      <div style="font-size:11px;letter-spacing:0.2px;color:rgba(232,228,216,0.6);line-height:2;font-style:italic">"${result.analysis || ''}"</div>
+    </div>
+
+    <!-- BEAT 4 — RARITY TRANSMISSION -->
+    ${transmission ? `
+    <div style="padding:28px 12px 24px;text-align:center;margin-bottom:22px;animation:certReveal 0.8s ease 0.45s both">
+      <div style="height:1px;background:linear-gradient(to right,transparent,${borderColor},transparent);margin-bottom:24px"></div>
+      <div style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:300;font-size:clamp(17px,4.5vw,26px);color:rgba(232,228,216,0.52);line-height:1.7;letter-spacing:0.3px">"${transmission}"</div>
+      <div style="margin-top:14px;font-size:7px;letter-spacing:3px;color:rgba(232,228,216,0.1)">— SCB TEMPORAL ARCHIVE · CYCLE 2187</div>
+    </div>` : ''}
+
+    <!-- BUREAU WATCHING BLOCK -->
+    <div style="border:1px solid rgba(255,45,120,0.15);background:rgba(255,45,120,0.025);padding:14px 18px;margin-bottom:14px;position:relative;animation:certReveal 0.7s ease 0.55s both">
+      <div class="corner-mark tl" style="border-color:rgba(255,45,120,0.2)"></div>
+      <div class="corner-mark br" style="border-color:rgba(255,45,120,0.2)"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+        <div style="width:5px;height:5px;background:var(--pink);border-radius:50%;animation:blink 1s step-end infinite;flex-shrink:0"></div>
+        <div style="font-size:7px;letter-spacing:3px;color:rgba(255,45,120,0.55);font-weight:700">YOUR SESSION HAS BEEN LOGGED IN CYCLE 2187</div>
+      </div>
+      <div style="font-size:8px;letter-spacing:1px;color:rgba(232,228,216,0.22);line-height:1.8">The Bureau has been notified of this specimen.</div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="cta-stack">
+      ${isDiamond && isNatural  ? `<a href="https://synthcity.tv" class="cta-btn">SEE HOW RARE IT IS IN 2187 →</a>` : ''}
+      ${isDiamond && isSynthetic ? `<a href="https://synthcity.tv" class="cta-btn cyan-btn">SEE HOW RARE IT IS IN 2187 →</a>` : ''}
+      ${!isDiamond ? `<a href="https://synthcity.tv" class="cta-btn">SEE HOW RARE IT IS IN 2187 →</a>` : ''}
+      <a href="https://premiergem.com/desert-diamonds" class="cta-btn secondary">${isNatural ? 'HOLD SOMETHING RARE — PREMIER GEM' : 'DISCOVER RARITY BY NATURE — PREMIER GEM'}</a>
+    </div>
+
+    <!-- INCOMING TRANSMISSION — below CTAs -->
+    <div style="margin-bottom:14px">
+      <span class="tx-btn-label">FILE K-9 // BUREAU SUPPRESSED</span>
+      <a href="/" class="tx-btn">
+        <span class="tx-btn-dot"></span>INCOMING TRANSMISSION
+      </a>
+    </div>
+
+    <span class="reanalyze" onclick="resetDetector()">← ANALYZE ANOTHER SPECIMEN</span>
+    <div class="scb-watermark">© SYNTHETIC COMPLIANCE BUREAU · CYCLE 2187 · SESSION LOGGED · ALL DATA TRANSMITTED</div>
+  `;
+
+  document.querySelector('.wrap').appendChild(resultDiv);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+// Glitch system
+(function(){
+  const canvas=document.getElementById('glitchOverlay'); if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+  resize(); window.addEventListener('resize',resize);
+  function runGlitch(intensity){
+    intensity=intensity||0.5; canvas.style.opacity='1';
+    const W=canvas.width,H=canvas.height;
+    let frames=0,max=6+Math.floor(intensity*8);
+    const iv=setInterval(()=>{
+      ctx.clearRect(0,0,W,H);
+      const bands=Math.floor(Math.random()*(2+intensity*3))+1;
+      for(let b=0;b<bands;b++){
+        const y=Math.floor(Math.random()*H),h=Math.floor(Math.random()*4)+1,ox=(Math.random()-.5)*40*intensity;
+        ctx.fillStyle=`rgba(255,45,120,${0.03+Math.random()*0.09*intensity})`;
+        ctx.fillRect(ox,y,W,h);
+      }
+      if(Math.random()>.6){ctx.fillStyle=`rgba(0,245,255,${0.025*intensity})`;ctx.fillRect(3,0,W,H);ctx.fillStyle=`rgba(255,45,120,${0.025*intensity})`;ctx.fillRect(-3,0,W,H);}
+      if(Math.random()>.5){const px=Math.floor(Math.random()*W),py=Math.floor(Math.random()*H);ctx.fillStyle=`rgba(255,45,120,${0.35+Math.random()*0.5})`;ctx.fillRect(px,py,Math.random()*40*intensity+2,1);}
+      frames++; if(frames>=max){clearInterval(iv);ctx.clearRect(0,0,W,H);canvas.style.opacity='0';}
+    },50);
+  }
+  const relay=document.getElementById('relayTxt');
+  const statuses=['TEMPORAL RELAY: ACTIVE · ORIGIN: CYCLE 2187 · YOUR TIME: RECEIVING','TEMPORAL RELAY: STABLE · SIGNAL STRENGTH: 38% · BUREAU MONITORING','TEMPORAL RELAY: FLUCTUATING · CROSS-TEMPORAL LINK: FRAGILE','TEMPORAL RELAY: ACTIVE · WARNING: SESSION LOGGED IN CYCLE 2187','TEMPORAL RELAY: ONLINE · SCB CROSS-TIME PROTOCOL 2187-T','TEMPORAL RELAY: WARNING · NATURAL DIAMOND SIGNAL DETECTED'];
+  let si=0;
+  setInterval(()=>{ si=(si+1)%statuses.length; if(relay)relay.textContent=statuses[si]; },4200);
+  function schedule(){setTimeout(()=>{runGlitch(0.3+Math.random()*0.7);schedule();},3000+Math.random()*9000);}
+  schedule();
+  window.addEventListener('phaseChange',()=>runGlitch(1.2));
+
+})();
+</script>
+
+</body>
+</html>

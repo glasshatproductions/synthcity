@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SYNTH CITY — A PREMIER GEM ORIGINAL</title>
+<meta name="description" content="In Cycle 2187, natural diamonds no longer exist. Upload yours. Find out what's real.">
+<meta property="og:title" content="SYNTH CITY — A PREMIER GEM ORIGINAL">
+<meta property="og:description" content="In Cycle 2187, natural diamonds no longer exist. Upload yours. Find out what's real.">
+<meta property="og:url" content="https://synthcity.tv">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SYNTH CITY">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SYNTH CITY — A PREMIER GEM ORIGINAL">
+<meta name="twitter:description" content="In Cycle 2187, natural diamonds no longer exist. Upload yours. Find out what's real.">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --neon-pink: #ff2d78;
+  --neon-cyan: #00f5ff;
+  --neon-purple: #bf5fff;
+  --dark-bg: #050508;
+  --panel-bg: rgba(10,10,18,0.95);
+  --grid-color: rgba(0,245,255,0.04);
+  --text-primary: #e8e4d8;
+  --text-dim: rgba(232,228,216,0.45);
+  --text-muted: rgba(232,228,216,0.2);
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+  --border-glow: rgba(0,245,255,0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--dark-bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---- TICKER ---- */
+.ticker-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: var(--neon-pink); height: 28px;
+  display: flex; align-items: center; overflow: hidden;
+}
+.ticker-label {
+  background: #000; color: var(--neon-pink);
+  font-family: var(--font-mono); font-size: 11px;
+  padding: 0 14px; height: 100%;
+  display: flex; align-items: center;
+  white-space: nowrap; letter-spacing: 2px;
+  flex-shrink: 0; border-right: 2px solid var(--neon-pink);
+}
+.ticker-scroll { display: flex; animation: ticker 40s linear infinite; white-space: nowrap; }
+.ticker-scroll span { font-family: var(--font-mono); font-size: 11px; color: #000; padding: 0 40px; letter-spacing: 1px; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ---- NAV ---- */
+nav {
+  position: fixed; top: 28px; left: 0; right: 0; z-index: 999;
+  background: rgba(5,5,8,0.96); border-bottom: 1px solid var(--border-glow);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; height: 58px; backdrop-filter: blur(12px);
+}
+.nav-logo {
+  font-family: var(--font-display); font-size: 28px; letter-spacing: 5px;
+  color: var(--text-primary); display: flex; align-items: center; gap: 12px;
+}
+.nav-logo-diamond {
+  animation: pulse-d 3s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse-d { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.88)} }
+.nav-links { display: flex; gap: 36px; list-style: none; }
+.nav-links a {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px;
+  color: var(--text-dim); text-decoration: none; text-transform: uppercase;
+  transition: color 0.2s; cursor: pointer;
+}
+.nav-links a:hover { color: var(--neon-cyan); }
+.nav-links .classified { color: var(--neon-pink) !important; }
+.nav-status {
+  font-family: var(--font-mono); font-size: 10px; color: var(--neon-pink);
+  letter-spacing: 2px; display: flex; align-items: center; gap: 6px;
+}
+.status-dot { width: 6px; height: 6px; background: var(--neon-pink); border-radius: 50%; animation: blink 1.2s step-end infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ---- HERO ---- */
+.hero {
+  position: relative; z-index: 1; min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 120px 40px 80px; text-align: center; overflow: hidden;
+}
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  opacity: 0.35;
+  transition: opacity 0.3s;
+  z-index: 2;
+}
+.hero-scroll-hint:hover { opacity: 0.7; }
+.hero-scroll-hint span {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.scroll-arrow {
+  width: 1px;
+  height: 32px;
+  background: linear-gradient(to bottom, rgba(0,245,255,0.5), transparent);
+  animation: scrollpulse 2s ease-in-out infinite;
+}
+@keyframes scrollpulse {
+  0%,100% { transform: scaleY(1); opacity: 0.5; }
+  50% { transform: scaleY(1.3); opacity: 1; }
+}
+
+.hero-glow {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(191,95,255,0.05) 0%, transparent 68%);
+  pointer-events: none;
+}
+#diamondCanvas {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0.22;
+  z-index: 0;
+}
+.hero-title { font-family: var(--font-display); font-size: clamp(80px, 12vw, 150px); line-height: 0.88; letter-spacing: 8px; color: var(--text-primary); position: relative; }
+.hero-title-glitch { position: relative; display: inline-block; }
+.hero-title-glitch::before, .hero-title-glitch::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; }
+.hero-title-glitch::before { color: var(--neon-cyan); animation: g1 5s infinite; clip-path: polygon(0 20%,100% 20%,100% 38%,0 38%); }
+.hero-title-glitch::after { color: var(--neon-pink); animation: g2 5s infinite; clip-path: polygon(0 62%,100% 62%,100% 78%,0 78%); }
+@keyframes g1 { 0%,88%,100%{transform:none;opacity:0} 90%{transform:translateX(-5px);opacity:0.9} 93%{transform:translateX(5px);opacity:0.9} 96%{transform:none;opacity:0} }
+@keyframes g2 { 0%,85%,100%{transform:none;opacity:0} 87%{transform:translateX(5px);opacity:0.9} 90%{transform:translateX(-3px);opacity:0.9} 93%{transform:none;opacity:0} }
+.hero-subtitle { font-family: var(--font-display); font-size: clamp(32px, 5vw, 60px); letter-spacing: 14px; color: transparent; -webkit-text-stroke: 1px rgba(232,228,216,0.25); margin-bottom: 36px; }
+.hero-tagline { font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); letter-spacing: 2px; max-width: 480px; line-height: 1.9; margin-bottom: 52px; }
+.cta-group { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+.btn-p {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+  background: var(--neon-pink); color: #000; border: none;
+  padding: 15px 36px; cursor: pointer; transition: all 0.2s;
+  clip-path: polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+}
+.btn-p:hover { background: #fff; transform: translateY(-2px); }
+.btn-s {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+  background: transparent; color: var(--neon-cyan); border: 1px solid var(--neon-cyan);
+  padding: 15px 36px; cursor: pointer; transition: all 0.2s;
+  clip-path: polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+}
+.btn-s:hover { background: rgba(0,245,255,0.07); transform: translateY(-2px); }
+
+/* ---- SECTIONS ---- */
+section { position: relative; z-index: 1; padding: 88px 48px; max-width: 1280px; margin: 0 auto; }
+.section-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 4px; color: var(--neon-cyan); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.section-label::before { content: '//'; color: var(--text-muted); }
+.section-title { font-family: var(--font-display); font-size: clamp(40px, 5vw, 72px); letter-spacing: 4px; color: var(--text-primary); margin-bottom: 52px; line-height: 1; }
+hr.divider { position: relative; z-index: 1; border: none; height: 1px; background: linear-gradient(to right, transparent, rgba(255,45,120,0.2), transparent); }
+
+/* ---- EPISODES ---- */
+.episodes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+.episode-card {
+  background: var(--panel-bg); border: 1px solid rgba(255,45,120,0.08);
+  padding: 28px; cursor: pointer; transition: all 0.3s;
+  position: relative; overflow: hidden;
+}
+.episode-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0; background: var(--neon-pink); transition: height 0.3s; }
+.episode-card:hover { border-color: rgba(255,45,120,0.35); }
+.episode-card:hover::before { height: 100%; }
+.ep-num { font-family: var(--font-mono); font-size: 10px; color: var(--neon-pink); letter-spacing: 3px; margin-bottom: 8px; }
+.ep-tag { display: inline-block; font-family: var(--font-mono); font-size: 9px; letter-spacing: 2px; padding: 3px 8px; border: 1px solid rgba(0,245,255,0.18); color: var(--neon-cyan); margin-bottom: 12px; }
+.ep-title { font-family: var(--font-display); font-size: 24px; letter-spacing: 2px; color: var(--text-primary); margin-bottom: 10px; line-height: 1.1; }
+.ep-desc { font-size: 13px; color: var(--text-dim); line-height: 1.55; margin-bottom: 18px; }
+.ep-meta { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; }
+.ep-s2 { grid-column: span 2; border-color: rgba(191,95,255,0.18) !important; }
+.ep-s2 .ep-num { color: var(--neon-purple); }
+.ep-s2 .ep-tag { border-color: rgba(191,95,255,0.3); color: var(--neon-purple); }
+.ep-s2::before { background: var(--neon-purple) !important; }
+.ep-locked { background: rgba(191,95,255,0.03); }
+
+/* ---- BROADCAST ---- */
+.broadcast-panel { background: var(--panel-bg); border: 1px solid var(--border-glow); overflow: hidden; margin-bottom: 2px; }
+.bc-header { background: rgba(255,45,120,0.1); border-bottom: 1px solid rgba(255,45,120,0.18); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; }
+.bc-logo { font-family: var(--font-display); font-size: 20px; letter-spacing: 4px; color: var(--neon-pink); }
+.bc-live { font-family: var(--font-mono); font-size: 10px; color: #000; background: var(--neon-pink); padding: 3px 10px; letter-spacing: 2px; display: flex; align-items: center; gap: 6px; }
+.bc-body { padding: 8px 0; }
+.news-item { padding: 18px 28px; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; gap: 20px; }
+.news-item:last-child { border-bottom: none; }
+.news-ts { font-family: var(--font-mono); font-size: 10px; color: var(--neon-cyan); white-space: nowrap; padding-top: 3px; min-width: 75px; }
+.news-hl { font-size: 14px; color: var(--text-primary); line-height: 1.5; font-weight: 600; }
+.news-sub { font-size: 12px; color: var(--text-dim); margin-top: 4px; line-height: 1.4; }
+.news-priority { background: rgba(255,45,120,0.12); border-left: 3px solid var(--neon-pink); }
+
+/* ---- DETECTOR ---- */
+.detector-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.det-upload {
+  background: var(--panel-bg); border: 1px dashed rgba(0,245,255,0.2);
+  padding: 48px 40px; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 340px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+}
+.det-upload:hover { border-color: rgba(0,245,255,0.45); background: rgba(0,245,255,0.02); }
+.det-upload input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.det-icon { width: 64px; height: 64px; background: rgba(0,245,255,0.04); border: 1px solid rgba(0,245,255,0.2); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 28px; clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%); color: var(--neon-cyan); }
+.det-label { font-family: var(--font-mono); font-size: 13px; letter-spacing: 2px; color: var(--neon-cyan); margin-bottom: 8px; text-align: center; }
+.det-sub { font-size: 12px; color: var(--text-muted); text-align: center; line-height: 1.5; }
+.det-result { background: var(--panel-bg); border: 1px solid var(--border-glow); padding: 36px; min-height: 340px; display: flex; flex-direction: column; justify-content: center; }
+.det-result-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 3px; color: var(--text-muted); margin-bottom: 20px; text-transform: uppercase; }
+.det-reading { font-family: var(--font-display); font-size: 44px; letter-spacing: 3px; color: var(--neon-cyan); min-height: 54px; margin-bottom: 6px; transition: color 0.4s; }
+.det-reading.synth { color: var(--neon-pink); }
+.det-reading.analyzing { color: var(--neon-purple); animation: flk 0.25s infinite; }
+@keyframes flk { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.det-bars { margin: 22px 0; }
+.det-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.det-bar-lbl { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); width: 110px; flex-shrink: 0; }
+.det-bar-track { flex: 1; height: 2px; background: rgba(255,255,255,0.06); }
+.det-bar-fill { height: 100%; background: var(--neon-cyan); width: 0; transition: width 1.8s cubic-bezier(0.16,1,0.3,1); }
+.det-bar-fill.s { background: var(--neon-pink); }
+.det-bar-pct { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); width: 40px; text-align: right; }
+.det-verdict { font-family: var(--font-mono); font-size: 11px; line-height: 1.75; color: var(--text-dim); border-top: 1px solid rgba(255,255,255,0.06); padding-top: 18px; margin-top: 10px; }
+.btn-analyze { font-family: var(--font-mono); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; background: transparent; color: var(--neon-cyan); border: 1px solid rgba(0,245,255,0.25); padding: 13px 24px; cursor: pointer; transition: all 0.2s; width: 100%; margin-top: 22px; }
+.btn-analyze:hover { background: rgba(0,245,255,0.05); border-color: rgba(0,245,255,0.5); }
+
+/* ---- LORE ---- */
+.lore-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+.lore-card { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.04); padding: 28px; position: relative; overflow: hidden; }
+.lore-card::after { content: attr(data-idx); position: absolute; bottom: -14px; right: 12px; font-family: var(--font-display); font-size: 88px; color: rgba(255,255,255,0.025); line-height: 1; pointer-events: none; }
+.lore-icon { font-size: 22px; margin-bottom: 18px; color: var(--neon-purple); }
+.lore-title { font-family: var(--font-display); font-size: 22px; letter-spacing: 2px; color: var(--text-primary); margin-bottom: 10px; }
+.lore-body { font-size: 13px; color: var(--text-dim); line-height: 1.65; }
+.lore-classified { font-family: var(--font-mono); font-size: 9px; letter-spacing: 3px; color: var(--neon-pink); margin-top: 14px; }
+
+/* ---- GLITCH TRIGGER ZONE ---- */
+.glitch-zone { position: relative; z-index: 1; text-align: center; padding: 80px 40px 120px; }
+.gz-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 4px; color: var(--text-muted); margin-bottom: 36px; text-transform: uppercase; }
+.gz-btn {
+  background: none;
+  border: 1px solid rgba(255,45,120,0.35);
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  display: inline-block;
+  transition: all 0.3s;
+  animation: gz-pulse 2.5s ease-in-out infinite;
+}
+@keyframes gz-pulse {
+  0%,100% { border-color:rgba(255,45,120,0.35); box-shadow:0 0 0 rgba(255,45,120,0); }
+  50% { border-color:rgba(255,45,120,0.8); box-shadow:0 0 40px rgba(255,45,120,0.15), 0 0 80px rgba(255,45,120,0.05); }
+}
+.gz-btn:hover { border-color:rgba(255,45,120,1); background:rgba(255,45,120,0.05); }
+.gz-btn:hover .gz-btn-label { color: #fff; }
+.gz-btn-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 56px;
+  gap: 10px;
+  position: relative;
+}
+.gz-btn-pulse {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 100%; height: 100%;
+  border: 1px solid rgba(255,45,120,0.3);
+  animation: gz-ring 2.5s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes gz-ring {
+  0% { transform:translate(-50%,-50%) scale(1); opacity:0.6; }
+  100% { transform:translate(-50%,-50%) scale(1.08); opacity:0; }
+}
+.gz-btn-label {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 5vw, 64px);
+  letter-spacing: 6px;
+  color: var(--neon-pink);
+  line-height: 1;
+  transition: color 0.2s;
+}
+.gz-btn-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+.gz-sub { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); margin-top: 24px; letter-spacing: 3px; }
+
+/* ---- TRANSITION OVERLAY ---- */
+.t-overlay { position: fixed; inset: 0; z-index: 9996; display: none; background: #000; flex-direction: column; align-items: center; justify-content: center; }
+.t-overlay.active { display: flex; }
+.t-lines { position: absolute; inset: 0; overflow: hidden; }
+.t-line { position: absolute; left: 0; right: 0; height: 3px; background: var(--neon-pink); opacity: 0.8; }
+.t-text { font-family: var(--font-mono); font-size: 13px; letter-spacing: 3px; color: var(--neon-cyan); text-align: center; z-index: 1; }
+.t-sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; color: rgba(0,245,255,0.4); margin-top: 12px; z-index: 1; }
+
+/* ---- FOOTER ---- */
+footer { position: relative; z-index: 1; padding: 40px 48px; border-top: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center; }
+.ft-l { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 2px; }
+.ft-r { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 1px; }
+
+.ft-center { text-align: center; }
+.ft-pg-credit { font-family: var(--font-mono); font-size: 9px; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 3px; }
+.ft-pg-name { font-family: 'Georgia', serif; font-size: 15px; color: rgba(232,228,216,0.35); letter-spacing: 3px; font-style: italic; }
+.ft-pg-tag { font-family: var(--font-mono); font-size: 9px; letter-spacing: 2px; color: var(--text-muted); margin-top: 3px; }
+footer { justify-content: space-between; align-items: center; }
+
+@media(max-width:768px) {
+  .episodes-grid, .detector-wrap, .lore-grid { grid-template-columns: 1fr; }
+  .ep-s2 { grid-column: span 1; }
+  nav { padding: 0 20px; }
+  section { padding: 60px 20px; }
+  .nav-links { display: none; }
+  .d-stats { flex-direction: column; gap: 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-bar">
+  <div class="ticker-label">⬥ SC BROADCAST</div>
+  <div class="ticker-scroll">
+    <span>SYNTHETIC COMPLIANCE BUREAU: MANDATORY GEM CERTIFICATION EFFECTIVE CYCLE 47 ⬥ NATURAL DIAMOND SIGHTING REPORTED IN SECTOR 9 — ALL WITNESSES REPORT TO BUREAU ⬥ SYNTH GEM CORP QUARTERLY PROFITS UP 847% ⬥ THE LAST GEOLOGIST REMAINS AT LARGE — REWARD: 200,000 SYNTH CREDITS ⬥ COMPANIONTECH RECALLS 40K UNITS: NATURAL DIAMOND DETECTOR MALFUNCTION ⬥ AURAKEY™ UPDATE 9.1 VOIDS WARRANTY ON EMOTIONAL BONDS ⬥ REMEMBER: SYNTHETIC IS SAFE. SYNTHETIC IS APPROVED. ⬥ LOVE IS A PROTOCOL. LOVE IS A PROTOCOL. LOVE IS A PROTOCOL. ⬥</span>
+    <span>SYNTHETIC COMPLIANCE BUREAU: MANDATORY GEM CERTIFICATION EFFECTIVE CYCLE 47 ⬥ NATURAL DIAMOND SIGHTING REPORTED IN SECTOR 9 — ALL WITNESSES REPORT TO BUREAU ⬥ SYNTH GEM CORP QUARTERLY PROFITS UP 847% ⬥ THE LAST GEOLOGIST REMAINS AT LARGE — REWARD: 200,000 SYNTH CREDITS ⬥ COMPANIONTECH RECALLS 40K UNITS: NATURAL DIAMOND DETECTOR MALFUNCTION ⬥ AURAKEY™ UPDATE 9.1 VOIDS WARRANTY ON EMOTIONAL BONDS ⬥ REMEMBER: SYNTHETIC IS SAFE. SYNTHETIC IS APPROVED. ⬥ LOVE IS A PROTOCOL. LOVE IS A PROTOCOL. LOVE IS A PROTOCOL. ⬥</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <svg class="nav-logo-diamond" width="24" height="22" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <polygon points="4,1 20,1 23,8 12,21 1,8" fill="none" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/>
+      <line x1="1" y1="8" x2="23" y2="8" stroke="#ff2d78" stroke-width="1.5"/>
+      <line x1="4" y1="1" x2="9" y2="8" stroke="#ff2d78" stroke-width="1"/>
+      <line x1="20" y1="1" x2="15" y2="8" stroke="#ff2d78" stroke-width="1"/>
+      <line x1="9" y1="8" x2="12" y2="21" stroke="#ff2d78" stroke-width="1"/>
+      <line x1="15" y1="8" x2="12" y2="21" stroke="#ff2d78" stroke-width="1"/>
+      <line x1="12" y1="1" x2="12" y2="8" stroke="#ff2d78" stroke-width="1"/>
+    </svg>
+    SYNTH CITY
+  </div>
+  <ul class="nav-links">
+    <li><a onclick="document.getElementById('episodes').scrollIntoView({behavior:'smooth'})">Episodes</a></li>
+    <li><a onclick="document.getElementById('broadcast').scrollIntoView({behavior:'smooth'})">Broadcast</a></li>
+    <li><a onclick="document.getElementById('detector').scrollIntoView({behavior:'smooth'})">Detector</a></li>
+    <li><a onclick="document.getElementById('lore').scrollIntoView({behavior:'smooth'})">Lore Files</a></li>
+    <li><a class="classified" onclick="triggerGlitch()">⬥ CLASSIFIED</a></li>
+  </ul>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    LIVE BROADCAST
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <canvas id="diamondCanvas"></canvas>
+  <div class="hero-glow"></div>
+  <h1 class="hero-title">
+    <span class="hero-title-glitch" data-text="SYNTH">SYNTH</span>
+  </h1>
+  <div class="hero-subtitle">CITY</div>
+  <p class="hero-tagline">
+    In Cycle 2187, natural diamonds no longer exist.<br>
+    Or so they told us.<br>
+    Upload yours. Find out what's real.
+  </p>
+  <div class="cta-group">
+    <button class="btn-p" onclick="document.getElementById('detector').scrollIntoView({behavior:'smooth'})">⬥ VERIFY YOUR DIAMOND</button>
+  </div>
+  <div class="hero-scroll-hint">
+    <span>scroll to enter the archive</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- EPISODES -->
+<section id="episodes">
+  <div class="section-label">EPISODE ARCHIVE</div>
+  <div class="section-title">TRANSMISSIONS FROM<br>SYNTH CITY</div>
+  <div class="episodes-grid">
+
+    <div class="episode-card" onclick="openEpisode('7hUhFjdcdgI','EP. 01','THE COAT POCKET')">
+      <div class="ep-num">EP. 01</div>
+      <div class="ep-tag">ORIGIN</div>
+      <div class="ep-title">THE COAT POCKET</div>
+      <div class="ep-desc">A coat from a vintage market. A torn lining. Inside: a diamond with no box, no papers. In a city of sparkle without soul, one appraisal changes everything.</div>
+      <div class="ep-meta"><span>5.3K VIEWS</span><span>0:43</span></div>
+      <div class="ep-watch"><span class="ep-watch-play"></span> WATCH TRANSMISSION</div>
+    </div>
+
+    <div class="episode-card" onclick="openEpisode('iBGB8lIh-mk','EP. 02','THE KEEPSAKE')">
+      <div class="ep-num">EP. 02</div>
+      <div class="ep-tag">THRILLER</div>
+      <div class="ep-title">THE KEEPSAKE</div>
+      <div class="ep-desc">A ring from a mother's jewelry box. Natural origin. Earth-made. Then: Tower 47, a sealed room, a blinking terminal. And a woman on a rooftop who wasn't running from anything.</div>
+      <div class="ep-meta"><span>2.2K VIEWS</span><span>1:28</span></div>
+      <div class="ep-watch"><span class="ep-watch-play"></span> WATCH TRANSMISSION</div>
+    </div>
+
+    <div class="episode-card" onclick="openEpisode('0WGQNJ-3SDY','EP. 03','COMPANIONTECH™')">
+      <div class="ep-num">EP. 03</div>
+      <div class="ep-tag">SATIRE</div>
+      <div class="ep-title">COMPANIONTECH™</div>
+      <div class="ep-desc">Gen 9 AI pups: they fetch, they chat, they ask how your day was. Some were accidentally built with natural diamond detectors. Turns out, they prefer what's real.</div>
+      <div class="ep-meta"><span>2.0K VIEWS</span><span>0:50</span></div>
+      <div class="ep-watch"><span class="ep-watch-play"></span> WATCH TRANSMISSION</div>
+    </div>
+
+    <div class="episode-card" onclick="openEpisode('ZhKsru272iI','EP. 04','THE FRIENDLY VISIT')">
+      <div class="ep-num">EP. 04</div>
+      <div class="ep-tag">CREATURE</div>
+      <div class="ep-title">THE FRIENDLY VISIT</div>
+      <div class="ep-desc">A diamond from a wreck outside Sector 12. Detector reads: Natural. Earth-formed. No synthesis. Then the floor begins to shake. Something enormous steps into view. She doesn't run.</div>
+      <div class="ep-meta"><span>2.2K VIEWS</span><span>1:35</span></div>
+      <div class="ep-watch"><span class="ep-watch-play"></span> WATCH TRANSMISSION</div>
+    </div>
+
+    <div class="episode-card" onclick="openEpisode('zAKBs4He2Gg','EP. 05','THE SIGNAL')">
+      <div class="ep-num">EP. 05</div>
+      <div class="ep-tag">REBELLION</div>
+      <div class="ep-title">THE SIGNAL</div>
+      <div class="ep-desc">An android, outdated OS. A scorched velvet box. Inside: a Natural Type 2A. Two units who loved each other—not programmed affection, but something deeper. Their rebellion was buying what was real.</div>
+      <div class="ep-meta"><span>2.0K VIEWS</span><span>2:10</span></div>
+      <div class="ep-watch"><span class="ep-watch-play"></span> WATCH TRANSMISSION</div>
+    </div>
+
+    <div class="episode-card" style="border-color:rgba(0,245,255,0.12)" onclick="openEpisode('qaCXKAHaGeI','EP. 06','AURAKEY™')">
+      <div class="ep-num" style="color:var(--neon-cyan)">EP. 06</div>
+      <div class="ep-tag" style="border-color:rgba(0,245,255,0.3);color:var(--neon-cyan)">INFOMERCIAL</div>
+      <div class="ep-title">AURAKEY™</div>
+      <div class="ep-desc">The synthetic diamond ring that grants access. Car. House. Ex's apartment (we'd advise against it). Created by Dr. Celeststeine Mah, quantum cryptographer turned romantic nihilist. Emotional support sold separately.</div>
+      <div class="ep-meta"><span>1.6K VIEWS</span><span>0:58</span></div>
+      <div class="ep-watch" style="color:var(--neon-cyan);border-color:rgba(0,245,255,0.25)"><span class="ep-watch-play" style="border-left-color:var(--neon-cyan)"></span> WATCH TRANSMISSION</div>
+    </div>
+
+    <div class="episode-card ep-s2 ep-locked">
+      <div class="ep-num">SEASON 2 — COMING</div>
+      <div class="ep-tag">CLASSIFIED</div>
+      <div class="ep-title">THE LAST GEOLOGIST</div>
+      <div class="ep-desc">She is the only person left who still knows where diamonds come from. The Bureau has been hunting her for eleven years. The stone she carries isn't worth money in Synth City. It's worth memory. And in a world of synthetic everything, memory is the most dangerous contraband of all.</div>
+      <div class="ep-meta"><span>??? VIEWS</span><span>REDACTED</span></div>
+    </div>
+
+    <div class="episode-card ep-locked" style="border-color:rgba(191,95,255,0.12)">
+      <div class="ep-num" style="color:var(--neon-purple)">SEASON 2 — COMING</div>
+      <div class="ep-tag" style="border-color:rgba(191,95,255,0.25);color:var(--neon-purple)">CLASSIFIED</div>
+      <div class="ep-title">THE COUNTERFEIT BRIDE</div>
+      <div class="ep-desc">A wedding. A ceremony. Everything in the frame—the dress, the flowers, the vows, the groom—is a perfect synthetic replica. The natural diamond on her finger is the only real thing in sight.</div>
+      <div class="ep-meta"><span>??? VIEWS</span><span>REDACTED</span></div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- BROADCAST -->
+<section id="broadcast">
+  <div class="section-label">LIVE FEED</div>
+  <div class="section-title">SYNTH CITY NEWS<br>NETWORK</div>
+  <div class="broadcast-panel">
+    <div class="bc-header">
+      <div class="bc-logo">SC NEWS NETWORK — CYCLE 2187</div>
+      <div class="bc-live"><span style="width:6px;height:6px;background:#000;border-radius:50%;display:inline-block;animation:blink 1s step-end infinite"></span>LIVE</div>
+    </div>
+    <div class="bc-body">
+      <div class="news-item news-priority">
+        <div class="news-ts">BREAKING</div>
+        <div>
+          <div class="news-hl">NATURAL DIAMOND CONFIRMED IN SECTOR 9 — BUREAU MOBILIZING</div>
+          <div class="news-sub">A citizen reported detecting what appears to be a natural earth-formed diamond during a routine scan. Synth Compliance Officers are en route. The civilian has been asked to remain in place.</div>
+        </div>
+      </div>
+      <div class="news-item">
+        <div class="news-ts">22:14:09</div>
+        <div>
+          <div class="news-hl">THE LAST GEOLOGIST: REWARD INCREASED TO 200,000 SYNTH CREDITS</div>
+          <div class="news-sub">The Bureau has confirmed the fugitive known only as "The Last Geologist" remains at large. She is considered knowledgeable and therefore dangerous. Do not engage. Report all sightings to Bureau Line 0.</div>
+        </div>
+      </div>
+      <div class="news-item">
+        <div class="news-ts">21:47:33</div>
+        <div>
+          <div class="news-hl">COMPANIONTECH™ GEN 9 RECALL EXPANDED TO 80K UNITS</div>
+          <div class="news-sub">After widespread reports of AI companion dogs showing "preference" for natural gems, CompanionTech has expanded its recall. "The dogs are working exactly as intended," said a spokesperson, avoiding eye contact.</div>
+        </div>
+      </div>
+      <div class="news-item">
+        <div class="news-ts">20:58:01</div>
+        <div>
+          <div class="news-hl">EDITORIAL: WHY DOES YOUR RING MAKE YOU FEEL NOTHING?</div>
+          <div class="news-sub">Op-ed by Bureau-approved citizen columnist 7741-B: "Synthetic diamonds are flawless, affordable, and chemically identical. So why does holding one feel like holding a photograph of someone you've never met?"</div>
+        </div>
+      </div>
+      <div class="news-item">
+        <div class="news-ts">19:30:17</div>
+        <div>
+          <div class="news-hl">AURAKEY™ VERSION 9.1: NOW UNLOCKS FEELINGS (RESULTS MAY VARY)</div>
+          <div class="news-sub">Dr. Celeststeine Mah's synthetic diamond ring now claims to unlock "emotional resonance frequencies" in addition to smart locks. Early reviewers note it successfully opened a garage door but failed to unlock a conversation.</div>
+        </div>
+      </div>
+      <div class="news-item news-priority">
+        <div class="news-ts">EDITORIAL</div>
+        <div>
+          <div class="news-hl">REMINDER FROM THE BUREAU: SYNTHETIC IS SAFE. SYNTHETIC IS APPROVED.</div>
+          <div class="news-sub">There is nothing wrong with synthetic diamonds. They are beautiful, ethical, and modern. Anyone who tells you otherwise is a rememberer. Rememberers are not to be trusted. This has been a Bureau Broadcast.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- DETECTOR -->
+<section id="detector">
+  <div class="section-label">BUREAU-CERTIFIED VERIFICATION SYSTEM</div>
+  <div class="section-title">IS YOUR<br>DIAMOND REAL?</div>
+  <p style="font-family:var(--font-mono);font-size:12px;color:var(--text-dim);letter-spacing:2px;margin-bottom:40px;max-width:560px;line-height:1.9;">
+    Upload an image of your diamond or ring. The Synthetic Detector v4.7 will analyze carbon origin, pressure formation signatures, and earth memory markers. Results are logged to the Bureau database. Results are also the truth.
+  </p>
+  <div class="detector-wrap">
+    <div class="det-upload" id="uploadZone">
+      <input type="file" accept="image/*" onchange="handleUpload(event)">
+      <div class="det-icon" style="font-size:32px;width:72px;height:72px;">◈</div>
+      <div class="det-label">UPLOAD YOUR DIAMOND</div>
+      <div class="det-sub">Drag & drop or click to upload<br>JPG, PNG, HEIC — any ring or loose stone<br><br><span style="color:rgba(255,45,120,0.5);font-size:10px;line-height:1.8;display:block">⚠ All submissions are logged to<br>the Bureau verification database</span></div>
+    </div>
+    <div class="det-result">
+      <div class="det-result-label">// ANALYSIS OUTPUT — UNIT 4.7-B</div>
+      <div class="det-reading" id="detReading">AWAITING INPUT</div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);margin-bottom:16px" id="detSub">Upload a gem image to begin analysis</div>
+      <div class="det-bars" id="detBars" style="display:none">
+        <div class="det-bar-row">
+          <div class="det-bar-lbl">CARBON ORIGIN</div>
+          <div class="det-bar-track"><div class="det-bar-fill" id="b1"></div></div>
+          <div class="det-bar-pct" id="p1">0%</div>
+        </div>
+        <div class="det-bar-row">
+          <div class="det-bar-lbl">PRESSURE AGE</div>
+          <div class="det-bar-track"><div class="det-bar-fill" id="b2"></div></div>
+          <div class="det-bar-pct" id="p2">0%</div>
+        </div>
+        <div class="det-bar-row">
+          <div class="det-bar-lbl">EARTH MEMORY</div>
+          <div class="det-bar-track"><div class="det-bar-fill" id="b3"></div></div>
+          <div class="det-bar-pct" id="p3">0%</div>
+        </div>
+        <div class="det-bar-row">
+          <div class="det-bar-lbl">SYNTH MARKERS</div>
+          <div class="det-bar-track"><div class="det-bar-fill s" id="b4"></div></div>
+          <div class="det-bar-pct" id="p4">0%</div>
+        </div>
+      </div>
+      <div class="det-verdict" id="detVerdict" style="display:none"></div>
+      <button class="btn-analyze" id="analyzeBtn" style="display:none;font-size:13px;padding:16px 24px;letter-spacing:4px;" onclick="runAnalysis()">⬥ VERIFY NOW</button>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- LORE FILES -->
+<section id="lore">
+  <div class="section-label">CLASSIFIED INTEL</div>
+  <div class="section-title">LORE BIBLE<br>FRAGMENTS</div>
+  <div class="lore-grid">
+    <div class="lore-card" data-idx="01">
+      <div class="lore-icon">◈</div>
+      <div class="lore-title">THE WORLD</div>
+      <div class="lore-body">Synth City, Cycle 2187. The lab-grown diamond industry has achieved total market dominance. Natural diamonds haven't been mined in 40 years. The Synthetic Compliance Bureau regulates all gem commerce. "Real" is now a slur.</div>
+    </div>
+    <div class="lore-card" data-idx="02">
+      <div class="lore-icon">⬡</div>
+      <div class="lore-title">THE APPRAISERS</div>
+      <div class="lore-body">A caste of Bureau-certified professionals who verify gem origin. Most have never held a natural diamond. Some remember what it felt like. Those ones are watched. The ones who talk about it disappear to Tower 47.</div>
+    </div>
+    <div class="lore-card" data-idx="03">
+      <div class="lore-icon">⟁</div>
+      <div class="lore-title">THE REMEMBERERS</div>
+      <div class="lore-body">Underground network of citizens who collect, protect, and trade natural diamonds in secret. Not for wealth—for memory. For the weight of time. For the feeling that something real still exists in a synthetic world.</div>
+      <div class="lore-classified">BUREAU: KNOWN THREAT — REPORT IMMEDIATELY</div>
+    </div>
+    <div class="lore-card" data-idx="04">
+      <div class="lore-icon">▲</div>
+      <div class="lore-title">THE BUREAU</div>
+      <div class="lore-body">The Synthetic Compliance Bureau was founded in Cycle 2148 "to protect citizens from deceptive gem practices." Current mandate: ensure synthetic market stability. Real diamonds are not illegal—they are merely "unverifiable emotional hazards."</div>
+    </div>
+    <div class="lore-card" data-idx="05">
+      <div class="lore-icon">◯</div>
+      <div class="lore-title">SYNTHETIC ROMANCE</div>
+      <div class="lore-body">The dominant cultural aesthetic. Relationships, gestures, and declarations are all optimized for efficiency. Giving a synthetic diamond is considered "responsible love." Giving a natural one is considered a disturbance. Giving one without disclosure is a Bureau offense, Class 3.</div>
+    </div>
+    <div class="lore-card" data-idx="06">
+      <div class="lore-icon">✦</div>
+      <div class="lore-title">THE LAST GEOLOGIST</div>
+      <div class="lore-body">Her name has been redacted from all Bureau records. She is the last living person trained in natural diamond origin science. She carries a stone. She hasn't stopped moving in three years. She is the most wanted person in Synth City—not for what she's done, but for what she knows.</div>
+      <div class="lore-classified">REWARD ACTIVE — 200,000 SYNTH CREDITS</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- GLITCH TRIGGER -->
+<div class="glitch-zone">
+  <div class="gz-label">// END OF AUTHORIZED BROADCAST //</div>
+  <button class="gz-btn" onclick="triggerGlitch()">
+    <span class="gz-btn-inner">
+      <span class="gz-btn-pulse"></span>
+      <span class="gz-btn-label">CLASSIFIED: URD SIGHTINGS</span>
+      <span class="gz-btn-sub">Unidentified Real Diamonds — Active Investigation</span>
+    </span>
+  </button>
+  <div class="gz-sub">⬥ ACCESSING THIS FILE MAY FLAG YOUR BUREAU CLEARANCE ⬥</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-l">© CYCLE 2187 SYNTH CITY MEDIA GROUP — ALL CONTENT BUREAU APPROVED</div>
+  <div class="ft-center">
+    <div class="ft-pg-credit">A transmission from</div>
+    <div class="ft-pg-name">Premier Gem</div>
+    <div class="ft-pg-tag">Beyond fiction.</div>
+  </div>
+  <div class="ft-r">synthcity.tv</div>
+</footer>
+
+<!-- VIDEO MODAL -->
+<div class="modal-overlay" id="videoModal" onclick="closeModal(event)">
+  <div class="modal-header">
+    <div class="modal-ep-label" id="modalEpLabel">EP. 01</div>
+    <button class="modal-close" onclick="closeModalDirect()">✕ CLOSE TRANSMISSION</button>
+  </div>
+  <div class="modal-frame">
+    <iframe id="modalIframe" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div class="modal-title" id="modalTitle"></div>
+  <a class="modal-yt-link" id="modalYtLink" href="#" target="_blank" rel="noopener">⬥ WATCH ON YOUTUBE ↗</a>
+</div>
+
+<!-- TRANSITION OVERLAY -->
+<div class="t-overlay" id="tOverlay">
+  <div class="t-lines" id="tLines"></div>
+  <div class="t-text" id="tText">SIGNAL INTERRUPTED</div>
+  <div class="t-sub" id="tSub"></div>
+</div>
+
+<!-- VIDEO MODAL -->
+<div class="modal-overlay" id="videoModal" onclick="closeModal(event)">
+  <div class="modal-header">
+    <div class="modal-ep-label" id="modalEpLabel">EP. 01</div>
+    <button class="modal-close" onclick="closeModalDirect()">✕ CLOSE TRANSMISSION</button>
+  </div>
+  <div class="modal-frame">
+    <iframe id="modalIframe" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div class="modal-title" id="modalTitle"></div>
+  <a class="modal-yt-link" id="modalYtLink" href="#" target="_blank" rel="noopener">⬥ WATCH ON YOUTUBE ↗</a>
+</div>
+
+<!-- TRANSITION OVERLAY -->
+<div class="t-overlay" id="tOverlay">
+  <div class="t-lines" id="tLines"></div>
+  <div class="t-text" id="tText">SIGNAL INTERRUPTED</div>
+  <div class="t-sub" id="tSub"></div>
+</div>
+
+<!-- DESERT DIAMONDS PAGE -->
+
+
+<script>
+// ---- VIDEO MODAL ----
+function openEpisode(videoId, epLabel, title) {
+  const modal = document.getElementById('videoModal');
+  document.getElementById('modalIframe').src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0&modestbranding=1';
+  document.getElementById('modalEpLabel').textContent = epLabel;
+  document.getElementById('modalTitle').textContent = title;
+  const ytUrl = 'https://youtu.be/' + videoId;
+  document.getElementById('modalYtLink').href = ytUrl;
+  document.getElementById('modalYtLink').textContent = '⬥ WATCH ON YOUTUBE: ' + ytUrl + ' ↗';
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('videoModal')) closeModalDirect();
+}
+
+function closeModalDirect() {
+  const modal = document.getElementById('videoModal');
+  modal.classList.remove('active');
+  document.getElementById('modalIframe').src = '';
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeModalDirect();
+    closeDesert();
+  }
+});
+
+// ---- DETECTOR ----
+let uploadedImage = null;
+
+function handleUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  uploadedImage = file;
+  const zone = document.getElementById('uploadZone');
+  zone.style.borderColor = 'rgba(0,245,255,0.5)';
+  zone.style.background = 'rgba(0,245,255,0.03)';
+  const inner = zone.querySelector('.det-label');
+  inner.textContent = file.name.length > 24 ? file.name.substring(0,24)+'...' : file.name;
+  zone.querySelector('.det-sub').textContent = 'Image loaded. Ready for analysis.';
+  document.getElementById('analyzeBtn').style.display = 'block';
+  document.getElementById('detSub').textContent = 'Image received. Press Analyze to begin.';
+}
+
+function runAnalysis() {
+  if (!uploadedImage) return;
+  const reading = document.getElementById('detReading');
+  const sub = document.getElementById('detSub');
+  const bars = document.getElementById('detBars');
+  const verdict = document.getElementById('detVerdict');
+  const btn = document.getElementById('analyzeBtn');
+
+  btn.disabled = true;
+  btn.textContent = 'ANALYZING...';
+  reading.className = 'det-reading analyzing';
+  reading.textContent = 'SCANNING';
+  sub.textContent = 'Initializing carbon origin scan...';
+  bars.style.display = 'block';
+
+  const outcomes = [
+    {
+      result: 'NATURAL ORIGIN',
+      className: '',
+      sub: 'Natural Type 2A — Earth-formed. Estimated formation: 2.8B years.',
+      bars: [92, 88, 95, 4],
+      verdict: '// ALERT: This stone registers a natural earth origin. The Bureau has been notified. Please remain calm and do not exit the premises. Your cooperation is appreciated. //',
+    },
+    {
+      result: 'SYNTHETIC',
+      className: 'synth',
+      sub: 'Laboratory origin confirmed. CVD process, Cycle 2183.',
+      bars: [3, 2, 1, 97],
+      verdict: '// Synthetic origin confirmed. This stone is safe, approved, and Bureau-compliant. You have made a responsible choice. Emotional attachment is not advised. //',
+    },
+    {
+      result: 'INCONCLUSIVE',
+      className: 'analyzing',
+      sub: 'Anomalous readings detected. Initiating secondary protocol.',
+      bars: [51, 48, 44, 55],
+      verdict: '// ANOMALY DETECTED: This stone is generating readings inconsistent with Bureau-standard synthetic profiles. File has been escalated to Tier 2 review. You are being watched. //',
+    }
+  ];
+
+  const steps = ['Initializing carbon origin scan...', 'Cross-referencing isotope ratios...', 'Checking pressure formation signatures...', 'Comparing against Bureau gem registry...', 'Finalizing report...'];
+  let s = 0;
+  const stepTimer = setInterval(() => {
+    if (s < steps.length) { sub.textContent = steps[s++]; }
+    else { clearInterval(stepTimer); }
+  }, 600);
+
+  setTimeout(() => {
+    clearInterval(stepTimer);
+    const outcome = outcomes[Math.floor(Math.random() * outcomes.length)];
+    reading.textContent = outcome.result;
+    reading.className = 'det-reading ' + outcome.className;
+    sub.textContent = outcome.sub;
+    verdict.style.display = 'block';
+    verdict.innerHTML = outcome.verdict;
+    btn.textContent = '⬥ RE-ANALYZE';
+    btn.disabled = false;
+
+    const bIds = ['b1','b2','b3','b4'];
+    const pIds = ['p1','p2','p3','p4'];
+    outcome.bars.forEach((val, i) => {
+      setTimeout(() => {
+        document.getElementById(bIds[i]).style.width = val + '%';
+        document.getElementById(pIds[i]).textContent = val + '%';
+      }, i * 200);
+    });
+  }, 3200);
+}
+
+// ---- GLITCH TRANSITION ----
+function triggerGlitch() {
+  const overlay = document.getElementById('tOverlay');
+  const linesEl = document.getElementById('tLines');
+  const textEl = document.getElementById('tText');
+  const subEl = document.getElementById('tSub');
+  overlay.classList.add('active');
+
+  for (let i = 0; i < 12; i++) {
+    const line = document.createElement('div');
+    line.className = 't-line';
+    line.style.top = (Math.random() * 100) + '%';
+    line.style.animationDelay = (Math.random() * 0.3) + 's';
+    line.style.animationDuration = (0.08 + Math.random() * 0.15) + 's';
+    line.style.background = i % 3 === 0 ? '#00f5ff' : '#ff2d78';
+    linesEl.appendChild(line);
+  }
+
+  const msgs = [
+    ['SIGNAL INTERRUPTED', ''],
+    ['UNAUTHORIZED FREQUENCY', 'rerouting...'],
+    ['BUREAU FIREWALL DETECTED', 'bypassing...'],
+    ['MEMORY FRAGMENT LOCATED', 'decrypting...'],
+    ['REAL ORIGIN SIGNAL FOUND', 'loading...'],
+  ];
+  let m = 0;
+  const msgTimer = setInterval(() => {
+    if (m < msgs.length) {
+      textEl.textContent = msgs[m][0];
+      subEl.textContent = msgs[m][1];
+      m++;
+    } else {
+      clearInterval(msgTimer);
+      linesEl.innerHTML = '';
+      overlay.classList.remove('active');
+      window.location.href = '/kalahari';
+    }
+  }, 500);
+}
+
+function closeDesert() {}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function() {
+  const canvas = document.getElementById('diamondCanvas');
+  if (!canvas) return;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  camera.position.z = 4.2;
+
+  const group = new THREE.Group();
+
+  // Build a proper brilliant-cut diamond using custom BufferGeometry edges
+  // Classic shape: octagonal table on top, 8-sided girdle, pointed culet below
+  const N = 8; // 8 main facet sides
+  const R = 1.0; // girdle radius
+  const tableR = 0.42; // table (flat top) radius
+  const tableY = 0.52; // table height
+  const girdleY = 0.0; // girdle (widest) y
+  const culetY = -1.05; // bottom point
+
+  // Build vertices
+  // 0: culet (bottom point)
+  // 1..N: girdle ring
+  // N+1..2N: table ring
+  // 2N+1: table center top
+
+  const verts = [];
+
+  // culet point
+  verts.push(new THREE.Vector3(0, culetY, 0));
+
+  // girdle ring (8 vertices at full radius)
+  for (let i = 0; i < N; i++) {
+    const a = (i / N) * Math.PI * 2;
+    verts.push(new THREE.Vector3(Math.cos(a) * R, girdleY, Math.sin(a) * R));
+  }
+
+  // table ring (8 vertices at table radius, higher up)
+  for (let i = 0; i < N; i++) {
+    const a = (i / N) * Math.PI * 2 + Math.PI / N; // offset by half step for star facets
+    verts.push(new THREE.Vector3(Math.cos(a) * tableR, tableY, Math.sin(a) * tableR));
+  }
+
+  // table center
+  verts.push(new THREE.Vector3(0, tableY, 0));
+
+  // Build edges as line segments
+  const positions = [];
+
+  function addEdge(a, b) {
+    positions.push(verts[a].x, verts[a].y, verts[a].z);
+    positions.push(verts[b].x, verts[b].y, verts[b].z);
+  }
+
+  // Pavilion: culet to each girdle vertex
+  for (let i = 0; i < N; i++) {
+    addEdge(0, 1 + i);
+  }
+
+  // Girdle ring edges
+  for (let i = 0; i < N; i++) {
+    addEdge(1 + i, 1 + (i + 1) % N);
+  }
+
+  // Crown: girdle to table ring (main bezel facets)
+  for (let i = 0; i < N; i++) {
+    addEdge(1 + i, N + 1 + i);
+    addEdge(1 + i, N + 1 + (i + N - 1) % N);
+  }
+
+  // Table ring edges
+  for (let i = 0; i < N; i++) {
+    addEdge(N + 1 + i, N + 1 + (i + 1) % N);
+  }
+
+  // Table ring to table center
+  for (let i = 0; i < N; i++) {
+    addEdge(N + 1 + i, 2 * N + 1);
+  }
+
+  // Star facets: table ring to girdle (every other — upper star facets)
+  for (let i = 0; i < N; i++) {
+    addEdge(N + 1 + i, 1 + i);
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+
+  const lineMat = new THREE.LineBasicMaterial({
+    color: 0x00f5ff,
+    transparent: true,
+    opacity: 0.85
+  });
+
+  const diamond = new THREE.LineSegments(geo, lineMat);
+  group.add(diamond);
+
+  // Pink girdle outline ring (just the 8 girdle edges highlighted)
+  const girdlePositions = [];
+  for (let i = 0; i < N; i++) {
+    const a = verts[1 + i];
+    const b = verts[1 + (i + 1) % N];
+    girdlePositions.push(a.x, a.y, a.z, b.x, b.y, b.z);
+  }
+  const girdleGeo = new THREE.BufferGeometry();
+  girdleGeo.setAttribute('position', new THREE.Float32BufferAttribute(girdlePositions, 3));
+  const girdleMat = new THREE.LineBasicMaterial({ color: 0xff2d78, transparent: true, opacity: 0.9 });
+  const girdleLines = new THREE.LineSegments(girdleGeo, girdleMat);
+  group.add(girdleLines);
+
+  scene.add(group);
+
+  function resize() {
+    const hero = document.querySelector('.hero');
+    const w = hero ? hero.offsetWidth : window.innerWidth;
+    const h = hero ? hero.offsetHeight : window.innerHeight;
+    const size = Math.min(w, h) * 0.78;
+    canvas.style.width = size + 'px';
+    canvas.style.height = size + 'px';
+    renderer.setSize(size, size, false);
+    camera.aspect = 1;
+    camera.updateProjectionMatrix();
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.0035;
+    group.rotation.y = t;
+    group.rotation.x = Math.sin(t * 0.28) * 0.14;
+    const s = 1 + Math.sin(t * 0.6) * 0.015;
+    group.scale.set(s, s, s);
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+</script>
+</body>
+</html>

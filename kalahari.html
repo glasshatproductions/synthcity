@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAST KNOWN TRANSMISSION — FILE K-9</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Rajdhani:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink:#ff2d78; --cyan:#00f5ff;
+  --bg:#050508; --text:#e8e4d8;
+  --mono:'Space Mono',monospace;
+  --display:'Bebas Neue',sans-serif;
+  --serif:'Cormorant Garamond',Georgia,serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{
+  background:var(--bg);color:var(--text);
+  overflow:hidden;
+  height:100%;
+  width:100%;
+}
+
+/* The page content is fixed — it never moves */
+.page-fixed {
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  z-index:1;
+}
+
+/* Subtle scanlines */
+.dossier-zone::before {
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px);
+  pointer-events:none;z-index:1;
+}
+
+@keyframes playPulse{0%,100%{opacity:0.7;transform:scale(1)}50%{opacity:1;transform:scale(1.07)}}
+@keyframes mutedPulse{0%{opacity:0;transform:translate(-50%,-50%) scale(0.9)}20%{opacity:1;transform:translate(-50%,-50%) scale(1)}70%{opacity:1;}100%{opacity:0;transform:translate(-50%,-50%) scale(1.02)}}
+@keyframes mutedFadeIn{from{opacity:0}to{opacity:1}}
+
+/* Muted overlay */
+.muted-overlay{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  z-index:20;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  pointer-events:none;
+  animation:mutedPulse 3s ease forwards;
+}
+.muted-overlay-icon{
+  font-size:48px;
+  color:rgba(255, 255, 255, 255);
+  text-shadow:0 0 20px rgb(232, 228, 216);
+  line-height:1;
+}
+.muted-overlay-text{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:4px;
+  color:rgb(255, 255, 255);
+  text-align:center;
+  text-shadow:0 0 10px rgba(232,228,216,0.3);
+}
+.muted-overlay.hidden{display:none;}
+@keyframes flicker{0%,100%{opacity:1}91%{opacity:1}92%{opacity:0.5}94%{opacity:1}98%{opacity:0.8}99%{opacity:1}}
+@keyframes scan{from{transform:translateY(-100%)}to{transform:translateY(100vh)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slowFade{from{opacity:0}to{opacity:1}}
+@keyframes overlayFadeIn{from{opacity:0}to{opacity:1}}
+
+/* ── SCROLL OVERLAY — solid black fades over fixed page ── */
+.scroll-reveal-overlay {
+  position:fixed;
+  inset:0;
+  z-index:400;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:40px 28px;
+  pointer-events:none;
+  opacity:0;
+  background:rgb(0, 0, 0);
+}
+.sro-setup {
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:clamp(18px,3.5vw,26px);
+  font-weight:300;
+  color:rgba(232,228,216,0.45);
+  letter-spacing:0.3px;
+  text-align:center;
+  line-height:1.6;
+  margin-bottom:clamp(16px,3vw,28px);
+}
+.sro-main {
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:clamp(28px,6vw,54px);
+  font-weight:300;
+  color:rgba(232,228,216,0.92);
+  letter-spacing:0.5px;
+  text-align:center;
+  line-height:1.2;
+  margin-bottom:clamp(24px,4vw,44px);
+}
+.sro-cta a {
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:5px;
+  color:rgba(232,228,216,0.55);
+  border:1px solid rgba(232,228,216,0.15);
+  padding:14px 32px;
+  text-decoration:none;
+  transition:all 0.3s ease;
+}
+.sro-cta a:hover {
+  color:var(--text);
+  border-color:rgba(232,228,216,0.4);
+  letter-spacing:7px;
+}
+.sro-credit {
+  margin-top:14px;
+  font-family:var(--mono);
+  font-size:7px;
+  letter-spacing:4px;
+  color:rgba(232,228,216,0.15);
+  text-align:center;
+}
+
+/* ── NAV ── */
+nav {
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  background:rgba(5,5,8,0.92);
+  border-bottom:1px solid rgba(255,45,120,0.1);
+  padding:0 24px;height:46px;
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-size:9px;letter-spacing:3px;
+  backdrop-filter:blur(8px);
+}
+nav a{color:rgba(232,228,216,0.3);text-decoration:none;transition:color .2s;}
+nav a:hover{color:var(--pink);}
+.nav-title{flex:1;text-align:center;color:rgba(232,228,216,0.25);font-size:8px;letter-spacing:4px;}
+.nav-badge{font-size:8px;letter-spacing:2px;color:rgba(255,45,120,0.4);border:1px solid rgba(255,45,120,0.2);padding:2px 8px;}
+
+/* ── DOSSIER ZONE (upper — dense, interface-heavy) ── */
+.dossier-zone {
+  position:relative;
+  padding-top:46px;
+}
+
+/* Hero headline */
+.k-hero {
+  padding:48px 28px 32px;
+  border-bottom:1px solid rgba(255,45,120,0.08);
+}
+.k-hero-eyebrow {
+  font-family:var(--mono);font-size:8px;letter-spacing:4px;
+  color:rgba(255,45,120,0.4);margin-bottom:20px;
+  display:flex;align-items:center;gap:8px;
+}
+.k-hero-eyebrow span{animation:blink 1.4s step-end infinite;}
+.k-headline {
+  font-family:var(--display);
+  font-size:clamp(42px,9vw,80px);
+  letter-spacing:4px;color:var(--text);
+  line-height:0.95;margin-bottom:22px;
+}
+.k-hero-sub {
+  font-family:'Rajdhani',sans-serif;
+  font-size:clamp(14px,3vw,17px);
+  font-weight:300;letter-spacing:1px;
+  color:rgba(232,228,216,0.55);
+  line-height:1.8;margin-bottom:20px;
+  max-width:480px;
+}
+.k-hero-meta {
+  font-family:var(--mono);font-size:8px;letter-spacing:3px;
+  color:rgba(232,228,216,0.2);
+}
+.k-hero-meta span{color:rgba(255,45,120,0.3);margin:0 6px;}
+
+/* Video transmission */
+.k-video-card {
+  position:relative;background:#000;overflow:hidden;
+}
+.k-video-meta-top {
+  position:absolute;top:0;left:0;right:0;z-index:10;
+  padding:12px 18px;display:flex;justify-content:space-between;
+  background:linear-gradient(to bottom,rgba(5,5,8,0.9),transparent);
+  font-family:var(--mono);font-size:8px;letter-spacing:2px;
+  color:rgba(232,228,216,0.35);line-height:1.8;
+}
+#geoVideo {
+  width:100%;display:block;
+  min-height:320px;object-fit:cover;
+  animation:flicker 12s infinite;
+}
+.k-video-overlay {
+  position:absolute;inset:0;z-index:5;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px);
+  pointer-events:none;
+}
+.k-video-scan {
+  position:absolute;top:0;left:0;right:0;height:2px;z-index:6;
+  background:linear-gradient(to bottom,transparent,rgba(0,245,255,0.05),transparent);
+  animation:scan 6s linear infinite;pointer-events:none;
+}
+.k-video-meta-bot {
+  position:absolute;bottom:0;left:0;right:0;z-index:10;
+  padding:10px 18px;display:flex;justify-content:space-between;align-items:flex-end;
+  background:linear-gradient(to top,rgba(5,5,8,0.95),transparent);
+  font-family:var(--mono);font-size:8px;letter-spacing:2px;
+}
+.k-video-meta-bot .left{color:rgba(232,228,216,0.3);line-height:1.8;}
+.k-video-meta-bot .right{color:rgba(255,45,120,0.5);line-height:1.8;text-align:right;}
+
+/* Tx dots */
+.tx-dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);z-index:11;display:flex;gap:8px;}
+.tx-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.15);cursor:pointer;transition:background .3s;}
+.tx-dot.active{background:rgba(255,45,120,0.8);}
+
+.k-unmute{
+  position:absolute;bottom:10px;right:12px;z-index:15;
+  background:rgba(5,5,8,0.7);border:1px solid rgba(232,228,216,0.1);
+  color:rgb(232, 228, 216);font-family:var(--mono);font-size:8px;
+  letter-spacing:2px;padding:4px 8px;cursor:pointer;transition:all .2s;
+}
+.k-unmute:hover{border-color:var(--cyan);color:var(--cyan);}
+
+/* ── TRANSITION ZONE (middle — interface dissolving) ── */
+.transition-zone {
+  padding:0 28px;
+}
+
+/* Scan bar — faint */
+.k-scan {
+  padding:28px 0 0;
+  opacity:0.6;
+}
+.k-scan-track{height:1px;background:rgba(255,45,120,0.06);overflow:hidden;margin-bottom:8px;}
+.k-scan-fill{height:100%;width:0%;background:linear-gradient(to right,rgba(0,245,255,0.4),rgba(255,45,120,0.4));transition:width .15s linear;}
+.k-scan-txt{font-family:var(--mono);font-size:8px;letter-spacing:3px;color:rgba(232,228,216,0.2);}
+
+/* Logs — sparse, breathing */
+.k-log-sparse {
+  padding:60px 0 0;
+  max-width:560px;
+}
+.k-log-sparse .log-line {
+  font-family:var(--serif);
+  font-size:clamp(16px,3.5vw,22px);
+  font-style:italic;font-weight:300;
+  color:rgba(200,169,110,0.75);
+  line-height:1.7;
+  margin-bottom:56px;
+  opacity:0;
+  animation:fadeUp 0.8s ease forwards;
+}
+.k-log-sparse .log-line.delay-1{animation-delay:0.3s;}
+.k-log-sparse .log-line.delay-2{animation-delay:0.7s;}
+.k-log-source {
+  font-family:var(--mono);font-size:8px;letter-spacing:3px;
+  color:rgba(232,228,216,0.12);margin-top:-44px;margin-bottom:56px;
+}
+
+/* ── EMOTIONAL ZONE (lower — open, sacred, quiet) ── */
+.emotional-zone {
+  padding:0;
+}
+
+/* Large breathing space */
+.breath { height:clamp(80px,15vw,140px); }
+.breath-xl { height:clamp(100px,20vw,200px); }
+
+/* Origin confirmed — small, restrained */
+.k-origin {
+  padding:0 28px;
+  font-family:var(--mono);font-size:8px;letter-spacing:5px;
+  color:rgba(232,228,216,0.18);text-align:center;
+  opacity:0;
+}
+.k-origin.visible{animation:slowFade 1.2s ease forwards;}
+
+/* The line */
+.k-the-line {
+  padding:0 28px;text-align:center;
+  opacity:0;
+}
+.k-the-line.visible{animation:fadeUp 1s ease forwards;}
+.k-the-line-text {
+  font-family:var(--serif);
+  font-size:clamp(28px,6vw,52px);
+  font-style:italic;font-weight:300;
+  color:rgba(232,228,216,0.9);
+  line-height:1.4;letter-spacing:0.5px;
+}
+
+/* Premier Gem credit */
+.k-credit {
+  padding:0 28px;text-align:center;
+  font-family:var(--mono);font-size:8px;letter-spacing:4px;
+  color:rgba(232,228,216,0.2);
+  opacity:0;
+}
+.k-credit.visible{animation:slowFade 1s ease forwards;}
+
+/* CTA */
+.k-cta {
+  padding:0 28px;text-align:center;
+  opacity:0;
+}
+.k-cta.visible{animation:fadeUp 0.8s ease forwards;}
+.k-cta-btn {
+  display:inline-block;
+  font-family:var(--mono);font-size:9px;letter-spacing:5px;
+  color:rgba(232,228,216,0.5);background:transparent;
+  border:1px solid rgba(232,228,216,0.12);
+  padding:14px 32px;cursor:pointer;
+  text-decoration:none;
+  transition:all 0.3s ease;
+}
+.k-cta-btn:hover{
+  color:var(--text);
+  border-color:rgba(232,228,216,0.3);
+  letter-spacing:6px;
+}
+
+/* Sole quote — single recovered line, no framing */
+.sole-quote {
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(17px,3.5vw,24px);
+  font-style:italic;font-weight:300;
+  color:rgba(200,169,110,0.6);
+  line-height:1.8;letter-spacing:0.2px;
+  opacity:0;
+  animation:fadeUp 1s ease 0.4s forwards;
+}
+
+/* Setup line — small, dim */
+.k-setup-line {
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(20px,4vw,32px);
+  font-style:italic;font-weight:300;
+  color:rgba(232,228,216,0.4);
+  letter-spacing:0.3px;line-height:1.6;
+  text-align:center;
+}
+
+/* Main line — large, quiet, centered */
+.k-main-line {
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(26px,5.5vw,52px);
+  font-style:italic;font-weight:300;
+  color:rgba(232,228,216,0.88);
+  letter-spacing:0.5px;line-height:1.2;
+  text-align:center;
+}
+
+/* Bureau whisper */
+.k-whisper {
+  padding:0 28px 80px;text-align:center;
+  font-family:var(--mono);font-size:7px;letter-spacing:2px;
+  color:rgba(232,228,216,0.07);line-height:2;font-style:italic;
+  opacity:0;
+}
+.k-whisper.visible{animation:slowFade 2s ease forwards;}
+</style>
+</head>
+<body>
+
+<!-- ALL PAGE CONTENT IS FIXED — never moves -->
+<div class="page-fixed">
+
+<!-- NAV -->
+<nav>
+  <a href="https://synthcity.tv">← SYNTH CITY</a>
+  <div class="nav-title">FILE K-9 // KALAHARI BASIN</div>
+  <div class="nav-badge">BUREAU: DENIED</div>
+</nav>
+
+<!-- ══ DOSSIER ZONE ══ -->
+<div class="dossier-zone">
+
+  <!-- Hero -->
+  <div class="k-hero">
+    <div class="k-hero-eyebrow">
+      <span>●</span> RECOVERED TRANSMISSION
+    </div>
+    <h1 class="k-headline">LAST KNOWN<br>TRANSMISSION</h1>
+    <p class="k-hero-sub">
+      Geologist last seen entering a remote desert cave. With a headlamp. And hope.
+    </p>
+    <div class="k-hero-meta">
+     NORTHERN KALAHARI BASIN <span>·</span> SIGNAL UNSTABLE
+    </div>
+  </div>
+
+  <!-- Video -->
+  <div class="k-video-card">
+    <div class="k-video-meta-top">
+      <div id="txMetaLeft"><br><br></div>
+      <div id="txMetaRight" style="text-align:right"><br></div>
+    </div>
+    <video id="geoVideo" playsinline preload="metadata" style="width:100%;display:block;max-height:55vh;max-width:100%;object-fit:cover;animation:flicker 12s infinite">
+      <source src="https://superborn-dev.s3.amazonaws.com/assets/videos/future.mp4" type="video/mp4">
+    </video>
+    <div class="k-video-overlay"></div>
+    <div class="k-video-scan"></div>
+
+    <!-- Muted indicator overlay -->
+    <!-- Play button -->
+    <div id="playOverlay" onclick="playTransmission()" style="position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:rgba(5,5,8,0.45);transition:background 0.3s;" onmouseover="this.style.background='rgba(5,5,8,0.2)'" onmouseout="this.style.background='rgba(5,5,8,0.45)'">
+      <div style="position:relative;width:72px;height:72px;border:1px solid rgba(255,45,120,0.6);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px;animation:playPulse 2.5s ease-in-out infinite;">
+        <div style="position:absolute;width:92px;height:92px;border:1px solid rgba(255,45,120,0.2);border-radius:50%;animation:playPulse 2.5s ease-in-out infinite 0.4s;"></div>
+        <div style="width:0;height:0;border-top:14px solid transparent;border-bottom:14px solid transparent;border-left:22px solid rgba(255,45,120,0.9);margin-left:4px;filter:drop-shadow(0 0 8px rgba(255,45,120,0.6));"></div>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:4px;color:rgba(232,228,216,0.5);">PLAY TRANSMISSION</div>
+    </div>
+    <div class="k-video-meta-bot">
+      <div class="left" id="txCamLeft"></div>
+      <div class="right" id="txCamRight"></div>
+    </div>
+    <div class="tx-dots">
+      <div class="tx-dot active" onclick="goTx(0)"></div>
+      <div class="tx-dot" onclick="goTx(1)"></div>
+    </div>
+    <button class="k-unmute" id="unmuteBtn" onclick="toggleMute()">⊘ MUTED</button>
+  </div>
+
+</div><!-- /dossier-zone -->
+
+<!-- ══ TRANSITION + EMOTIONAL ZONE ══ -->
+<div class="transition-zone" style="display:none">
+
+
+
+
+
+</div>
+
+<!-- ══ EMOTIONAL ZONE — hidden, content lives in overlay only ══ -->
+<div class="emotional-zone" style="display:none"></div>
+
+<script>
+// Clock
+function updateClock() {
+  const el = document.getElementById('txMetaRight');
+  if (!el) return;
+  const n = new Date();
+  const t = String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
+  el.innerHTML = `TIME: ${t}<br>FILE: K-9`;
+}
+updateClock(); setInterval(updateClock, 1000);
+
+// Play transmission
+function playTransmission() {
+  const v = document.getElementById('geoVideo');
+  const po = document.getElementById('playOverlay');
+  if (!v || !po) return;
+  po.style.transition = 'opacity 0.4s';
+  po.style.opacity = '0';
+  setTimeout(() => { po.style.display = 'none'; }, 420);
+  v.muted = false;
+  const b = document.getElementById('unmuteBtn');
+  if (b) { b.textContent = '♪ AUDIO ON'; b.style.color = 'var(--cyan)'; }
+  v.play().catch(() => { v.muted = true; if(b) b.textContent='⊘ MUTED'; v.play().catch(()=>{}); });
+}
+function toggleMute() {
+  const v = document.getElementById('geoVideo');
+  const b = document.getElementById('unmuteBtn');
+  if (!v) return;
+  v.muted = !v.muted;
+  b.textContent = v.muted ? '⊘ MUTED' : '♪ AUDIO ON';
+  b.style.color = v.muted ? '' : 'var(--cyan)';
+}
+
+// Transmissions
+const transmissions = [
+  {
+    src:'https://superborn-dev.s3.amazonaws.com/assets/videos/future.mp4',
+    left:'<br>',
+    cam:'',sig:'',
+  },
+  {
+    src:'https://superborn-dev.s3.amazonaws.com/assets/videos/they-lied.mp4',
+    left:'',
+    cam:'',sig:'',
+  },
+];
+let currentTx = 0;
+function goTx(idx) {
+  currentTx = idx;
+  const t = transmissions[idx];
+  const vid = document.getElementById('geoVideo');
+  const po = document.getElementById('playOverlay');
+  const hasPlayed = po && po.style.display === 'none';
+  const wasMuted = vid.muted;
+  vid.style.opacity='1';
+  setTimeout(()=>{
+    vid.src=t.src; vid.load();
+    vid.muted = wasMuted;
+    if (hasPlayed) {
+      const playPromise = vid.play();
+      if(playPromise !== undefined){
+        playPromise.catch(()=>{ vid.muted=true; vid.play().catch(()=>{}); });
+      }
+    }
+    vid.style.transition='opacity 0.6s'; vid.style.opacity='1';
+  },300);
+  document.getElementById('txMetaLeft').innerHTML=t.left;
+  document.getElementById('txCamLeft').innerHTML=t.cam;
+  document.getElementById('txCamRight').innerHTML=t.sig;
+  document.querySelectorAll('.tx-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+}
+
+// Cycle on natural video end instead of fixed timer
+document.getElementById('geoVideo').addEventListener('ended', () => {
+  goTx((currentTx + 1) % transmissions.length);
+});
+
+// Scan + scroll reveals
+
+
+// Intersection observer — reveal emotional zone elements as viewer scrolls
+const reveals = [
+  { id:'theLineEl', delay:0    },
+  { id:'mainLineEl',delay:400  },
+  { id:'creditEl',  delay:0    },
+  { id:'taglineEl', delay:200  },
+  { id:'ctaEl',     delay:500  },
+  { id:'whisperEl', delay:0    },
+];
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const r = reveals.find(r => r.id === entry.target.id);
+      if (r) {
+        setTimeout(() => entry.target.classList.add('visible'), r.delay);
+        observer.unobserve(entry.target);
+      }
+    }
+  });
+}, { threshold: 1 });
+
+reveals.forEach(r => {
+  const el = document.getElementById(r.id);
+  if (el) observer.observe(el);
+});
+
+// Scroll reveal — clock and observers end here
+</script>
+
+</div><!-- /page-fixed -->
+
+<!-- SCROLL OVERLAY — fades over fixed page as user scrolls -->
+<div class="scroll-reveal-overlay" id="scrollOverlay">
+  <div class="sro-setup">The future forgot what rare felt like.</div>
+  <div class="sro-main">Hold what the future can't make.</div>
+  <div class="sro-cta">
+    <a href="https://premiergem.com/desert-diamonds">HOLD SOMETHING RARE</a>
+  </div>
+  <div class="sro-credit">PREMIER GEM<br><br>NATURAL DIAMONDS ARE BEYOND FICTION.</div>
+  <div style="margin-top:32px;font-family:var(--serif);font-style:italic;font-size:11px;color:rgba(232,228,216,0.08);text-align:center;line-height:2">
+    "There is nothing in the desert.<br>There has never been anything in the desert."<br>
+    — Bureau of Synthetic Compliance, Cycle 2187
+  </div>
+</div>
+
+<!-- OVERLAY JS — must be after the overlay div -->
+<script>
+const overlay = document.getElementById('scrollOverlay');
+const geoVideo = document.getElementById('geoVideo');
+let progress = 0;
+
+function setProgress(p) {
+  progress = Math.max(0, Math.min(1, p));
+  if (overlay) {
+    overlay.style.setProperty('opacity', progress, 'important');
+    overlay.style.setProperty('pointer-events', progress > 0.05 ? 'auto' : 'none', 'important');
+  }
+  // Pause video as overlay comes in, resume as it goes back
+  if (geoVideo) {
+    if (progress > 0.3 && !geoVideo.paused) geoVideo.pause();
+    if (progress < 0.1 && geoVideo.paused) geoVideo.play().catch(()=>{});
+  }
+}
+
+// Mouse wheel
+window.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const delta = e.deltaY / 500;
+  setProgress(progress + delta);
+}, { passive: false });
+
+// Touch swipe
+let touchStartY = 0;
+window.addEventListener('touchstart', (e) => {
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+window.addEventListener('touchmove', (e) => {
+  const dy = touchStartY - e.touches[0].clientY;
+  touchStartY = e.touches[0].clientY;
+  setProgress(progress + dy / 300);
+}, { passive: true });
+</script>
+
+</body>
+</html>
