@@ -653,7 +653,7 @@ function runSignalAcquisition() {
 document.addEventListener('DOMContentLoaded', () => {
   runSignalAcquisition();
   // Init slideshow after brief delay to allow config to load
-  setTimeout(initSlideshow, 100);
+  window.configReady.then(initSlideshow).catch(initSlideshow);
 });
 
 function skipIntro() {
@@ -836,13 +836,47 @@ function skipIntro() {
 <script>
 
 // ── SITE CONFIG ─────────────────────────────────────────
-let SITE_CONFIG = null;
-async function loadConfig() {
-  try {
-    const res = await fetch('https://superborn-dev.s3.amazonaws.com/assets/config/content.json?v=' + Date.now());
-    if (res.ok) SITE_CONFIG = await res.json();
-  } catch(e) { /* use defaults */ }
-}
+  let SITE_CONFIG = null;
+  async function loadConfig() {
+    try {
+      const res = await fetch('https://superborn-dev.s3.amazonaws.com/assets/config/content.json?v=' + Date.now());
+      if (res.ok) SITE_CONFIG = await res.json();
+    } catch (e) { /* use defaults */ }
+  }
+
+  // Kick off the fetch immediately, and expose one shared promise so
+  // anything on the page can wait for config (or time out after 3s).
+  window.configReady = Promise.race([
+    loadConfig(),
+    new Promise(r => setTimeout(r, 3000))
+  ]).then(() => {
+    renderTicker();
+    renderTopStories();
+  });
+
+  function renderTicker() {
+    const scrollEl = document.querySelector('.ticker-scroll');
+    const items = SITE_CONFIG?.ticker;
+    if (!scrollEl || !items || !items.length) return;
+    const text = items.join(' ⬥ ') + ' ⬥ ';
+    scrollEl.innerHTML = `<span>${text}</span><span>${text}</span>`;
+  }
+
+  function renderTopStories() {
+    const feedEl = document.querySelector('.news-feed');
+    const stories = SITE_CONFIG?.topStories;
+    if (!feedEl || !stories || !stories.length) return;
+    feedEl.innerHTML = stories.map((s, i) => `
+    <div class="news-item ${i < stories.length - 1 ? 'news-priority' : ''}" ${i === 0 ? 'style="border-top:none"' : ''}>
+      <div class="news-ts">${s.tag || 'BREAKING'}</div>
+      <div>
+        <div class="news-hl">${s.hl}</div>
+        <div class="news-sub">${s.sub || ''}</div>
+      </div>
+    </div>
+  `).join('');
+  }
+
 
 (function() {
   // Run every visit — this is the intro, not a one-time splash
@@ -879,7 +913,7 @@ async function loadConfig() {
 
   async function runIntro() {
     // Load S3 config — timeout after 2s so it never blocks
-    try { await Promise.race([loadConfig(), new Promise(r=>setTimeout(r,2000))]); } catch(e){}
+   try { await window.configReady; } catch (e) { }
     await wait(500);
 
     const dosEl = document.getElementById('coldDOS');
