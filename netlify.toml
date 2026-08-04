@@ -1,26 +1,8 @@
-functionsDirectory = "/Users/asherwilens/Library/Mobile Documents/com~apple~CloudDocs/Synthcity TV/synthcity/netlify/functions"
-functionsDirectoryOrigin = "config-v1"
-plugins = []
-headers = []
-
 [build]
-publish = "/Users/asherwilens/Library/Mobile Documents/com~apple~CloudDocs/Synthcity TV/synthcity"
-publishOrigin = "default"
-functions = "/Users/asherwilens/Library/Mobile Documents/com~apple~CloudDocs/Synthcity TV/synthcity/netlify/functions"
+publish = "."
+functions = "netlify/functions"
 
   [build.environment]
-
-  [build.processing]
-
-    [build.processing.css]
-
-    [build.processing.html]
-
-    [build.processing.images]
-
-    [build.processing.js]
-
-  [build.services]
 
 [functions]
 
@@ -32,32 +14,14 @@ to = "/detector.html"
 status = 200
 force = false
 
-  [redirects.query]
-
-  [redirects.conditions]
-
-  [redirects.headers]
-
 [[redirects]]
 from = "/kalahari"
 to = "/kalahari.html"
 status = 200
 force = false
 
-  [redirects.query]
-
-  [redirects.conditions]
-
-  [redirects.headers]
-
 [[redirects]]
 from = "/broadcast"
 to = "/index.html?entry=direct"
 status = 200
 force = false
-
-  [redirects.query]
-
-  [redirects.conditions]
-
-  [redirects.headers]
