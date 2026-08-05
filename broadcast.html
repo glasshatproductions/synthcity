@@ -2436,13 +2436,13 @@ function toggleNewsHeroMute() {
 
 // ---- INTRO CINEMATIC HANDOFF ----
 // index.html's monitor frame posts this once its intro video ends and the
-// user has already granted the audio-gesture, so we unmute in sync rather
-// than making them tap UNMUTE again. Reuses the same unmute paths as the
-// manual buttons above so button labels/icons stay accurate either way.
+// user has already granted the audio-gesture, so we unmute the hero video
+// in sync rather than making them tap UNMUTE again. The UNDISCLOSED REPORTS
+// transmission (#txVideo) stays muted by design — that one's meant to stay
+// a manual, deliberate "tap to listen in" moment, not auto-triggered here.
 window.addEventListener('message', (e) => {
   if (!e.data || e.data.type !== 'synthcity:unmute') return;
 
-  if (window._txMuted !== false) toggleTxMute();
   if (window._newsHeroMuted !== false) toggleNewsHeroMute();
 });
 
