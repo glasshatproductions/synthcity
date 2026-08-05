@@ -170,7 +170,7 @@ html, body {
   </div>
 </div>
 
-<div id="shellWrap" style="display:none;">
+<div id="shellWrap" style="opacity:0; pointer-events:none;">
   <div id="frameBox">
     <iframe id="siteFrame" src="broadcast.html" title="Synth City Broadcast"></iframe>
     <img id="frameImg" src="https://superborn-dev.s3.amazonaws.com/assets/images/neptune-screen.png" alt="">
@@ -211,7 +211,8 @@ html, body {
 
   introVideo.addEventListener('ended', () => {
     introWrap.classList.add('hidden');
-    shellWrap.style.display = 'flex';
+    shellWrap.style.opacity = '1';
+    shellWrap.style.pointerEvents = 'auto';
 
     // Tell the embedded broadcast to unmute/play in sync with the handoff.
     // Requires a matching listener inside broadcast.html, e.g.:
