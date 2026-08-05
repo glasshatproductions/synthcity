@@ -1,238 +1,285 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta property="og:title" content="SYNTH CITY // CYCLE 2187">
-<meta property="og:description" content="Natural diamonds: extinct. Or so we were told.">
-<meta property="og:image" content="https://superborn-dev.s3.amazonaws.com/assets/images/synth-city-frame.jpg">
-<meta property="og:url" content="https://synthcity.tv">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="SYNTH CITY">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="SYNTH CITY // CYCLE 2187">
-<meta name="twitter:description" content="Natural diamonds: extinct. Or so we were told.">
-<meta name="twitter:image" content="https://superborn-dev.s3.amazonaws.com/assets/images/synth-city-frame.jpg">
-<meta name="description" content="By Cycle 2187, natural diamonds no longer existed. Or so we were told.">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SYNTH CITY — A PREMIER GEM ORIGINAL</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
+  <meta charset="UTF-8">
+  <meta property="og:title" content="SYNTH CITY // CYCLE 2187">
+  <meta property="og:description" content="Natural diamonds: extinct. Or so we were told.">
+  <meta property="og:image" content="https://superborn-dev.s3.amazonaws.com/assets/images/synth-city-frame.jpg">
+  <meta property="og:url" content="https://synthcity.tv">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SYNTH CITY">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SYNTH CITY // CYCLE 2187">
+  <meta name="twitter:description" content="Natural diamonds: extinct. Or so we were told.">
+  <meta name="twitter:image" content="https://superborn-dev.s3.amazonaws.com/assets/images/synth-city-frame.jpg">
+  <meta name="description" content="By Cycle 2187, natural diamonds no longer existed. Or so we were told.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYNTH CITY — A PREMIER GEM ORIGINAL</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-html, body {
-  height: 100%;
-  background: #000;
-  overflow: hidden;
-  font-family: 'Share Tech Mono', monospace;
-}
+    html,
+    body {
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+      font-family: 'Share Tech Mono', monospace;
+    }
 
-/* Full-viewport black backdrop, centers the monitor */
-#shellWrap {
-  position: fixed; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  background: #000;
-}
+    /* Full-viewport black backdrop, centers the monitor */
+    #shellWrap {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
 
-/* ============ INTRO CINEMATIC ============ */
-/* Sits above #shellWrap on load. Uses the IDENTICAL aspect-ratio-locked
+    /* ============ INTRO CINEMATIC ============ */
+    /* Sits above #shellWrap on load. Uses the IDENTICAL aspect-ratio-locked
    sizing formula as #frameBox below, so the video — which is authored to
    match neptune-screen.png's exact framing — lines up pixel-for-pixel with
    the monitor frame it hands off to, at any window size. */
-#introWrap {
-  position: fixed; inset: 0;
-  z-index: 100;
-  display: flex; align-items: center; justify-content: center;
-  background: #000;
-}
-#introWrap.hidden { display: none; }
+    #introWrap {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
 
-#introStage {
-  position: relative;
-  width: min(100vw, 100vh * (1920 / 1331));
-  height: min(100vh, 100vw * (1331 / 1920));
-}
+    #introWrap.hidden {
+      display: none;
+    }
 
-#introVideo {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  background: #000;
-}
+    #introStage {
+      position: relative;
+      width: min(100vw, 100vh * (1920 / 1331));
+      height: min(100vh, 100vw * (1331 / 1920));
+    }
 
-/* "INCOMING" — the tap that both starts playback and satisfies the
+    #introVideo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+
+    /* "INCOMING" — the tap that both starts playback and satisfies the
    browser's user-gesture requirement for unmuted audio. */
-#incomingBtn {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-  background: rgba(0,0,0,0.55);
-  border: 1px solid #ff2d78;
-  color: #fff;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 15px;
-  letter-spacing: 5px;
-  padding: 16px 38px;
-  cursor: pointer;
-  box-shadow: 0 0 0 0 rgba(255,45,120,0.55);
-  animation: incomingPulse 2s ease-out infinite;
-  transition: background 0.2s, color 0.2s;
-}
-#incomingBtn:hover {
-  background: rgba(255,45,120,0.15);
-}
-#incomingBtn.hidden { display: none; }
+    #incomingBtn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid #ff2d78;
+      color: #fff;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 15px;
+      letter-spacing: 5px;
+      padding: 16px 38px;
+      cursor: pointer;
+      box-shadow: 0 0 0 0 rgba(255, 45, 120, 0.55);
+      animation: incomingPulse 2s ease-out infinite;
+      transition: background 0.2s, color 0.2s;
+    }
 
-@keyframes incomingPulse {
-  0%   { box-shadow: 0 0 0 0 rgba(255,45,120,0.55); }
-  70%  { box-shadow: 0 0 0 22px rgba(255,45,120,0); }
-  100% { box-shadow: 0 0 0 0 rgba(255,45,120,0); }
-}
+    #incomingBtn:hover {
+      background: rgba(255, 45, 120, 0.15);
+    }
 
-/* Aspect-ratio-locked box matching neptune-screen.png (1920x1331) exactly,
+    #incomingBtn.hidden {
+      display: none;
+    }
+
+    @keyframes incomingPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(255, 45, 120, 0.55);
+      }
+
+      70% {
+        box-shadow: 0 0 0 22px rgba(255, 45, 120, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 45, 120, 0);
+      }
+    }
+
+    /* Aspect-ratio-locked box matching neptune-screen.png (1920x1331) exactly,
    so the transparent glass cutout always lines up regardless of window size. */
-#frameBox {
-  position: relative;
-  width: min(100vw, 100vh * (1920 / 1331));
-  height: min(100vh, 100vw * (1331 / 1920));
-  transition: width 0.4s ease, height 0.4s ease;
-}
-#frameBox.expanded {
-  width: 100vw;
-  height: 100vh;
-}
+    #frameBox {
+      position: relative;
+      width: min(100vw, 100vh * (1920 / 1331));
+      height: min(100vh, 100vw * (1331 / 1920));
+      transition: width 0.4s ease, height 0.4s ease;
+    }
 
-/* The real site, loaded fresh in its own iframe — this is what fixes the
+    #frameBox.expanded {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* The real site, loaded fresh in its own iframe — this is what fixes the
    vw/vh unit mismatch: inside an iframe, viewport units resolve against
    the iframe's own box, not the outer window, so the site's existing
    responsive CSS just works, unmodified. */
-#siteFrame {
-  position: absolute;
-  left: 19.74%; top: 13.52%;
-  width: 57.71%; height: 61.31%;
-  border: none;
-  background: #050508;
-  transition: left 0.4s ease, top 0.4s ease, width 0.4s ease, height 0.4s ease;
-}
-#frameBox.expanded #siteFrame {
-  left: 0; top: 0; width: 100%; height: 100%;
-}
+    #siteFrame {
+      position: absolute;
+      left: 19.74%;
+      top: 13.52%;
+      width: 57.71%;
+      height: 61.31%;
+      border: none;
+      background: #050508;
+      transition: left 0.4s ease, top 0.4s ease, width 0.4s ease, height 0.4s ease;
+    }
 
-/* Monitor bezel image — decorative only, clicks pass straight through
+    #frameBox.expanded #siteFrame {
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Monitor bezel image — decorative only, clicks pass straight through
    the transparent glass to the iframe beneath. */
-#frameImg {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 5;
-  transition: opacity 0.3s ease;
-}
-#frameBox.expanded #frameImg {
-  opacity: 0;
-}
+    #frameImg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+      transition: opacity 0.3s ease;
+    }
 
-/* Expand / minimize toggle */
-#toggleBtn {
-  position: absolute;
-  top: 18px; right: 18px;
-  z-index: 20;
-  background: rgba(0,0,0,0.7);
-  border: 1px solid rgba(255,45,120,0.5);
-  color: #e8e4d8;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 2px;
-  padding: 9px 16px;
-  cursor: pointer;
-  display: flex; align-items: center; gap: 8px;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
-}
-#toggleBtn:hover {
-  border-color: #ff2d78;
-  color: #fff;
-  background: rgba(255,45,120,0.1);
-}
-#toggleIcon { font-size: 13px; }
+    #frameBox.expanded #frameImg {
+      opacity: 0;
+    }
 
-/* Safety net — mobile is handled via JS redirect below, but if JS is
+    /* Expand / minimize toggle */
+    #toggleBtn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 20;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 45, 120, 0.5);
+      color: #e8e4d8;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      padding: 9px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    #toggleBtn:hover {
+      border-color: #ff2d78;
+      color: #fff;
+      background: rgba(255, 45, 120, 0.1);
+    }
+
+    #toggleIcon {
+      font-size: 13px;
+    }
+
+    /* Safety net — mobile is handled via JS redirect below, but if JS is
    somehow blocked, don't leave a broken frame on screen. */
-@media (max-width: 768px) {
-  #toggleBtn { display: none; }
-}
-</style>
+    @media (max-width: 768px) {
+      #toggleBtn {
+        display: none;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div id="introWrap">
-  <div id="introStage">
-    <video id="introVideo" src="https://superborn-dev.s3.amazonaws.com/assets/videos/intro-synthcity.mp4"
-           muted playsinline preload="auto"></video>
-    <button id="incomingBtn">INCOMING</button>
+  <div id="introWrap">
+    <div id="introStage">
+      <video id="introVideo" src="https://superborn-dev.s3.amazonaws.com/assets/videos/intro-synthcity.mp4" muted
+        playsinline preload="auto"></video>
+      <button id="incomingBtn">INCOMING</button>
+    </div>
   </div>
-</div>
 
-<div id="shellWrap" style="opacity:0; pointer-events:none;">
-  <div id="frameBox">
-    <iframe id="siteFrame" src="broadcast.html" title="Synth City Broadcast"></iframe>
-    <img id="frameImg" src="https://superborn-dev.s3.amazonaws.com/assets/images/neptune-screen.png" alt="">
-    <button id="toggleBtn" onclick="toggleExpand()">
-      <span id="toggleIcon">⤢</span><span id="toggleLabel">EXPAND</span>
-    </button>
+  <div id="shellWrap" style="opacity:0; pointer-events:none;">
+    <div id="frameBox">
+      <iframe id="siteFrame" src="broadcast.html" title="Synth City Broadcast"></iframe>
+      <img id="frameImg" src="https://superborn-dev.s3.amazonaws.com/assets/images/neptune-screen.png" alt="">
+      <button id="toggleBtn" onclick="toggleExpand()">
+        <span id="toggleIcon">⤢</span><span id="toggleLabel">EXPAND</span>
+      </button>
+    </div>
   </div>
-</div>
 
-<script>
-  // Mobile keeps the normal full-screen site — no frame, no iframe overhead.
-  // (Unchanged: mobile skips the framed intro entirely, same as before.)
-  function checkMobile() {
-    if (window.innerWidth <= 768) {
-      window.location.href = 'broadcast.html';
-    }
-  }
-  checkMobile();
-  window.addEventListener('resize', checkMobile);
+  <script>
+    // ---------- INTRO CINEMATIC ----------
+    const introWrap = document.getElementById('introWrap');
+    const introVideo = document.getElementById('introVideo');
+    const incomingBtn = document.getElementById('incomingBtn');
+    const shellWrap = document.getElementById('shellWrap');
+    const siteFrame = document.getElementById('siteFrame');
 
-  // ---------- INTRO CINEMATIC ----------
-  const introWrap   = document.getElementById('introWrap');
-  const introVideo  = document.getElementById('introVideo');
-  const incomingBtn = document.getElementById('incomingBtn');
-  const shellWrap   = document.getElementById('shellWrap');
-  const siteFrame   = document.getElementById('siteFrame');
-
-  incomingBtn.addEventListener('click', () => {
-    incomingBtn.classList.add('hidden');
-    introVideo.muted = false;   // the click is the user gesture that permits this
-    introVideo.play().catch(() => {
-      // Autoplay-with-sound was blocked for some reason — fall back to
-      // muted playback rather than leaving the video stuck.
-      introVideo.muted = true;
-      introVideo.play();
+    incomingBtn.addEventListener('click', () => {
+      incomingBtn.classList.add('hidden');
+      introVideo.muted = false;   // the click is the user gesture that permits this
+      introVideo.play().catch(() => {
+        // Autoplay-with-sound was blocked for some reason — fall back to
+        // muted playback rather than leaving the video stuck.
+        introVideo.muted = true;
+        introVideo.play();
+      });
     });
-  });
 
-  introVideo.addEventListener('ended', () => {
-    introWrap.classList.add('hidden');
-    shellWrap.style.opacity = '1';
-    shellWrap.style.pointerEvents = 'auto';
+    introVideo.addEventListener('ended', () => {
+      introWrap.classList.add('hidden');
+      shellWrap.style.opacity = '1';
+      shellWrap.style.pointerEvents = 'auto';
 
-    // Tell the embedded broadcast to unmute/play in sync with the handoff.
-    // Requires a matching listener inside broadcast.html, e.g.:
-    //   window.addEventListener('message', (e) => {
-    //     if (e.data && e.data.type === 'synthcity:unmute') { /* unmute + play here */ }
-    //   });
-    try {
-      siteFrame.contentWindow.postMessage({ type: 'synthcity:unmute' }, '*');
-    } catch (e) { /* no-op if cross-origin or not yet loaded */ }
-  });
+      // Mobile lands straight in EXPAND — desktop stays windowed with
+      // EXPAND available as a manual choice, exactly as before.
+      if (window.innerWidth <= 768) {
+        toggleExpand();
+      }
 
-  function toggleExpand() {
-    const box = document.getElementById('frameBox');
-    const icon = document.getElementById('toggleIcon');
-    const label = document.getElementById('toggleLabel');
-    const expanded = box.classList.toggle('expanded');
-    icon.textContent = expanded ? '⤡' : '⤢';
-    label.textContent = expanded ? 'MINIMIZE' : 'EXPAND';
-  }
-</script>
+      // Tell the embedded broadcast to unmute/play in sync with the handoff.
+      // Requires a matching listener inside broadcast.html, e.g.:
+      //   window.addEventListener('message', (e) => {
+      //     if (e.data && e.data.type === 'synthcity:unmute') { /* unmute + play here */ }
+      //   });
+      try {
+        siteFrame.contentWindow.postMessage({ type: 'synthcity:unmute' }, '*');
+      } catch (e) { /* no-op if cross-origin or not yet loaded */ }
+    });
+
+    function toggleExpand() {
+      const box = document.getElementById('frameBox');
+      const icon = document.getElementById('toggleIcon');
+      const label = document.getElementById('toggleLabel');
+      const expanded = box.classList.toggle('expanded');
+      icon.textContent = expanded ? '⤡' : '⤢';
+      label.textContent = expanded ? 'MINIMIZE' : 'EXPAND';
+    }
+  </script>
 
 </body>
+
 </html>
