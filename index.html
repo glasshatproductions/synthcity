@@ -32,6 +32,62 @@ html, body {
   background: #000;
 }
 
+/* ============ INTRO CINEMATIC ============ */
+/* Sits above #shellWrap on load. Uses the IDENTICAL aspect-ratio-locked
+   sizing formula as #frameBox below, so the video — which is authored to
+   match neptune-screen.png's exact framing — lines up pixel-for-pixel with
+   the monitor frame it hands off to, at any window size. */
+#introWrap {
+  position: fixed; inset: 0;
+  z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  background: #000;
+}
+#introWrap.hidden { display: none; }
+
+#introStage {
+  position: relative;
+  width: min(100vw, 100vh * (1920 / 1331));
+  height: min(100vh, 100vw * (1331 / 1920));
+}
+
+#introVideo {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+
+/* "INCOMING" — the tap that both starts playback and satisfies the
+   browser's user-gesture requirement for unmuted audio. */
+#incomingBtn {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid #ff2d78;
+  color: #fff;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 15px;
+  letter-spacing: 5px;
+  padding: 16px 38px;
+  cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(255,45,120,0.55);
+  animation: incomingPulse 2s ease-out infinite;
+  transition: background 0.2s, color 0.2s;
+}
+#incomingBtn:hover {
+  background: rgba(255,45,120,0.15);
+}
+#incomingBtn.hidden { display: none; }
+
+@keyframes incomingPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255,45,120,0.55); }
+  70%  { box-shadow: 0 0 0 22px rgba(255,45,120,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,45,120,0); }
+}
+
 /* Aspect-ratio-locked box matching neptune-screen.png (1920x1331) exactly,
    so the transparent glass cutout always lines up regardless of window size. */
 #frameBox {
@@ -106,7 +162,15 @@ html, body {
 </head>
 <body>
 
-<div id="shellWrap">
+<div id="introWrap">
+  <div id="introStage">
+    <video id="introVideo" src="https://superborn-dev.s3.amazonaws.com/videos/intro-synthcity.mp4"
+           muted playsinline preload="auto"></video>
+    <button id="incomingBtn">INCOMING</button>
+  </div>
+</div>
+
+<div id="shellWrap" style="display:none;">
   <div id="frameBox">
     <iframe id="siteFrame" src="broadcast.html" title="Synth City Broadcast"></iframe>
     <img id="frameImg" src="https://superborn-dev.s3.amazonaws.com/assets/images/neptune-screen.png" alt="">
@@ -118,6 +182,7 @@ html, body {
 
 <script>
   // Mobile keeps the normal full-screen site — no frame, no iframe overhead.
+  // (Unchanged: mobile skips the framed intro entirely, same as before.)
   function checkMobile() {
     if (window.innerWidth <= 768) {
       window.location.href = 'broadcast.html';
@@ -125,6 +190,38 @@ html, body {
   }
   checkMobile();
   window.addEventListener('resize', checkMobile);
+
+  // ---------- INTRO CINEMATIC ----------
+  const introWrap   = document.getElementById('introWrap');
+  const introVideo  = document.getElementById('introVideo');
+  const incomingBtn = document.getElementById('incomingBtn');
+  const shellWrap   = document.getElementById('shellWrap');
+  const siteFrame   = document.getElementById('siteFrame');
+
+  incomingBtn.addEventListener('click', () => {
+    incomingBtn.classList.add('hidden');
+    introVideo.muted = false;   // the click is the user gesture that permits this
+    introVideo.play().catch(() => {
+      // Autoplay-with-sound was blocked for some reason — fall back to
+      // muted playback rather than leaving the video stuck.
+      introVideo.muted = true;
+      introVideo.play();
+    });
+  });
+
+  introVideo.addEventListener('ended', () => {
+    introWrap.classList.add('hidden');
+    shellWrap.style.display = 'flex';
+
+    // Tell the embedded broadcast to unmute/play in sync with the handoff.
+    // Requires a matching listener inside broadcast.html, e.g.:
+    //   window.addEventListener('message', (e) => {
+    //     if (e.data && e.data.type === 'synthcity:unmute') { /* unmute + play here */ }
+    //   });
+    try {
+      siteFrame.contentWindow.postMessage({ type: 'synthcity:unmute' }, '*');
+    } catch (e) { /* no-op if cross-origin or not yet loaded */ }
+  });
 
   function toggleExpand() {
     const box = document.getElementById('frameBox');
