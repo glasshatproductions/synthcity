@@ -71,7 +71,7 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(46px,13vw,64px);li
 .br.a{top:0;left:0;border-right:0;border-bottom:0}.br.b{top:0;right:0;border-left:0;border-bottom:0}
 .br.c{bottom:0;left:0;border-right:0;border-top:0}.br.d{bottom:0;right:0;border-left:0;border-top:0}
 .ring{position:absolute;inset:12%;border-radius:50%;border:1px solid var(--line)}
-.cross{position:absolute;background:var(--line)}.cross.h{left:4%;right:4%;top:50%;height:1px}.cross.v{top:4%;bottom:4%;left:50%;width:1px}
+.cross{position:absolute;background:linear-gradient(var(--line),var(--line))}.cross.h{left:4%;right:4%;top:50%;height:1px}.cross.v{top:4%;bottom:4%;left:50%;width:1px}
 .gem{position:absolute;inset:0;width:100%;height:100%;z-index:1;transition:opacity .4s}
 .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2}
 .frame.loaded .gem,.frame.loaded .ring,.frame.loaded .cross{opacity:0}
@@ -438,75 +438,65 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(46px,13vw,64px);li
       const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='rarity-detector.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);},'image/png');
   });
 
-  /* 3D specimen: brilliant-cut stone in a counter-rotating geodesic cage */
+  /* 3D specimen: a fractured icosahedron with particle dust on its faces */
   (function gem(){
     const cv=$('gem'),ctx=cv.getContext('2d'),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const V=[],E=[];const add=(x,y,z)=>V.push([x,y,z])-1;const edge=(i,j)=>E.push([i,j,0]);
-    // stone: table(8) crown(8) girdle(16) pavilion mains(8) culet
-    const T=[],C=[],G=[],P=[];
-    for(let k=0;k<8;k++){const t=k/8*Math.PI*2;T.push(add(.52*Math.cos(t),-.52,.52*Math.sin(t)));}
-    for(let k=0;k<8;k++){const t=(k+.5)/8*Math.PI*2;C.push(add(.82*Math.cos(t),-.34,.82*Math.sin(t)));}
-    for(let k=0;k<16;k++){const t=k/16*Math.PI*2;G.push(add(Math.cos(t),-.16,Math.sin(t)));}
-    for(let k=0;k<8;k++){const t=k/8*Math.PI*2;P.push(add(.5*Math.cos(t),.42,.5*Math.sin(t)));}
-    const cul=add(0,1.05,0);
-    for(let k=0;k<8;k++){const n=(k+1)%8;
-      edge(T[k],T[n]);edge(T[k],C[k]);edge(T[n],C[k]);edge(C[k],G[2*k+1]);edge(C[k],G[2*k]);edge(C[k],G[(2*k+2)%16]);
-      edge(G[2*k],P[k]);edge(G[2*k+1],P[k]);edge(G[2*k+1],P[n]);edge(P[k],cul);}
-    for(let k=0;k<16;k++)edge(G[k],G[(k+1)%16]);
-    const stoneN=V.length,stoneE=E.length;
-    // inner core: a smaller stone, inverted, spinning the other way
-    for(let i=0;i<stoneN;i++)add(V[i][0]*.36,-V[i][1]*.36,V[i][2]*.36);
-    for(let k=0;k<stoneE;k++)E.push([E[k][0]+stoneN,E[k][1]+stoneN,2]);
-    const coreEnd=V.length;
-    // cage: icosahedron, radius 1.75
-    const f=(1+Math.sqrt(5))/2,ic=[[-1,f,0],[1,f,0],[-1,-f,0],[1,-f,0],[0,-1,f],[0,1,f],[0,-1,-f],[0,1,-f],[f,0,-1],[f,0,1],[-f,0,-1],[-f,0,1]];
-    const r=1.75/Math.hypot(1,f),base=V.length;ic.forEach(q=>add(q[0]*r,q[1]*r,q[2]*r));
-    for(let i=0;i<12;i++)for(let j=i+1;j<12;j++)if(Math.abs(Math.hypot(ic[i][0]-ic[j][0],ic[i][1]-ic[j][1],ic[i][2]-ic[j][2])-2)<.01)E.push([base+i,base+j,1]);
-    const dust=[...Array(70)].map(()=>[Math.random()*Math.PI*2,1.35+Math.random()*.25,(Math.random()-.5)*.08]);
+    const f=(1+Math.sqrt(5))/2,n=Math.hypot(1,f);
+    const V=[[-1,f,0],[1,f,0],[-1,-f,0],[1,-f,0],[0,-1,f],[0,1,f],[0,-1,-f],[0,1,-f],[f,0,-1],[f,0,1],[-f,0,-1],[-f,0,1]].map(v=>v.map(c=>c/n));
+    const d=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]),L=d(V[0],V[1]);
+    const E=[],F=[];
+    for(let i=0;i<12;i++)for(let j=i+1;j<12;j++)if(Math.abs(d(V[i],V[j])-L)<1e-3){E.push([i,j]);for(let k=j+1;k<12;k++)if(Math.abs(d(V[i],V[k])-L)<1e-3&&Math.abs(d(V[j],V[k])-L)<1e-3)F.push([i,j,k]);}
+    let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+    const bary=(fc,u,v)=>{const w=1-u-v,A=V[fc[0]],B=V[fc[1]],C=V[fc[2]];return[A[0]*u+B[0]*v+C[0]*w,A[1]*u+B[1]*v+C[1]*w,A[2]*u+B[2]*v+C[2]*w];};
+    // dust: denser toward edges and corners, a little inside the volume
+    const P=[];
+    F.forEach(fc=>{for(let k=0;k<120;k++){let u=rnd(),v=rnd();if(u+v>1){u=1-u;v=1-v;}
+      if(rnd()<.55){const e=Math.floor(rnd()*3),t=rnd(),j=rnd()*.06;[u,v]=e===0?[t*(1-j),(1-t)*(1-j)]:e===1?[j,t*(1-j)]:[t*(1-j),j];}
+      const q=bary(fc,u,v),s=rnd()<.15?.6+rnd()*.38:1;P.push([q[0]*s,q[1]*s,q[2]*s,.5+rnd()*.9]);}});
+    for(let k=0;k<260;k++){const t=rnd()*Math.PI*2,z=rnd()*2-1,r=Math.cbrt(rnd())*.72,s=Math.sqrt(1-z*z);P.push([r*s*Math.cos(t),r*z,r*s*Math.sin(t),.5]);}
+    // fractures: jagged hairlines across a dozen faces
+    const K=[];
+    for(let c=0;c<16;c++){const fc=F[Math.floor(rnd()*F.length)];
+      // start near one edge, run roughly across the face with small jags, sometimes branching
+      let u=.02+rnd()*.15,v=.2+rnd()*.6;const tu=.35+rnd()*.5,tv=rnd()*.3,steps=10;const pts=[];
+      for(let s=0;s<=steps;s++){const k=s/steps;const uu=u+(tu-u)*k+(rnd()-.5)*.035,vv=v+(tv-v)*k+(rnd()-.5)*.035;
+        if(uu<0||vv<0||uu+vv>1)break;pts.push(bary(fc,uu,vv));}
+      if(pts.length>3){K.push(pts);if(rnd()<.5){const m=Math.floor(pts.length/2),b=[pts[m]];let q=pts[m];
+        for(let s=0;s<4;s++){const j=bary(fc,.15+rnd()*.5,.15+rnd()*.3);q=[q[0]+(j[0]-q[0])*.3,q[1]+(j[1]-q[1])*.3,q[2]+(j[2]-q[2])*.3];b.push(q);}K.push(b);}}}
     let W=0,H=0,tx=0,ty=0,px=0,py=0,glitch=0;
-    function size(){const r=cv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);}
+    function size(){const r=cv.getBoundingClientRect(),dp=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;cv.width=W*dp;cv.height=H*dp;ctx.setTransform(dp,0,0,dp,0,0);}
     size();addEventListener('resize',size);
-    cv.parentNode.addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect();tx=((e.clientX-r.left)/r.width-.5);ty=((e.clientY-r.top)/r.height-.5);});
+    cv.parentNode.addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect();tx=(e.clientX-r.left)/r.width-.5;ty=(e.clientY-r.top)/r.height-.5;});
     cv.parentNode.addEventListener('pointerleave',()=>{tx=ty=0;});
     const rot=(v,ay,ax,az)=>{let[x,y,z]=v;let c=Math.cos(ay),s=Math.sin(ay);[x,z]=[x*c+z*s,-x*s+z*c];c=Math.cos(ax);s=Math.sin(ax);[y,z]=[y*c-z*s,y*s+z*c];c=Math.cos(az);s=Math.sin(az);[x,y]=[x*c-y*s,x*s+y*c];return[x,y,z];};
     function frame(ms){
-      if(!W){size();}
-      const t=ms/1000; px+=(tx-px)*.06; py+=(ty-py)*.06;
+      if(!W)size();
+      const t=ms/1000;px+=(tx-px)*.06;py+=(ty-py)*.06;
       const col=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
-      const acc=col.includes('gold')||col.includes('d8b878')?'216,184,120':'53,230,240';
+      const gold=col.includes('gold')||col.includes('d8b878');
+      const ink=gold?'246,228,190':'226,248,250',acc=gold?'216,184,120':'53,230,240';
       ctx.clearRect(0,0,W,H);
-      const S=Math.min(W,H)*.22,cx=W/2,cy=H/2+Math.sin(t*.8)*4,cam=5.2;
-      const ay=t*.45+px*1.6, ax=-.38+py*1.1+Math.sin(t*.31)*.42, az=Math.sin(t*.19)*.3;
-      const proj=V.map((v,i)=>{let q=v;
-        if(i<stoneN){const w=1+Math.sin(t*1.7+v[1]*4+v[0]*3)*.025;q=[v[0]*w,v[1],v[2]*w];q=rot(q,ay,ax,az);}
-        else if(i<coreEnd){q=rot(rot(q,-t*1.3,Math.sin(t*.7)*.6,t*.4),0,ax,az);}
-        else q=rot(q,-t*.18+px*.8,ax*.6+.5,t*.07);
-        const k=cam/(cam-q[2]);return[cx+q[0]*S*k,cy+q[1]*S*k,q[2]];});
-      // glitch slices
-      if(!reduce&&Math.random()<.008)glitch=10; const gl=glitch>0?(glitch--,1):0;
-      const draw=(off,rgb,alphaMul)=>{
-        ctx.lineCap='round';
-        E.forEach(([i,j,kind])=>{const a=proj[i],b=proj[j],z=(a[2]+b[2])/2,cage=kind===1,core=kind===2;
-          const depth=cage?(z+1.75)/3.5:Math.max(0,Math.min(1,(z+1)/2));
-          const al=cage?.08+.22*depth:core?.25+.45*depth:.14+.86*depth;
-          ctx.strokeStyle=core?`rgba(255,47,125,${(al*alphaMul).toFixed(3)})`:`rgba(${rgb},${(al*alphaMul).toFixed(3)})`;
-          ctx.lineWidth=cage?.7:core?.6:(.6+depth*1.1);
-          if(cage)ctx.setLineDash([2,5]);else ctx.setLineDash([]);
-          ctx.beginPath();ctx.moveTo(a[0]+off,a[1]);ctx.lineTo(b[0]+off,b[1]);ctx.stroke();});
-        ctx.setLineDash([]);
-      };
-      ctx.shadowColor=`rgba(${acc},.55)`;ctx.shadowBlur=8;
-      if(gl){draw(-4,'255,47,125',.6);draw(4,'53,230,240',.6);}
-      draw(0,acc,1);ctx.shadowBlur=0;
-      // vertex sparks on the near side of the stone
-      for(let i=0;i<stoneN;i++){const p=proj[i];if(p[2]>.25){ctx.fillStyle=`rgba(${acc},${(.4+p[2]*.6).toFixed(2)})`;ctx.beginPath();ctx.arc(p[0],p[1],1.1+p[2]*1.2,0,7);ctx.fill();}}
-      // orbiting dust ring (tilted)
-      dust.forEach(d=>{const a=d[0]+t*.35*(1.6-d[1]);let q=rot([Math.cos(a)*d[1],d[2],Math.sin(a)*d[1]],0,.95+py*.5,.35);
-        const k=cam/(cam-q[2]),al=.15+.55*((q[2]+1.6)/3.2);ctx.fillStyle=`rgba(${acc},${al.toFixed(2)})`;ctx.fillRect(cx+q[0]*S*k,cy+q[1]*S*k,1.4,1.4);});
-      // horizontal scan slice that drifts down through the object
-      const sy=cy-S*1.6+((t*.25)%1)*S*3.2;const g=ctx.createLinearGradient(0,sy-10,0,sy+10);
-      g.addColorStop(0,`rgba(${acc},0)`);g.addColorStop(.5,`rgba(${acc},.10)`);g.addColorStop(1,`rgba(${acc},0)`);ctx.fillStyle=g;ctx.fillRect(cx-S*1.3,sy-10,S*2.6,20);
-      if(gl){const y=Math.random()*H,h=6+Math.random()*16;try{ctx.drawImage(cv,0,y*(cv.width/W),cv.width,h*(cv.width/W),(Math.random()-.5)*14,y,W,h);}catch(e){}}
+      const S=Math.min(W,H)*.29,cx=W/2,cy=H/2+Math.sin(t*.8)*3,cam=4.2;
+      const ay=t*.32+px*1.6,ax=.32+py*1.1+Math.sin(t*.27)*.35,az=Math.sin(t*.17)*.22;
+      const pr=v=>{const q=rot(v,ay,ax,az),k=cam/(cam-q[2]);return[cx+q[0]*S*k,cy+q[1]*S*k,q[2]];};
+      if(!reduce&&Math.random()<.007)glitch=9;const gl=glitch>0?(glitch--,1):0;
+      // dust
+      P.forEach(p=>{const q=pr(p),a=.12+.6*((q[2]+1)/2)*p[3];ctx.fillStyle=`rgba(${ink},${a.toFixed(2)})`;const sz=.5+((q[2]+1)/2)*.8;ctx.fillRect(q[0],q[1],sz,sz);});
+      const PV=V.map(pr);
+      const edges=(off,rgb,mul)=>E.forEach(([i,j])=>{const a=PV[i],b=PV[j],dep=((a[2]+b[2])/2+1)/2;
+        ctx.strokeStyle=`rgba(${rgb},${((.22+.78*dep)*mul).toFixed(3)})`;ctx.lineWidth=.6+dep*1.1;ctx.beginPath();ctx.moveTo(a[0]+off,a[1]);ctx.lineTo(b[0]+off,b[1]);ctx.stroke();});
+      ctx.lineCap='round';ctx.lineJoin='round';
+      if(gl){edges(-4,'255,47,125',.6);edges(4,'53,230,240',.6);}
+      ctx.shadowColor=`rgba(${acc},.6)`;ctx.shadowBlur=9;edges(0,ink,1);
+      // fractures
+      K.forEach(pts=>{const q=pts.map(pr),dep=(q[0][2]+1)/2;ctx.strokeStyle=`rgba(${ink},${(.12+.6*dep).toFixed(2)})`;ctx.lineWidth=.4+dep*.7;
+        ctx.beginPath();q.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();});
+      ctx.shadowBlur=0;
+      // vertex glints
+      PV.forEach(p=>{if(p[2]>0){ctx.fillStyle=`rgba(${ink},${(.5+p[2]*.5).toFixed(2)})`;ctx.beginPath();ctx.arc(p[0],p[1],1+p[2]*1.4,0,7);ctx.fill();}});
+      // centre reticle dot
+      ctx.fillStyle=`rgba(${acc},.8)`;ctx.fillRect(cx-1.5,H/2-1.5,3,3);
+      if(gl){const y=Math.random()*H,h=6+Math.random()*16,dp=cv.width/W;try{ctx.drawImage(cv,0,y*dp,cv.width,h*dp,(Math.random()-.5)*14,y,W,h);}catch(e){}}
       if(!reduce&&!document.hidden&&!$('frame').classList.contains('loaded'))requestAnimationFrame(frame);
       else if(!reduce)setTimeout(()=>requestAnimationFrame(frame),400);
     }
