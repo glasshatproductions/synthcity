@@ -25,3 +25,16 @@ from = "/broadcast"
 to = "/index.html?entry=direct"
 status = 200
 force = false
+
+# raritydetector.com (domain alias on this site) opens straight into the Detector
+[[redirects]]
+from = "https://raritydetector.com/"
+to = "/detector.html"
+status = 200
+force = true
+
+[[redirects]]
+from = "https://www.raritydetector.com/"
+to = "/detector.html"
+status = 200
+force = true
