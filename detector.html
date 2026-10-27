@@ -3,17 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Rarity Detector — Synthetic Compliance Bureau</title>
-<meta name="description" content="Upload a photo of anything. The Bureau classifies how rare it will be in Cycle 2187.">
-<meta property="og:title" content="Rarity Detector — How rare is it in 2187?">
-<meta property="og:description" content="Upload a photo of anything. The Bureau classifies its rarity on the Temporal Rarity Index.">
-<meta property="og:image" content="https://superborn-dev.s3.amazonaws.com/assets/images/is-your-diamond-rare.png">
-<meta property="og:url" content="https://raritydetector.com">
+<title>Rarity Detector — Will it survive 2187?</title>
+<meta name="description" content="Point your camera at anything: a ring, a watch, your sneakers. The Synthetic Compliance Bureau rates how rare it will be in 2187. Most things don't make it.">
+<meta property="og:title" content="This Rarity Detector scans anything and tells you if it survives 2187.">
+<meta property="og:description" content="Point your camera at anything: a ring, a watch, your sneakers. The Synthetic Compliance Bureau rates how rare it will be in 2187. Most things don't make it.">
+<meta property="og:image" content="https://synthcity.tv/og-detector.jpg">
+<meta property="og:url" content="https://synthcity.tv/detector">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Rarity Detector by the Synthetic Compliance Bureau: a glowing wireframe icosahedron. Scan anything. See if it survives 2187.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Rarity Detector — How rare is it in 2187?">
-<meta name="twitter:description" content="Upload a photo of anything. The Bureau classifies its rarity on the Temporal Rarity Index.">
-<meta name="twitter:image" content="https://superborn-dev.s3.amazonaws.com/assets/images/is-your-diamond-rare.png">
+<meta name="twitter:title" content="This Rarity Detector scans anything and tells you if it survives 2187.">
+<meta name="twitter:description" content="Point your camera at anything: a ring, a watch, your sneakers. The Synthetic Compliance Bureau rates how rare it will be in 2187. Most things don't make it.">
+<meta name="twitter:image" content="https://synthcity.tv/og-detector.jpg">
 <meta name="theme-color" content="#04070a">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -434,7 +437,7 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(46px,13vw,64px);li
     x.font='italic 44px "Cormorant Garamond"';wrap(x,'“'+(r.rarityTransmission||'').replace(/^["“]|["”]$/g,'')+'”',64,1130,W-128,52);
     x.fillStyle='#4f6266';x.font='22px "Space Mono"';x.fillText('RARITYDETECTOR.COM',64,H-56);x.textAlign='right';x.fillText('SCAN YOURS',W-64,H-56);
     c.toBlob(async blob=>{const f=new File([blob],'rarity-detector.png',{type:'image/png'});
-      if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Rarity Detector'});return;}catch(e){}}
+      if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Rarity Detector',text:'The Bureau rated mine. Scan yours and see if it survives 2187: synthcity.tv/detector'});return;}catch(e){}}
       const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='rarity-detector.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);},'image/png');
   });
 
