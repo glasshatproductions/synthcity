@@ -1384,7 +1384,7 @@
         const t = document.createElement('canvas');
         if (params.get('gem') === '0') throw new Error('gem disabled');   // ?gem=0 → 2D fallback
         if (!(t.getContext('webgl2') || t.getContext('webgl'))) throw new Error('no webgl');
-        const m = await import('./gem.js');
+        const m = await import(params.get('look') === 'wave' ? './wave.js' : './gem.js');
         const g = await m.createGem($('gemCanvas'), { reduceMotion });
         if (!document.body.contains(callLayer)) { g.stop(); return; }
         gem = g;
