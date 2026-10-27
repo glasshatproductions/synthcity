@@ -167,7 +167,7 @@ export async function createGem(canvas, { reduceMotion = false } = {}) {
 
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.9, 0.6, 0.0);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.5, 0.3, 0.1);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
 
@@ -279,7 +279,7 @@ export async function createGem(canvas, { reduceMotion = false } = {}) {
       const amp = 0.035 + hist[d] * 0.42;
       const yy = y * (1 - collapse);
       tmp.copy(baseCol[i]).lerp(st.tint, 0.25);
-      const bright = 0.35 + hist[d] * 1.4 + st.pulse * 0.8;
+      const bright = 0.28 + hist[d] * 1.1 + st.pulse * 0.35;
       const cr = tmp.r * bright, cg = tmp.g * bright, cb = tmp.b * bright;
       for (let j = 0; j < SEG; j++) {
         for (let e = 0; e < 2; e++) {
@@ -295,7 +295,7 @@ export async function createGem(canvas, { reduceMotion = false } = {}) {
     }
     ringGeo.attributes.position.needsUpdate = true;
     ringGeo.attributes.color.needsUpdate = true;
-    ringMat.opacity = 0.9 * (1 - collapse * 0.7);
+    ringMat.opacity = 0.8 * (1 - collapse * 0.7);
 
     // meridians follow the same envelope, quietly
     let m = 0;
@@ -324,7 +324,7 @@ export async function createGem(canvas, { reduceMotion = false } = {}) {
     }
     dustGeo.attributes.position.needsUpdate = true;
 
-    bloom.strength = 0.8 + st.pulse * 0.6 + lvl * 0.4;
+    bloom.strength = 0.45 + st.pulse * 0.25 + lvl * 0.3;
 
     if (st.out) {
       const o = st.out; o.t += dt;
