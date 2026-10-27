@@ -3,24 +3,75 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta property="og:title" content="SYNTH CITY // CYCLE 2187">
-  <meta property="og:description" content="Natural diamonds: extinct. Or so we were told.">
-  <meta property="og:image" content="https://superborn-dev.s3.amazonaws.com/assets/images/synth-city-frame.jpg">
+  <!-- Share preview (iMessage, WhatsApp, Slack, LinkedIn, X). The image is a
+       still of the actual 3D receiver; lives in /og so it deploys with the site. -->
+  <meta property="og:title" content="Someone's been trying to reach you.">
+  <meta property="og:description" content="1 missed call from Cycle 2187. Only a natural diamond can carry this signal.">
+  <meta property="og:image" content="https://synthcity.tv/og/missed-call.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="1 missed call — unknown caller, Cycle 2187 — beside a glowing natural diamond">
   <meta property="og:url" content="https://synthcity.tv">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="SYNTH CITY">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="SYNTH CITY // CYCLE 2187">
-  <meta name="twitter:description" content="Natural diamonds: extinct. Or so we were told.">
-  <meta name="twitter:image" content="https://superborn-dev.s3.amazonaws.com/assets/images/synth-city-frame.jpg">
-  <meta name="description" content="By Cycle 2187, natural diamonds no longer existed. Or so we were told.">
+  <meta name="twitter:title" content="Someone's been trying to reach you.">
+  <meta name="twitter:description" content="1 missed call from Cycle 2187. Only a natural diamond can carry this signal.">
+  <meta name="twitter:image" content="https://synthcity.tv/og/missed-call.jpg">
+  <meta name="description" content="1 missed call from Cycle 2187. Only a natural diamond can carry this signal.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SYNTH CITY — A PREMIER GEM ORIGINAL</title>
+
+  <!-- three.js is self-hosted in /vendor (no CDN dependency) -->
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three/three.module.min.js", "three/addons/": "./vendor/three/addons/" } }
+  </script>
+  <link rel="preload" href="fonts/bebas-neue-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="modulepreload" href="vendor/three/three.module.min.js">
+
   <style>
+    /* Self-hosted fonts — the diamond draws the year into a canvas, so the
+       face has to be available locally, not at Google's mercy. */
+    @font-face {
+      font-family: 'Bebas Neue';
+      src: url(fonts/bebas-neue-latin-400-normal.woff2) format('woff2');
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Share Tech Mono';
+      src: url(fonts/share-tech-mono-latin-400-normal.woff2) format('woff2');
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Rajdhani';
+      font-weight: 400;
+      src: url(fonts/rajdhani-latin-400-normal.woff2) format('woff2');
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Rajdhani';
+      font-weight: 600;
+      src: url(fonts/rajdhani-latin-600-normal.woff2) format('woff2');
+      font-display: swap;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+    }
+
+    :root {
+      --pink: #ff2d78;
+      --cyan: #00f5ff;
+      --bone: #e8e4d8;
+      --dim: rgba(232, 228, 216, 0.45);
+      --mono: 'Share Tech Mono', ui-monospace, monospace;
+      --display: 'Bebas Neue', 'Rajdhani', Impact, sans-serif;
+      --sans: 'Rajdhani', system-ui, sans-serif;
     }
 
     html,
@@ -28,10 +79,10 @@
       height: 100%;
       background: #000;
       overflow: hidden;
-      font-family: 'Share Tech Mono', monospace;
+      font-family: var(--mono);
     }
 
-    /* Full-viewport black backdrop, centers the monitor */
+    /* ============ MONITOR + LIVE SITE ============ */
     #shellWrap {
       position: fixed;
       inset: 0;
@@ -41,85 +92,7 @@
       background: #000;
     }
 
-    /* ============ INTRO CINEMATIC ============ */
-    /* Sits above #shellWrap on load. Uses the IDENTICAL aspect-ratio-locked
-   sizing formula as #frameBox below, so the video — which is authored to
-   match neptune-screen.png's exact framing — lines up pixel-for-pixel with
-   the monitor frame it hands off to, at any window size. */
-    #introWrap {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #000;
-    }
-
-    #introWrap.hidden {
-      display: none;
-    }
-
-    #introStage {
-      position: relative;
-      width: min(100vw, 100vh * (1920 / 1331));
-      height: min(100vh, 100vw * (1331 / 1920));
-    }
-
-    #introVideo {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      background: #000;
-    }
-
-    /* "INCOMING" — the tap that both starts playback and satisfies the
-   browser's user-gesture requirement for unmuted audio. */
-    #incomingBtn {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 10;
-      background: rgba(0, 0, 0, 0.55);
-      border: 1px solid #ff2d78;
-      color: #fff;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 15px;
-      letter-spacing: 5px;
-      padding: 16px 38px;
-      cursor: pointer;
-      box-shadow: 0 0 0 0 rgba(255, 45, 120, 0.55);
-      animation: incomingPulse 2s ease-out infinite;
-      transition: background 0.2s, color 0.2s;
-    }
-
-    #incomingBtn:hover {
-      background: rgba(255, 45, 120, 0.15);
-    }
-
-    #incomingBtn.hidden {
-      display: none;
-    }
-
-    @keyframes incomingPulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(255, 45, 120, 0.55);
-      }
-
-      70% {
-        box-shadow: 0 0 0 22px rgba(255, 45, 120, 0);
-      }
-
-      100% {
-        box-shadow: 0 0 0 0 rgba(255, 45, 120, 0);
-      }
-    }
-
-    /* Aspect-ratio-locked box matching neptune-screen.png (1920x1331) exactly,
-   so the transparent glass cutout always lines up regardless of window size. */
+    /* Aspect-ratio-locked box matching neptune-screen.png (1920x1331) exactly */
     #frameBox {
       position: relative;
       width: min(100vw, 100vh * (1920 / 1331));
@@ -132,10 +105,6 @@
       height: 100vh;
     }
 
-    /* The real site, loaded fresh in its own iframe — this is what fixes the
-   vw/vh unit mismatch: inside an iframe, viewport units resolve against
-   the iframe's own box, not the outer window, so the site's existing
-   responsive CSS just works, unmodified. */
     #siteFrame {
       position: absolute;
       left: 19.74%;
@@ -154,8 +123,6 @@
       height: 100%;
     }
 
-    /* Monitor bezel image — decorative only, clicks pass straight through
-   the transparent glass to the iframe beneath. */
     #frameImg {
       position: absolute;
       inset: 0;
@@ -170,7 +137,6 @@
       opacity: 0;
     }
 
-    /* Expand / minimize toggle */
     #toggleBtn {
       position: absolute;
       top: 18px;
@@ -178,8 +144,8 @@
       z-index: 20;
       background: rgba(0, 0, 0, 0.7);
       border: 1px solid rgba(255, 45, 120, 0.5);
-      color: #e8e4d8;
-      font-family: 'Share Tech Mono', monospace;
+      color: var(--bone);
+      font-family: var(--mono);
       font-size: 11px;
       letter-spacing: 2px;
       padding: 9px 16px;
@@ -191,7 +157,7 @@
     }
 
     #toggleBtn:hover {
-      border-color: #ff2d78;
+      border-color: var(--pink);
       color: #fff;
       background: rgba(255, 45, 120, 0.1);
     }
@@ -200,11 +166,964 @@
       font-size: 13px;
     }
 
-    /* Safety net — mobile is handled via JS redirect below, but if JS is
-   somehow blocked, don't leave a broken frame on screen. */
     @media (max-width: 768px) {
       #toggleBtn {
         display: none;
+      }
+    }
+
+    /* =====================================================================
+       THE RECEIVER — a call from 2187, carried by a natural diamond.
+       ===================================================================== */
+    #callLayer {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      color: var(--bone);
+      overflow: hidden;
+      transform-origin: 0 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 42%, rgba(255, 45, 120, 0.09) 0%, rgba(5, 5, 8, 0) 60%),
+        radial-gradient(ellipse at 50% 50%, #0a0710 0%, #050508 55%, #000 100%);
+    }
+
+    #callLayer.fadeout {
+      transition: opacity 0.7s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #gemCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #callLayer .grid {
+      position: absolute;
+      inset: -1px;
+      z-index: 1;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 45, 120, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 45, 120, 0.03) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse at center, #000 30%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 80%);
+    }
+
+    #callLayer .scan {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+      background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.2) 0 1px, transparent 1px 3px);
+      mix-blend-mode: multiply;
+    }
+
+    #callLayer .vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 49;
+      box-shadow: inset 0 0 180px 40px #000;
+    }
+
+    #callLayer .orbits {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 1;
+      width: 160vmax;
+      height: 160vmax;
+      transform: translate(-50%, -50%);
+      opacity: 0.14;
+      pointer-events: none;
+      animation: orbitSpin 140s linear infinite;
+    }
+
+    @keyframes orbitSpin {
+      to {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
+    .stage {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px 16px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s ease, visibility 0s linear 0.6s;
+    }
+
+    .stage.on {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.6s ease, visibility 0s;
+    }
+
+    /* Slots: empty boxes the 3D diamond glides into, stage by stage. */
+    .slot {
+      position: relative;
+      pointer-events: none;
+      flex: none;
+    }
+
+    /* ---------- STAGE A: RINGING ---------- */
+    .topline {
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--pink);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: clamp(4px, 1.5vh, 16px);
+    }
+
+    .topline .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--pink);
+      box-shadow: 0 0 10px var(--pink);
+      animation: blink 1s steps(1) infinite;
+    }
+
+    .topline .sep {
+      color: rgba(255, 45, 120, 0.4);
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    #ringSlot {
+      width: clamp(200px, 38vh, 380px);
+      height: clamp(150px, 29vh, 290px);
+      margin-bottom: clamp(4px, 1.5vh, 16px);
+      display: grid;
+      place-items: center;
+    }
+
+    #ringSlot .pulse {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 62%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      translate: -50% -50%;
+      border: 1px solid var(--pink);
+      opacity: 0;
+      animation: ringPulse 3s ease-out infinite;
+    }
+
+    #ringSlot .pulse.p2 {
+      animation-delay: 0.35s;
+    }
+
+    #ringSlot .pulse.p3 {
+      animation-delay: 0.7s;
+      border-color: var(--cyan);
+    }
+
+    @keyframes ringPulse {
+      0% {
+        scale: 0.8;
+        opacity: 0.6;
+      }
+
+      60% {
+        opacity: 0;
+      }
+
+      100% {
+        scale: 1.9;
+        opacity: 0;
+      }
+    }
+
+    .orb-fallback {
+      display: none;
+      width: 42%;
+      filter: drop-shadow(0 0 14px rgba(255, 45, 120, 0.7));
+    }
+
+    .no-gem .orb-fallback {
+      display: block;
+    }
+
+    #voiceSlot,
+    #odoGemSlot {
+      display: grid;
+      place-items: center;
+    }
+
+    #voiceSlot .orb-fallback {
+      width: 30%;
+    }
+
+    #odoGemSlot .orb-fallback {
+      width: 34%;
+    }
+
+    .caller {
+      font-family: var(--display);
+      font-size: clamp(48px, 8.5vw, 104px);
+      line-height: 0.9;
+      letter-spacing: 0.05em;
+      color: #fff;
+      text-shadow: 0 0 30px rgba(255, 45, 120, 0.35);
+    }
+
+    .via {
+      margin-top: 10px;
+      font-size: 12px;
+      letter-spacing: 4px;
+      color: var(--dim);
+    }
+
+    .meta {
+      display: flex;
+      gap: clamp(16px, 4vw, 48px);
+      margin: clamp(16px, 3vh, 30px) 0 clamp(12px, 2vh, 18px);
+      padding: 14px clamp(14px, 3vw, 28px);
+      border-top: 1px solid rgba(255, 45, 120, 0.25);
+      border-bottom: 1px solid rgba(255, 45, 120, 0.25);
+    }
+
+    .meta div {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .meta dt {
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--dim);
+    }
+
+    .meta dd {
+      font-size: clamp(13px, 1.6vw, 16px);
+      letter-spacing: 2px;
+      color: var(--cyan);
+    }
+
+    .meta dd.pink {
+      color: var(--pink);
+    }
+
+    .collect {
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--bone);
+      opacity: 0.8;
+    }
+
+    .collect b {
+      color: var(--pink);
+      font-weight: normal;
+    }
+
+    .since {
+      margin-top: 8px;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--dim);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .actions {
+      display: flex;
+      gap: clamp(64px, 14vw, 160px);
+      margin-top: clamp(22px, 4vh, 44px);
+    }
+
+    .act {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--dim);
+    }
+
+    .rb {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      border: 1px solid;
+      transition: transform 0.35s cubic-bezier(.2, 1.6, .4, 1), background 0.2s, border-color 0.2s;
+    }
+
+    .rb svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .rb.accept {
+      background: var(--pink);
+      border-color: var(--pink);
+      color: #0a0006;
+      animation: acceptPulse 3s ease-out infinite;
+    }
+
+    .rb.accept svg {
+      animation: buzz 3s ease-in-out infinite;
+    }
+
+    .rb.accept:hover {
+      background: #ff4d8f;
+    }
+
+    .rb.decline {
+      background: rgba(0, 0, 0, 0.3);
+      border-color: rgba(232, 228, 216, 0.3);
+      color: var(--bone);
+    }
+
+    .rb.decline:hover {
+      border-color: var(--bone);
+    }
+
+    .rb:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 4px;
+    }
+
+    @keyframes buzz {
+
+      0%,
+      22%,
+      100% {
+        transform: rotate(0);
+      }
+
+      2%,
+      10% {
+        transform: rotate(-8deg);
+      }
+
+      6%,
+      14% {
+        transform: rotate(8deg);
+      }
+    }
+
+    @keyframes acceptPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(255, 45, 120, 0.6);
+      }
+
+      45% {
+        box-shadow: 0 0 0 26px rgba(255, 45, 120, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 45, 120, 0);
+      }
+    }
+
+    .declineMsg {
+      min-height: 22px;
+      margin-top: 22px;
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: var(--pink);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .declineMsg.show {
+      opacity: 1;
+      animation: glitchIn 0.35s steps(2);
+    }
+
+    @keyframes glitchIn {
+      0% {
+        transform: translateX(-6px);
+        filter: blur(2px);
+        opacity: 0.3;
+      }
+
+      50% {
+        transform: translateX(4px);
+      }
+
+      100% {
+        transform: none;
+        filter: none;
+      }
+    }
+
+    /* ---------- STAGE B: LINK + ODOMETER ---------- */
+    .linkHead {
+      position: absolute;
+      top: clamp(20px, 5vh, 44px);
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: clamp(14px, 4vw, 48px);
+      font-size: 11px;
+      letter-spacing: 3px;
+      flex-wrap: wrap;
+      padding: 0 16px;
+    }
+
+    .linkHead .ch {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cyan);
+    }
+
+    .linkHead .ch::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    .linkHead .ch.acq {
+      color: var(--pink);
+    }
+
+    .linkHead .ch.acq::before {
+      animation: blink 0.7s steps(1) infinite;
+    }
+
+    .linkHead .ch.ok {
+      color: var(--cyan);
+    }
+
+    .linkHead .ch.air {
+      color: var(--pink);
+    }
+
+    #voiceSlot {
+      position: absolute;
+      left: 50%;
+      top: 44%;
+      width: min(64vh, 86vw);
+      height: min(50vh, 66vw);
+      transform: translate(-50%, -50%);
+    }
+
+    #wave {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 84%;
+      width: 100%;
+      height: 140px;
+      transform: translateY(-50%);
+      opacity: 0.55;
+      transition: opacity 0.8s ease;
+    }
+
+    #wave.low {
+      opacity: 0.3;
+    }
+
+    .caption {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: clamp(48px, 10vh, 104px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .caption .who {
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: var(--pink);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .caption.live .who {
+      opacity: 1;
+    }
+
+    #capText {
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: clamp(20px, 2.8vw, 34px);
+      letter-spacing: 0.02em;
+      color: #fff;
+      min-height: 1.3em;
+      max-width: 900px;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.9);
+    }
+
+    .caption {
+      transition: bottom 0.5s ease;
+    }
+
+    .caption.raised {
+      bottom: clamp(128px, 20vh, 190px);
+    }
+
+    /* ---------- YOUR REPLY (year picker) ---------- */
+    .reply {
+      position: absolute;
+      left: 50%;
+      bottom: clamp(28px, 6vh, 56px);
+      transform: translate(-50%, 8px);
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .reply.on {
+      opacity: 1;
+      transform: translate(-50%, 0);
+      pointer-events: auto;
+    }
+
+    .replyLbl {
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: var(--cyan);
+    }
+
+    .replyRow {
+      display: flex;
+      align-items: stretch;
+      gap: 10px;
+    }
+
+    #yearSel {
+      appearance: none;
+      -webkit-appearance: none;
+      background: rgba(0, 0, 0, 0.65) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2300f5ff' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 12px center / 12px 8px;
+      border: 1px solid var(--cyan);
+      border-radius: 0;
+      color: #fff;
+      font-family: var(--display);
+      font-size: 30px;
+      line-height: 1;
+      letter-spacing: 0.08em;
+      padding: 8px 40px 6px 16px;
+      cursor: pointer;
+    }
+
+    #yearSel:focus-visible,
+    #sendBtn:focus-visible {
+      outline: 2px solid var(--pink);
+      outline-offset: 3px;
+    }
+
+    #sendBtn {
+      background: var(--pink);
+      border: none;
+      color: #0a0006;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 3px;
+      padding: 0 20px;
+      white-space: nowrap;
+      cursor: pointer;
+      animation: acceptPulse 2.4s ease-out infinite;
+    }
+
+    #sendBtn:disabled {
+      background: var(--cyan);
+      animation: none;
+      cursor: default;
+    }
+
+    .replyAuto {
+      min-height: 1em;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--dim);
+    }
+
+    /* She snaps on-air: caption switches from whisper to broadcast lower-third */
+    .caption.anchor .who {
+      color: var(--cyan);
+    }
+
+    .caption.anchor #capText {
+      font-family: var(--display);
+      font-weight: normal;
+      font-size: clamp(22px, 2.6vw, 36px);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      max-width: 1200px;
+    }
+
+    #capText .cursor {
+      display: inline-block;
+      width: 0.5em;
+      height: 0.9em;
+      margin-left: 3px;
+      vertical-align: -0.08em;
+      background: var(--pink);
+      animation: blink 0.6s steps(1) infinite;
+    }
+
+    .odo {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      z-index: 3;
+      margin-top: -6vh;
+    }
+
+    .odo.on {
+      opacity: 1;
+    }
+
+    /* Once she starts talking, the readouts step back: stone + year + her words */
+    .odo .odoLabel,
+    .odo .odoDate,
+    .odo .odoDelta,
+    .odo .milestone {
+      transition: opacity 0.8s ease;
+    }
+
+    .odo.quiet .odoLabel,
+    .odo.quiet .odoDate,
+    .odo.quiet .odoDelta,
+    .odo.quiet .milestone {
+      opacity: 0;
+    }
+
+    .odo.quiet .odoYear {
+      opacity: 0.35;
+    }
+
+    .odoLabel {
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--cyan);
+    }
+
+    #odoGemSlot {
+      width: min(36vh, 64vw);
+      height: min(25vh, 46vw);
+    }
+
+    #odoYearSlot {
+      width: min(94vw, 1100px);
+      height: clamp(96px, 19vw, 230px);
+      margin-top: -4vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* DOM year: only used when WebGL isn't available */
+    .odoYear {
+      font-family: var(--display);
+      font-size: clamp(96px, 19vw, 230px);
+      line-height: 0.86;
+      color: var(--bone);
+      text-shadow: 0 0 40px rgba(255, 45, 120, 0.25);
+      display: flex;
+      visibility: hidden;
+    }
+
+    .no-gem .odoYear {
+      visibility: visible;
+    }
+
+    .odoYear span {
+      display: inline-block;
+      width: 0.47em;
+      text-align: center;
+    }
+
+    .odo.spinning .odoYear {
+      color: var(--pink);
+    }
+
+    .odo.landed .odoYear {
+      color: #fff;
+    }
+
+    .odoDate {
+      font-size: clamp(13px, 1.6vw, 17px);
+      letter-spacing: 5px;
+      color: var(--bone);
+      font-variant-numeric: tabular-nums;
+      margin-top: 4px;
+    }
+
+    .odoDelta {
+      margin-top: 12px;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--dim);
+    }
+
+    .odo.landed .odoDelta {
+      color: var(--pink);
+    }
+
+    .milestone {
+      margin-top: 18px;
+      min-height: 2.6em;
+      max-width: 760px;
+      font-size: clamp(11px, 1.3vw, 13px);
+      letter-spacing: 3px;
+      color: var(--bone);
+      line-height: 1.6;
+    }
+
+    .milestone .yr {
+      color: var(--pink);
+      margin-right: 10px;
+    }
+
+    .milestone.flash {
+      animation: glitchIn 0.3s steps(2);
+    }
+
+    .milestone.final {
+      font-family: var(--display);
+      font-size: clamp(22px, 3vw, 36px);
+      letter-spacing: 0.04em;
+      color: #fff;
+      line-height: 1.05;
+    }
+
+    .milestone.final .yr {
+      display: block;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 4px;
+      margin: 0 0 8px;
+    }
+
+    #frags {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .frag {
+      position: absolute;
+      font-size: 11px;
+      letter-spacing: 3px;
+      white-space: nowrap;
+      color: var(--cyan);
+      opacity: 0;
+      animation: fragLife var(--life, 900ms) steps(6) forwards;
+    }
+
+    .frag.pink {
+      color: var(--pink);
+    }
+
+    .frag.box {
+      border: 1px solid currentColor;
+      padding: 4px 8px;
+    }
+
+    @keyframes fragLife {
+      0% {
+        opacity: 0;
+      }
+
+      15% {
+        opacity: 0.9;
+      }
+
+      30% {
+        opacity: 0.3;
+      }
+
+      45%,
+      80% {
+        opacity: 0.85;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    #flash {
+      position: absolute;
+      inset: 0;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 40;
+    }
+
+    #flash.go {
+      animation: flashGo 0.55s ease-out;
+    }
+
+    @keyframes flashGo {
+      0% {
+        opacity: 0.6;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    #callLayer.shake {
+      animation: shake 0.4s;
+    }
+
+    @keyframes shake {
+
+      20%,
+      60% {
+        translate: -3px 1px;
+      }
+
+      40%,
+      80% {
+        translate: 3px -1px;
+      }
+    }
+
+    #skipBtn {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      z-index: 60;
+      background: transparent;
+      border: 1px solid rgba(232, 228, 216, 0.2);
+      color: var(--dim);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 3px;
+      padding: 8px 14px;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s, color 0.2s, border-color 0.2s;
+    }
+
+    /* Shown only if the phone interrupts audio mid-call */
+    #soundBtn {
+      position: absolute;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      z-index: 61;
+      background: rgba(255, 45, 120, 0.15);
+      border: 1px solid var(--pink);
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      padding: 10px 18px;
+      cursor: pointer;
+      display: none;
+      animation: blink 1.2s steps(1) infinite;
+    }
+
+    #soundBtn.on {
+      display: block;
+    }
+
+    #skipBtn.on {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #skipBtn:hover {
+      color: var(--bone);
+      border-color: var(--pink);
+    }
+
+    @media (max-width: 560px) {
+      .topline {
+        font-size: 9px;
+        letter-spacing: 2px;
+      }
+
+      .topline .hide-sm {
+        display: none;
+      }
+
+      .meta {
+        gap: 14px;
+      }
+
+      .meta dd {
+        font-size: 12px;
+        letter-spacing: 1px;
+      }
+
+      .collect,
+      .since,
+      .via {
+        font-size: 9px;
+        letter-spacing: 2px;
+      }
+
+      .actions {
+        margin-top: 20px;
+      }
+
+      .declineMsg {
+        margin-top: 14px;
+        letter-spacing: 2px;
+      }
+    }
+
+    @media (max-height: 700px) {
+      #ringSlot {
+        height: 22vh;
+      }
+
+      .meta {
+        margin: 12px 0 10px;
+        padding: 10px 16px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      #callLayer .orbits,
+      .rb.accept svg {
+        animation: none;
       }
     }
   </style>
@@ -212,17 +1131,132 @@
 
 <body>
 
-  <div id="introWrap">
-    <div id="introStage">
-      <video id="introVideo" src="https://superborn-dev.s3.amazonaws.com/assets/videos/intro-synthcity.mp4" muted
-        playsinline preload="auto"></video>
-      <button id="incomingBtn">INCOMING</button>
-    </div>
+  <!-- ============ THE RECEIVER ============ -->
+  <div id="callLayer" role="dialog" aria-label="Incoming transmission from 2187">
+    <canvas id="gemCanvas" aria-hidden="true"></canvas>
+    <svg class="orbits" viewBox="-100 -100 200 200" aria-hidden="true">
+      <g fill="none" stroke="#00f5ff" stroke-width="0.08">
+        <ellipse rx="34" ry="12" />
+        <ellipse rx="52" ry="19" transform="rotate(-12)" />
+        <ellipse rx="74" ry="27" transform="rotate(8)" stroke-dasharray="0.6 1.2" />
+        <ellipse rx="96" ry="36" transform="rotate(-4)" />
+      </g>
+    </svg>
+    <div class="grid"></div>
+
+    <!-- STAGE A — RINGING -->
+    <section id="stageRing" class="stage on">
+      <div class="topline"><span class="dot"></span>INCOMING TRANSMISSION <span class="sep hide-sm">//</span> <span
+          class="hide-sm">CLASSIFIER INTERCEPT 8</span></div>
+
+      <div id="ringSlot" class="slot" aria-hidden="true">
+        <span class="pulse p1"></span><span class="pulse p2"></span><span class="pulse p3"></span>
+        <svg class="orb-fallback" viewBox="0 0 64 56" fill="none" stroke="#ff2d78" stroke-width="2.2"
+          stroke-linejoin="round">
+          <path d="M14 3h36l12 15L32 53 2 18z" />
+          <path d="M2 18h60M14 3l8 15 10 35M50 3l-8 15-10 35M22 18l10-15 10 15" />
+        </svg>
+      </div>
+
+      <div class="caller">UNKNOWN CALLER</div>
+      <div class="via">ONLY EARTH-FORMED CRYSTAL CAN CARRY THIS SIGNAL</div>
+
+      <dl class="meta">
+        <div>
+          <dt>ORIGIN</dt>
+          <dd>CYCLE 2187</dd>
+        </div>
+        <div>
+          <dt>DISTANCE</dt>
+          <dd id="distYears">— YEARS</dd>
+        </div>
+        <div>
+          <dt>RECEIVER</dt>
+          <dd class="pink">NATURAL ◆</dd>
+        </div>
+      </dl>
+
+      <div class="collect">COLLECT CALL · <b>CHARGES REVERSED TO <span id="nowYear">2026</span></b></div>
+      <div class="since">RINGING SINCE 06.03.2019 · <span id="ringFor">—</span></div>
+
+      <div class="actions">
+        <div class="act">
+          <button id="declineBtn" class="rb decline" aria-label="Decline call">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+          <span id="declineLbl">DECLINE</span>
+        </div>
+        <div class="act">
+          <button id="acceptBtn" class="rb accept" aria-label="Accept call">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 013 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z" />
+            </svg>
+          </button>
+          <span>ACCEPT</span>
+        </div>
+      </div>
+      <div id="declineMsg" class="declineMsg" aria-live="polite"></div>
+    </section>
+
+    <!-- STAGE B — VOICE + TEMPORAL ODOMETER -->
+    <section id="stageLink" class="stage" aria-live="polite">
+      <div class="linkHead">
+        <span class="ch" id="audStatus">AUDIO CHANNEL: OPEN</span>
+        <span class="ch acq" id="vidStatus">VIDEO SIGNAL: ACQUIRING</span>
+      </div>
+
+      <div id="voiceSlot" class="slot"><svg class="orb-fallback" viewBox="0 0 64 56" fill="none" stroke="#ff2d78" stroke-width="2.2"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 3h36l12 15L32 53 2 18z" />
+          <path d="M2 18h60M14 3l8 15 10 35M50 3l-8 15-10 35M22 18l10-15 10 15" />
+        </svg></div>
+      <canvas id="wave"></canvas>
+      <div id="frags"></div>
+
+      <div id="odo" class="odo">
+        <div class="odoLabel" id="odoLabel">SIGNAL ORIGIN DETECTED · YOUR LOCAL TIME</div>
+        <div id="odoGemSlot" class="slot"><svg class="orb-fallback" viewBox="0 0 64 56" fill="none" stroke="#ff2d78" stroke-width="2.2"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 3h36l12 15L32 53 2 18z" />
+          <path d="M2 18h60M14 3l8 15 10 35M50 3l-8 15-10 35M22 18l10-15 10 15" />
+        </svg></div>
+        <div id="odoYearSlot" class="slot">
+          <div class="odoYear" id="odoYear"><span>2</span><span>0</span><span>2</span><span>6</span></div>
+        </div>
+        <div class="odoDate" id="odoDate">—</div>
+        <div class="odoDelta" id="odoDelta">Δ +0 YEARS</div>
+        <div class="milestone" id="milestone"></div>
+      </div>
+
+      <div class="reply" id="reply">
+        <span class="replyLbl">YOUR REPLY</span>
+        <div class="replyRow">
+          <select id="yearSel" aria-label="What year is it there?"></select>
+          <button id="sendBtn">TRANSMIT ▸</button>
+        </div>
+        <span class="replyAuto" id="replyAuto"></span>
+      </div>
+
+      <div class="caption" id="caption">
+        <span class="who" id="capWho">UNAUTHORIZED CHANNEL · NEPTUNE RELAY</span>
+        <div id="capText"></div>
+      </div>
+    </section>
+
+    <div id="flash"></div>
+    <div class="vignette"></div>
+    <div class="scan"></div>
+    <button id="skipBtn">SKIP INTRO ›</button>
+    <button id="soundBtn" aria-label="Restore sound">TAP FOR SOUND</button>
   </div>
 
+  <!-- ============ MONITOR + LIVE SITE ============ -->
   <div id="shellWrap" style="opacity:0; pointer-events:none;">
     <div id="frameBox">
-      <iframe id="siteFrame" src="broadcast.html" title="Synth City Broadcast"></iframe>
+      <iframe id="siteFrame" src="broadcast.html?via=call" title="Synth City Broadcast"></iframe>
       <img id="frameImg" src="https://superborn-dev.s3.amazonaws.com/assets/images/neptune-screen.png" alt="">
       <button id="toggleBtn" onclick="toggleExpand()">
         <span id="toggleIcon">⤢</span><span id="toggleLabel">EXPAND</span>
@@ -231,50 +1265,822 @@
   </div>
 
   <script>
-    // ---------- INTRO CINEMATIC ----------
-    const introWrap = document.getElementById('introWrap');
-    const introVideo = document.getElementById('introVideo');
-    const incomingBtn = document.getElementById('incomingBtn');
-    const shellWrap = document.getElementById('shellWrap');
-    const siteFrame = document.getElementById('siteFrame');
+    /* =====================================================================
+       CONFIG — the knobs you'll actually want to touch
+       ===================================================================== */
+    const CONFIG = {
+      targetYear: 2187,
+      landedTimecode: 'DAY 145 · 07:19:42',  // matches BROADCAST TIMECODE 2187:145:07:19:42
+      probeLaunch: new Date(2019, 5, 3),        // 06.03.2019 — DSN-2019-NEP
 
-    incomingBtn.addEventListener('click', () => {
-      incomingBtn.classList.add('hidden');
-      introVideo.muted = false;   // the click is the user gesture that permits this
-      introVideo.play().catch(() => {
-        // Autoplay-with-sound was blocked for some reason — fall back to
-        // muted playback rather than leaving the video stuck.
-        introVideo.muted = true;
-        introVideo.play();
+      // Anchor VO. Each line is captioned in chunks: [text, seconds-into-file, options].
+      // Timings come from word-level alignment of the recordings, so captions
+      // land on the words. Options: clear: true starts a fresh caption line;
+      // cue: fires a visual beat (see CUES below) as that chunk is spoken.
+      // `clarity` 0–1 = how clean the signal sounds (0 = muffled relay, 1 = studio).
+      // If a file is missing, the caption still plays on its own.
+      lines: {
+        hello: {
+          audio: 'audio/vo-hello.mp3', clarity: 0.15, chunks: [
+            ['…Hello?', 0.12], [' Is someone there?', 1.22], [' …Can you hear me?', 2.52]]
+        },
+        who: {
+          audio: 'audio/vo-who.mp3', clarity: 0.25, chunks: [
+            ['Okay.', 0.24], [' I know this is going to sound crazy.', 1.02],
+            ['I\'m a reporter…', 3.09, { clear: true }], [' and I\'m calling you from a long way away.', 3.87],
+            ['…From the future.', 6.70, { clear: true, cue: 'future' }]]
+        },
+        synthetic: {
+          audio: 'audio/vo-synthetic.mp3', clarity: 0.35, chunks: [
+            ['Where I am, everything is synthetic.', 0.26, { cue: 'synthetic' }], [' Everything.', 2.50],
+            ['But we found a signal…', 3.40, { clear: true }], [' carried by something real.', 4.58],
+            ['A natural diamond.', 6.14, { clear: true, cue: 'diamond' }],
+            ['It\'s the only thing that can carry a call this far.', 7.69, { clear: true }]]
+        },
+        year: { audio: 'audio/vo-year.mp3', clarity: 0.45, chunks: [['What year is it there?', 0.24]] },
+        oh: { audio: 'audio/vo-oh.mp3', clarity: 0.55, chunks: [['It\'s not even 2030 yet?', 0.0], [' …Oh.', 3.16]] },
+        // Alternate take: 'audio/vo-still-triple.mp3' (she repeats it three times, fading to a whisper)
+        still: { audio: 'audio/vo-still.mp3', clarity: 0.7, chunks: [['…you still have them.', 0.68]] },
+        listen: {
+          audio: 'audio/vo-listen.mp3', clarity: 0.8, chunks: [
+            ['Listen.', 0.0], [' I don\'t have long.', 0.83],
+            ['I\'m patching you into our broadcast.', 2.04, { clear: true, cue: 'patch' }],
+            ['They\'ll tell you synthetic is better…', 4.15, { clear: true }],
+            [' then watch what it costs to own something real.', 6.05, { cue: 'real' }]]
+        },
+        signon: {
+          audio: 'audio/vo-signon.mp3', clarity: 1, chunks: [
+            ['Good evening!', 0], [' This is Synth City News, live from 2187.', 0.94], [' Our top story tonight…', 4.84]]
+        },
+      },
+      // Seconds into vo-signon.mp3 when the broadcast takes over — she's cut
+      // off on "Our top story tonight…" and the headline finishes the sentence.
+      signonHandoffAt: 4.75,
+
+      // Seconds the year picker waits before sending their real year itself.
+      replyTimeout: 12,
+
+      // On-screen decline messages + the VO that plays with each (needs a tap first).
+      declineLines: [
+        { text: 'THIS CALL HAS BEEN RINGING SINCE 2019.', audio: null },
+        { text: 'PLEASE DON\'T HANG UP. I CAN\'T CALL TWICE.', audio: 'audio/vo-please.mp3' },
+        { text: 'WE\'VE WAITED 161 YEARS. WE CAN WAIT A MINUTE.', audio: 'audio/vo-waited.mp3' },
+      ],
+
+      // Time-lapse beats flashed as the year spins past them.
+      milestones: [
+        [2031, 'LAB-GROWN OUTSELLS EARTH-MINED FOR THE FIRST TIME'],
+        [2058, 'ENGAGEMENT RINGS NOW FREE WITH PHONE UPGRADE'],
+        [2096, '"RARE" REMOVED FROM THE SCHOOL CURRICULUM'],
+        [2121, 'SYNTHETIC SURPLUS USED TO FILL POTHOLES'],
+        [2147, 'LAST NATURAL DIAMOND MINED'],
+        [2170, 'BUREAU: "THERE IS NOTHING IN THE DESERT."'],
+      ],
+      // Headline flashed when the odometer lands. Left empty on purpose: the
+      // broadcast's top story is the payoff, so the intro doesn't pre-empt it.
+      finalHeadline: '',
+
+      fragments: [
+        ['TEMPORAL ANOMALY DETECTED', 'pink box'], ['SIGNAL LOOP ESTABLISHED', ''],
+        ['RECEIVER: EARTH-FORMED · 2.8B YRS', 'box'], ['CRYSTAL LATTICE: STABLE', ''],
+        ['CARRIER: PURE CARBON', ''], ['ENCRYPTION: OMEGA-7', ''],
+        ['MARKET FEED +312% Y/Y', 'pink'], ['BROADCAST ID: SC-2187-A', ''],
+        ['SYNTHETIC IS SAFE.', 'pink'], ['SYNTHETIC IS APPROVED.', 'pink'],
+        ['LAT -18.179° LON 184.732°', ''], ['SIGNAL INTEGRITY 98.7%', ''],
+        ['CLASSIFIED FEED', 'pink box'], ['LAB-GROWN CRYSTAL: NO SIGNAL', ''],
+      ],
+    };
+
+    /* =====================================================================
+       ELEMENTS + STATE
+       ===================================================================== */
+    const $ = (id) => document.getElementById(id);
+    const callLayer = $('callLayer');
+    const shellWrap = $('shellWrap');
+    const siteFrame = $('siteFrame');
+    const frameBox = $('frameBox');
+
+    const params = new URLSearchParams(location.search);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const now = new Date();
+    const NOW_YEAR = now.getFullYear();
+    const YEARS_AHEAD = CONFIG.targetYear - NOW_YEAR;
+
+    let connected = false, handedOff = false, aborted = false, siteShown = false;
+
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    async function beat(ms) { await sleep(ms); if (aborted) throw new Error('skip'); }
+    const pad = (n, w = 2) => String(n).padStart(w, '0');
+
+    /* =====================================================================
+       THE DIAMOND — loaded as a module; the page works without it (SVG
+       fallback) if WebGL isn't available.
+       ===================================================================== */
+    let gem = null, gemSlotEl = $('ringSlot');
+    const G = (fn) => { if (gem) { try { fn(gem); } catch (e) { } } };
+    function gemSlot(el) { gemSlotEl = el; G((g) => g.setSlot(el)); }
+    const gemReady = (async () => {
+      try {
+        const t = document.createElement('canvas');
+        if (params.get('gem') === '0') throw new Error('gem disabled');   // ?gem=0 → 2D fallback
+        if (!(t.getContext('webgl2') || t.getContext('webgl'))) throw new Error('no webgl');
+        const m = await import('./gem.js');
+        const g = await m.createGem($('gemCanvas'), { reduceMotion });
+        if (!document.body.contains(callLayer)) { g.stop(); return; }
+        gem = g;
+        gem.setSlot(gemSlotEl, { snap: true });
+        gem.setLevel(() => voiceLevel() * 0.6);
+        callLayer.classList.add('has-gem');
+      } catch (e) {
+        callLayer.classList.add('no-gem');
+        const c = $('gemCanvas'); if (c) c.remove();
+      }
+    })();
+
+    /* =====================================================================
+       STAGE A — RINGING SCREEN DATA
+       ===================================================================== */
+    $('nowYear').textContent = NOW_YEAR;
+    $('distYears').textContent = YEARS_AHEAD + ' YEARS';
+    CONFIG.declineLines.forEach((l) => { l.text = l.text.replace('161', YEARS_AHEAD); });
+
+    function ringingFor() {
+      const t = new Date(), s = CONFIG.probeLaunch;
+      let y = t.getFullYear() - s.getFullYear();
+      let m = t.getMonth() - s.getMonth();
+      let d = t.getDate() - s.getDate();
+      if (d < 0) { m--; d += new Date(t.getFullYear(), t.getMonth(), 0).getDate(); }
+      if (m < 0) { y--; m += 12; }
+      return `${y}Y ${m}M ${d}D ${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())}`;
+    }
+    const ringTimer = setInterval(() => { $('ringFor').textContent = ringingFor(); }, 1000);
+    $('ringFor').textContent = ringingFor();
+
+    /* =====================================================================
+       SOUND DESIGN — synthesized. Audible after the visitor's first tap.
+       ===================================================================== */
+    const A = { ctx: null, out: null, noise: null, bed: null };
+    function audioInit() {
+      try {
+        if (!A.ctx) {
+          const C = window.AudioContext || window.webkitAudioContext;
+          A.ctx = new C();
+          A.out = A.ctx.createGain(); A.out.gain.value = 0.6;
+          const comp = A.ctx.createDynamicsCompressor();
+          A.out.connect(comp); comp.connect(A.ctx.destination);
+          const len = A.ctx.sampleRate * 2;
+          A.noise = A.ctx.createBuffer(1, len, A.ctx.sampleRate);
+          const ch = A.noise.getChannelData(0);
+          for (let i = 0; i < len; i++) ch[i] = Math.random() * 2 - 1;
+        }
+        // iPhone: play through the ring/silent switch, like a video would.
+        try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { }
+        if (A.ctx.state !== 'running') A.ctx.resume();
+        voDecodeAll();
+      } catch (e) { /* no audio — the visuals still carry it */ }
+    }
+
+    // Struck-crystal tone: inharmonic partials with long, staggered decays.
+    function crystal(freq = 1568, vol = 0.18, dur = 2.4, delay = 0) {
+      if (!A.ctx) return;
+      const t = A.ctx.currentTime + delay;
+      [[1, 1], [2.0, 0.42], [2.76, 0.32], [4.07, 0.16], [5.4, 0.08]].forEach(([r, a], i) => {
+        if (freq * r > 18000) return;
+        const o = A.ctx.createOscillator(), g = A.ctx.createGain();
+        o.type = 'sine'; o.frequency.value = freq * r;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(vol * a, t + 0.004);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur / (1 + i * 0.6));
+        o.connect(g); g.connect(A.out); o.start(t); o.stop(t + dur + 0.1);
       });
+    }
+
+    function noiseHit({ type = 'bandpass', freq = 1800, q = 0.8, vol = 0.15, dur = 0.4, delay = 0, crackle = false } = {}) {
+      if (!A.ctx) return;
+      const t = A.ctx.currentTime + delay;
+      const s = A.ctx.createBufferSource(); s.buffer = A.noise;
+      const f = A.ctx.createBiquadFilter(); f.type = type; f.frequency.value = freq; f.Q.value = q;
+      const g = A.ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
+      if (crackle) for (let k = 0.03; k < dur; k += 0.03) g.gain.setValueAtTime(vol * Math.random(), t + k);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      s.connect(f); f.connect(g); g.connect(A.out);
+      s.start(t, Math.random()); s.stop(t + dur + 0.05);
+    }
+
+    function boom(vol = 0.5, delay = 0) {
+      if (!A.ctx) return;
+      const t = A.ctx.currentTime + delay;
+      const o = A.ctx.createOscillator(), g = A.ctx.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(110, t);
+      o.frequency.exponentialRampToValueAtTime(32, t + 1.2);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 1.6);
+      o.connect(g); g.connect(A.out); o.start(t); o.stop(t + 1.7);
+      noiseHit({ type: 'lowpass', freq: 140, q: 0.5, vol: vol * 0.6, dur: 1.4, delay });
+    }
+
+    let lastTick = 0;
+    function tick(pitch = 1) {
+      if (!A.ctx) return;
+      const n = performance.now();
+      if (n - lastTick < 30) return;
+      lastTick = n;
+      const t = A.ctx.currentTime;
+      const o = A.ctx.createOscillator(), g = A.ctx.createGain();
+      o.type = 'triangle'; o.frequency.value = 900 * pitch;
+      g.gain.setValueAtTime(0.06, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.035);
+      o.connect(g); g.connect(A.out); o.start(t); o.stop(t + 0.05);
+    }
+
+    // Radio bed under the audio-only portion of the call.
+    function bedStart() {
+      if (!A.ctx || A.bed) return;
+      const s = A.ctx.createBufferSource(); s.buffer = A.noise; s.loop = true;
+      const f = A.ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1300; f.Q.value = 0.6;
+      const lfo = A.ctx.createOscillator(), lg = A.ctx.createGain();
+      lfo.frequency.value = 0.23; lg.gain.value = 500; lfo.connect(lg); lg.connect(f.frequency);
+      const hum = A.ctx.createOscillator(); hum.frequency.value = 55; hum.type = 'sine';
+      const hg = A.ctx.createGain(); hg.gain.value = 0.035;
+      const g = A.ctx.createGain(); g.gain.setValueAtTime(0.0001, A.ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.03, A.ctx.currentTime + 0.8);
+      s.connect(f); f.connect(g); hum.connect(hg); hg.connect(g); g.connect(A.out);
+      s.start(); lfo.start(); hum.start();
+      A.bed = { g, stop: () => { try { s.stop(); lfo.stop(); hum.stop(); } catch (e) { } } };
+    }
+    function bedStop(fade = 0.8) {
+      if (!A.bed) return;
+      const b = A.bed; A.bed = null;
+      b.g.gain.cancelScheduledValues(A.ctx.currentTime);
+      b.g.gain.setValueAtTime(b.g.gain.value, A.ctx.currentTime);
+      b.g.gain.exponentialRampToValueAtTime(0.0001, A.ctx.currentTime + fade);
+      setTimeout(b.stop, fade * 1000 + 100);
+    }
+
+    // The ring: the stone flares + a double crystal strike every 3s.
+    let ringAudible = false;
+    function ringOnce() {
+      if (connected) return;
+      G((g) => g.ring());
+      if (!ringAudible) return;
+      crystal(1568, 0.14, 2.2); crystal(1568, 0.11, 2.0, 0.35);
+      noiseHit({ type: 'lowpass', freq: 70, vol: 0.12, dur: 1.2 });
+    }
+    const ringLoop = setInterval(ringOnce, 3000);
+    setTimeout(ringOnce, 300);
+
+    // Door + footsteps: someone walks in on her.
+    function doorCue() {
+      if (!A.ctx) return;
+      noiseHit({ type: 'lowpass', freq: 260, q: 1.2, vol: 0.35, dur: 0.35 });
+      noiseHit({ type: 'bandpass', freq: 3200, q: 4, vol: 0.12, dur: 0.06, delay: 0.02 });
+      [0.45, 0.85].forEach((d) => noiseHit({ type: 'lowpass', freq: 180, q: 1, vol: 0.18, dur: 0.18, delay: d }));
+    }
+
+    /* =====================================================================
+       VOICE-OVER — decoded into memory and played through the same Web Audio
+       engine the Accept tap unlocks. (Separate <audio> players need their own
+       permission on phones, and iOS revokes it mid-sequence — so we don't use
+       them.) Routed through a "relay" filter that clears up line by line, and
+       an analyser that lights the diamond.
+       ===================================================================== */
+    const VO = {};      // src -> { raw: Promise<ArrayBuffer>, buf: AudioBuffer|null, ok }
+    let voAnalyser = null, voFilterHP = null, voFilterLP = null, currentVO = null, voGen = 0;
+    const voBuf = new Uint8Array(1024);
+
+    // Fetch the bytes early (small files); decode once the audio engine exists.
+    function voLoad(src) {
+      if (!src) return null;
+      if (!VO[src]) {
+        const rec = { ok: true, buf: null, decoding: null };
+        rec.raw = fetch(src).then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+          .catch(() => { rec.ok = false; return null; });
+        VO[src] = rec;
+      }
+      return VO[src];
+    }
+    Object.values(CONFIG.lines).forEach((l) => voLoad(l.audio));
+    CONFIG.declineLines.forEach((l) => voLoad(l.audio));
+
+    function voDecode(rec) {
+      if (rec.buf || !rec.ok || !A.ctx) return Promise.resolve(rec.buf);
+      if (!rec.decoding) {
+        rec.decoding = rec.raw.then((ab) => {
+          if (!ab) return null;
+          // callback form too, for older Safari
+          return new Promise((res, rej) => {
+            const p = A.ctx.decodeAudioData(ab.slice(0), res, rej);
+            if (p && p.then) p.then(res, rej);
+          });
+        }).then((b) => { rec.buf = b; return b; }).catch(() => { rec.ok = false; return null; });
+      }
+      return rec.decoding;
+    }
+    function voDecodeAll() { Object.values(VO).forEach(voDecode); }
+
+    function voChain() {
+      if (!A.ctx || voAnalyser) return;
+      voFilterHP = A.ctx.createBiquadFilter(); voFilterHP.type = 'highpass';
+      voFilterLP = A.ctx.createBiquadFilter(); voFilterLP.type = 'lowpass';
+      const g = A.ctx.createGain(); g.gain.value = 1.6;
+      voAnalyser = A.ctx.createAnalyser(); voAnalyser.fftSize = 1024;
+      voFilterHP.connect(voFilterLP); voFilterLP.connect(g); g.connect(voAnalyser); voAnalyser.connect(A.out);
+    }
+    function setClarity(c) {
+      if (!voFilterHP) return;
+      const t = A.ctx.currentTime;
+      voFilterHP.frequency.setTargetAtTime(600 - 520 * c, t, 0.05);
+      voFilterLP.frequency.setTargetAtTime(2200 + 15800 * c * c, t, 0.05);
+    }
+
+    // Plays a line. Resolves to a handle with the same bits of the <audio> API
+    // the rest of the page uses (currentTime, paused, ended, pause, done),
+    // or null if the line can't play — captions then run on their own.
+    async function voPlay(src, clarity = 1) {
+      const rec = voLoad(src);
+      if (!rec || !A.ctx) return null;
+      const gen = voGen;
+      const buf = await Promise.race([voDecode(rec), sleep(4000).then(() => null)]);
+      if (!buf || aborted || gen !== voGen) return null;   // stopped while loading
+      voChain();
+      setClarity(clarity);
+      const node = A.ctx.createBufferSource();
+      node.buffer = buf;
+      node.connect(voFilterHP);
+      const t0 = A.ctx.currentTime + 0.02;
+      const h = {
+        ended: false, stopped: false,
+        get currentTime() { return Math.max(0, Math.min(buf.duration, A.ctx.currentTime - t0)); },
+        get paused() { return h.ended || h.stopped; },
+        pause() { if (!h.stopped && !h.ended) { h.stopped = true; try { node.stop(); } catch (e) { } } },
+      };
+      h.done = new Promise((resolve) => { node.onended = () => { h.ended = true; resolve(); }; });
+      h.el = h;   // compatibility with callers that used vo.el
+      node.start(t0);
+      currentVO = h;
+      return h;
+    }
+    function voStop() { voGen++; if (currentVO) { try { currentVO.pause(); } catch (e) { } currentVO = null; } }
+
+    // 0–1 loudness of her voice right now — drives the waveform and the stone.
+    function voiceLevel() {
+      if (!voAnalyser || !currentVO || currentVO.paused) return 0;
+      voAnalyser.getByteTimeDomainData(voBuf);
+      let s = 0; for (let i = 0; i < voBuf.length; i++) { const v = (voBuf[i] - 128) / 128; s += v * v; }
+      return Math.min(1, Math.sqrt(s / voBuf.length) * 7);
+    }
+
+    /* =====================================================================
+       DECLINE — the button you can't really use
+       ===================================================================== */
+    const declineBtn = $('declineBtn'), declineMsg = $('declineMsg');
+    let declineStep = 0, dodges = 0, declineVO = null;
+
+    function sayDecline(i) {
+      const line = CONFIG.declineLines[i];
+      declineMsg.classList.remove('show'); void declineMsg.offsetWidth;
+      declineMsg.textContent = line.text;
+      declineMsg.classList.add('show');
+      if (line.audio && A.ctx) { voStop(); declineVO = voPlay(line.audio, 0.3); }
+      else declineVO = null;
+    }
+    function dodge() {
+      const x = (Math.random() < 0.5 ? -1 : 1) * (50 + Math.random() * 50);
+      const y = (Math.random() - 0.5) * 50;
+      declineBtn.style.transform = `translate(${x}px, ${y}px)`;
+      setTimeout(() => { declineBtn.style.transform = ''; }, 900);
+    }
+
+    declineBtn.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'mouse' || connected || dodges >= 2 || declineStep >= 2) return;
+      dodges++;
+      dodge();
+      sayDecline(declineStep); declineStep++;
     });
 
-    introVideo.addEventListener('ended', () => {
-      introWrap.classList.add('hidden');
+    declineBtn.addEventListener('click', () => {
+      if (connected) return;
+      audioInit(); ringAudible = true;
+      if (declineStep < 2) {
+        sayDecline(declineStep); declineStep++;
+        dodge();
+        crystal(1568, 0.12, 1.6);
+        G((g) => g.ring());
+        return;
+      }
+      sayDecline(2);
+      $('declineLbl').textContent = '…';
+      declineBtn.disabled = true;
+      const go = () => setTimeout(connect, 500);
+      Promise.resolve(declineVO).then((h) => (h ? h.done : sleep(1200))).then(go);
+    });
+
+    $('acceptBtn').addEventListener('click', connect);
+
+    /* =====================================================================
+       WAVEFORM + CAPTIONS
+       ===================================================================== */
+    const wave = $('wave'), wctx = wave.getContext('2d');
+    let speaking = 0, waveEnergy = 0.08, waveRun = false;
+    function sizeWave() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      wave.width = wave.clientWidth * dpr; wave.height = wave.clientHeight * dpr;
+      wctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener('resize', sizeWave);
+    function drawWave(t) {
+      if (!waveRun) return;
+      const w = wave.clientWidth, h = wave.clientHeight, mid = h / 2;
+      let target = speaking ? 0.55 + Math.random() * 0.45 : 0.06;
+      const lvl = voiceLevel();
+      if (lvl > 0) target = 0.05 + lvl;
+      waveEnergy += (target - waveEnergy) * 0.12;
+      wctx.clearRect(0, 0, w, h);
+      [['rgba(0,245,255,0.18)', 1.6, 0.7], ['rgba(255,45,120,0.9)', 1.4, 1]].forEach(([c, lw, k], layer) => {
+        wctx.beginPath(); wctx.strokeStyle = c; wctx.lineWidth = lw;
+        for (let x = 0; x <= w; x += 3) {
+          const env = Math.sin((x / w) * Math.PI);
+          const y = mid
+            + Math.sin(x * 0.045 + t * 0.012 + layer) * 18 * waveEnergy * env * k
+            + Math.sin(x * 0.13 - t * 0.02) * 26 * waveEnergy * env * k * (0.5 + Math.random() * 0.5)
+            + (Math.random() - 0.5) * 4 * env;
+          x === 0 ? wctx.moveTo(x, y) : wctx.lineTo(x, y);
+        }
+        wctx.stroke();
+      });
+      requestAnimationFrame(drawWave);
+    }
+
+    const capText = $('capText'), caption = $('caption');
+    async function say(key, { wait = true } = {}) {
+      const line = CONFIG.lines[key];
+      const chunks = line.chunks.map(([s, at, o]) => [s.replace('{YEAR}', NOW_YEAR), at, o || {}]);
+      caption.classList.add('live');
+      noiseHit({ freq: 2400, vol: 0.05, dur: 0.12 });
+      const vo = await voPlay(line.audio, line.clarity);
+      speaking = vo && voAnalyser ? 0 : 1;
+      const t0 = performance.now();
+      const clock = () => (vo && (!vo.el.paused || vo.el.ended)) ? vo.el.currentTime : (performance.now() - t0) / 1000;
+      let shown = '';
+      for (const [s, at, o] of chunks) {
+        while (clock() < at && (performance.now() - t0) / 1000 < at + 1.5) await beat(20);
+        if (o.clear) shown = '';
+        if (o.cue && CUES[o.cue]) { try { CUES[o.cue](); } catch (e) { } }
+        // Clock-based typing: a slow device drops frames, never stretches the line.
+        const msPer = vo ? 26 : 42, ts = performance.now();
+        let i = 0;
+        while (i < s.length) {
+          i = Math.min(s.length, 1 + Math.floor((performance.now() - ts) / msPer));
+          capText.innerHTML = shown + s.slice(0, i) + '<span class="cursor"></span>';
+          if (i < s.length) await beat(16);
+        }
+        shown += s;
+      }
+      capText.innerHTML = shown + (wait ? '' : '<span class="cursor"></span>');
+      if (vo && wait) await Promise.race([vo.done, sleep(8000)]);
+      if (aborted) throw new Error('skip');
+      speaking = 0;
+    }
+    function clearCaption() { capText.textContent = ''; }
+
+    /* =====================================================================
+       ODOMETER — from the visitor's real now to 2187, refracted through
+       the stone (the year is drawn *behind* the diamond in 3D).
+       ===================================================================== */
+    const odo = $('odo'), odoYear = $('odoYear'), odoDate = $('odoDate'),
+      odoDelta = $('odoDelta'), odoLabel = $('odoLabel'), milestone = $('milestone');
+    const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+    function setYear(y, color) {
+      odoYear.innerHTML = String(y).split('').map((d) => `<span>${d}</span>`).join('');
+      G((g) => g.setYear(String(y), color));
+    }
+    function localStamp(d = new Date()) {
+      return `${MONTHS[d.getMonth()]} ${pad(d.getDate())} · ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+    function showMilestone(yr, text, final) {
+      milestone.classList.remove('flash'); void milestone.offsetWidth;
+      milestone.className = 'milestone flash' + (final ? ' final' : '');
+      milestone.innerHTML = `<span class="yr">${final ? 'BREAKING · ' + yr : yr}</span>${text}`;
+    }
+
+    const frags = $('frags');
+    function spawnFrag(item) {
+      const [txt, cls] = item || CONFIG.fragments[Math.floor(Math.random() * CONFIG.fragments.length)];
+      const el = document.createElement('div');
+      el.className = 'frag ' + cls;
+      el.textContent = txt;
+      const edge = Math.random();
+      const x = edge < 0.5 ? 3 + Math.random() * 20 : 70 + Math.random() * 18;
+      const y = 10 + Math.random() * 74;
+      el.style.left = x + '%'; el.style.top = y + '%';
+      el.style.setProperty('--life', (600 + Math.random() * 700) + 'ms');
+      frags.appendChild(el);
+      setTimeout(() => el.remove(), 1400);
+    }
+
+    /* ---------- Visual beats, fired on specific words of her VO ---------- */
+    function burst(items, gap = 140) { items.forEach((it, i) => setTimeout(() => spawnFrag(it), i * gap)); }
+    function glitch(strength = 0.25) {
+      const f = $('flash');
+      f.style.setProperty('opacity', strength);
+      setTimeout(() => f.style.removeProperty('opacity'), 70);
+    }
+    const CUES = {
+      // "…From the future."
+      future() {
+        glitch(0.18); G((g) => g.kick(1.2));
+        noiseHit({ freq: 1400, vol: 0.1, dur: 0.35, crackle: true });
+        burst([['TEMPORAL ANOMALY DETECTED', 'pink box'], ['SIGNAL LOOP ESTABLISHED', '']]);
+      },
+      // "Where I am, everything is synthetic." — the stone goes cold and grey
+      synthetic() {
+        G((g) => { g.setTint('#5d6c78'); g.setSpin(0.2); });
+        burst([['LAB-GROWN MARKET SHARE: 100%', 'box'], ['SYNTHETIC IS SAFE.', 'pink'], ['NATURAL SUPPLY: 0.000%', ''],
+        ['SYNTHETIC IS APPROVED.', 'pink'], ['BUREAU CERTIFIED', 'box'], ['LAB-GROWN HAPPINESS', '']], 260);
+      },
+      // "A natural diamond." — it comes alive again
+      diamond() {
+        G((g) => { g.setTint('#ff2d78'); g.flash(1.0); g.setSpin(0.5); });
+        crystal(2093, 0.12, 2.6);
+        burst([['RECEIVER: EARTH-FORMED · 2.8B YRS', 'pink box']]);
+      },
+      // "I'm patching you into our broadcast."
+      patch() {
+        noiseHit({ freq: 2200, vol: 0.12, dur: 0.5, crackle: true });
+        burst([['ROUTING → SC NEWS NETWORK', 'box'], ['BROADCAST ID: SC-2187-A', '']]);
+      },
+      // "…what it costs to own something real."
+      real() {
+        G((g) => g.flash(0.8));
+        crystal(1568, 0.08, 2.2);
+      },
+    };
+
+    function spin(from, to, dur) {
+      return new Promise((resolve) => {
+        const t0 = performance.now();
+        let last = from, mi = 0, fragAcc = 0, prev = t0;
+        const ease = (p) => p < 0.5 ? 8 * p ** 4 : 1 - Math.pow(-2 * p + 2, 4) / 2;
+        odo.classList.add('spinning');
+        G((g) => g.setGlintRate(3));
+        function frame(n) {
+          if (aborted) return resolve();
+          const p = Math.min(1, (n - t0) / dur);
+          const y = Math.round(from + (to - from) * ease(p));
+          const speed = Math.abs(y - last);
+          G((g) => g.setSpin(0.4 + Math.min(speed, 6) * 1.1));
+          if (y !== last) {
+            setYear(y, '#ff2d78'); tick(1 + (y - from) / (to - from) * 0.8);
+            odoDelta.textContent = `Δ +${y - from} YEARS`;
+            odoDate.textContent = `${MONTHS[Math.floor(Math.random() * 12)]} ${pad(1 + Math.floor(Math.random() * 28))} · ${pad(Math.floor(Math.random() * 24))}:${pad(Math.floor(Math.random() * 60))}:${pad(Math.floor(Math.random() * 60))}`;
+            while (mi < CONFIG.milestones.length && y >= CONFIG.milestones[mi][0]) {
+              showMilestone(CONFIG.milestones[mi][0], CONFIG.milestones[mi][1]); mi++;
+            }
+            last = y;
+          }
+          fragAcc += n - prev; prev = n;
+          if (fragAcc > 130 && p > 0.08 && p < 0.95) { fragAcc = 0; spawnFrag(); }
+          if (p < 1) requestAnimationFrame(frame);
+          else { odo.classList.remove('spinning'); G((g) => { g.setSpin(0.3); g.setGlintRate(0.8); }); resolve(); }
+        }
+        requestAnimationFrame(frame);
+      });
+    }
+
+    /* =====================================================================
+       YOUR REPLY — she asks the year, the visitor answers. Defaults to their
+       real year; auto-transmits if they don't touch it, so nobody gets stuck.
+       Options stop at 2029 — her next line is "It's not even 2030 yet?"
+       ===================================================================== */
+    function askYear() {
+      return new Promise((resolve) => {
+        const box = $('reply'), sel = $('yearSel'), send = $('sendBtn'), auto = $('replyAuto');
+        const top = Math.min(2029, Math.max(NOW_YEAR, 2026)), def = Math.min(NOW_YEAR, 2029);
+        sel.innerHTML = '';
+        for (let y = top; y >= 2019; y--) {
+          const o = document.createElement('option'); o.value = y; o.textContent = y;
+          if (y === def) o.selected = true;
+          sel.appendChild(o);
+        }
+        caption.classList.add('raised');
+        box.classList.add('on');
+        noiseHit({ freq: 2600, vol: 0.06, dur: 0.15 });
+        let left = CONFIG.replyTimeout, touched = false, done = false;
+        const tickT = setInterval(() => {
+          if (aborted) return finish();
+          left--;
+          if (!touched && left <= 5 && left > 0) auto.textContent = `AUTO-TRANSMITTING IN ${left}…`;
+          if (left <= 0) finish();
+        }, 1000);
+        const touch = () => { touched = true; auto.textContent = ''; left = Math.max(left, 15); };
+        sel.addEventListener('focus', touch, { once: true });
+        sel.addEventListener('change', touch, { once: true });
+        function finish() {
+          if (done) return; done = true;
+          clearInterval(tickT);
+          audioInit();   // the tap re-confirms audio on phones
+          crystal(2637, 0.1, 1.4); noiseHit({ freq: 1600, vol: 0.12, dur: 0.35, crackle: true });
+          G((g) => g.kick(1.5));
+          send.textContent = 'SENT ✓'; send.disabled = true; sel.disabled = true; auto.textContent = '';
+          setTimeout(() => { box.classList.remove('on'); caption.classList.remove('raised'); }, 650);
+          resolve(parseInt(sel.value, 10) || def);
+        }
+        send.onclick = finish;
+      });
+    }
+
+    /* =====================================================================
+       THE SEQUENCE
+       ===================================================================== */
+    async function connect() {
+      if (connected) return;
+      connected = true;
+      clearInterval(ringLoop); clearInterval(ringTimer);
+      voStop(); audioInit();
+
+      // The line opens: one clean crystal strike + static
+      crystal(2093, 0.16, 2.8);
+      noiseHit({ freq: 1800, vol: 0.2, dur: 0.6, crackle: true, delay: 0.05 });
+
+      $('stageRing').classList.remove('on');
+      $('stageLink').classList.add('on');
+      $('skipBtn').classList.add('on');
+      gemSlot($('voiceSlot'));
+      G((g) => { g.flash(0.8); g.setSpin(0.5); });
+      sizeWave(); waveRun = true; requestAnimationFrame(drawWave);
+      bedStart();
+
+      try {
+        await beat(900);
+        await say('hello');
+        await beat(450);
+        await say('who');
+        await beat(350);
+        await say('synthetic');
+        await beat(450);
+        await say('year');
+
+        // The visitor answers her. (Also a fresh tap mid-call, which keeps
+        // phone audio unlocked.)
+        const fromYear = await askYear();
+        if (aborted) throw new Error('skip');
+        await beat(300);
+
+        // The odometer surfaces: the stone lifts, their year appears behind it
+        clearCaption(); caption.classList.remove('live');
+        $('wave').classList.add('low');
+        odo.classList.add('on');
+        gemSlot($('odoGemSlot'));
+        G((g) => { g.setYearSlot($('odoYearSlot')); g.showYear(true); });
+        odoLabel.textContent = 'REPLY RECEIVED · YOUR LOCAL TIME';
+        setYear(fromYear, '#e8e4d8');
+        odoDate.textContent = localStamp();
+        const liveClock = setInterval(() => { odoDate.textContent = localStamp(); }, 1000);
+        await beat(1400);
+        clearInterval(liveClock);
+
+        odoLabel.textContent = 'TRACING SIGNAL ORIGIN';
+        noiseHit({ freq: 900, vol: 0.12, dur: 0.5, crackle: true });
+        await spin(fromYear, CONFIG.targetYear, reduceMotion ? 1200 : 3800);
+        if (aborted) throw new Error('skip');
+
+        // LANDED
+        $('flash').classList.remove('go'); void $('flash').offsetWidth; $('flash').classList.add('go');
+        if (!reduceMotion) { callLayer.classList.add('shake'); setTimeout(() => callLayer.classList.remove('shake'), 450); }
+        crystal(1046.5, 0.22, 3.2); crystal(1568, 0.12, 3.0, 0.02); boom(0.45);
+        G((g) => g.flash(1.1));
+        odo.classList.add('landed');
+        setYear(CONFIG.targetYear, '#ffffff');
+        odoLabel.textContent = 'SIGNAL ORIGIN · SYNTH CITY';
+        odoDate.textContent = CONFIG.landedTimecode;
+        odoDelta.textContent = `${CONFIG.targetYear - fromYear} YEARS AHEAD OF YOU`;
+        if (CONFIG.finalHeadline) showMilestone(CONFIG.targetYear, CONFIG.finalHeadline, true);
+        else { milestone.classList.remove('flash'); milestone.innerHTML = ''; }
+
+        await beat(1800);
+        odo.classList.add('quiet');
+        G((g) => g.showYear(0.3));
+        await say('oh');
+        await beat(500);
+        await say('still');
+        await beat(800);
+        await say('listen');
+        await beat(700);
+
+        // Someone walks in. She covers — snaps on-air. The stone goes broadcast-cold.
+        clearCaption(); caption.classList.remove('live');
+        doorCue();
+        G((g) => { g.setTint('#7fe3ff'); g.kick(1.5); });
+        await beat(950);
+        caption.classList.add('anchor');
+        $('capWho').textContent = 'SC NEWS NETWORK · LIVE FROM ' + CONFIG.targetYear;
+        $('audStatus').textContent = 'ON AIR'; $('audStatus').classList.add('air');
+        const vs = $('vidStatus'); vs.textContent = 'VIDEO SIGNAL: ACQUIRED'; vs.classList.replace('acq', 'ok');
+        noiseHit({ freq: 3000, vol: 0.08, dur: 0.2 });
+        currentVO = null;   // so the cut waits for the sign-on's own clock, not the last line's
+        say('signon', { wait: false }).catch(() => { });
+
+        // On "Our top story tonight…" the stone collapses into a single glint,
+        // and the broadcast boots inside it.
+        const OUTRO_LEAD = 0.5;
+        const s0 = performance.now();
+        while (!(currentVO && currentVO.currentTime >= CONFIG.signonHandoffAt - OUTRO_LEAD)
+          && performance.now() - s0 < (CONFIG.signonHandoffAt + 1.5) * 1000) await beat(30);
+        crystal(3136, 0.16, 2.6); crystal(4186, 0.08, 2.2, 0.03);
+        if (gem) await gem.outro({ dur: 1.0, peakAt: OUTRO_LEAD });
+        handoff(false);
+      } catch (e) {
+        /* skipped */
+      }
+    }
+
+    $('skipBtn').addEventListener('click', () => { aborted = true; voStop(); handoff(true); });
+
+    // If the phone suspends audio mid-call (notification, lock, app switch),
+    // offer a one-tap restore — a tap is the only thing iOS accepts.
+    const soundBtn = $('soundBtn');
+    soundBtn.addEventListener('click', () => { if (A.ctx) A.ctx.resume(); soundBtn.classList.remove('on'); });
+    setInterval(() => {
+      const lost = connected && !handedOff && A.ctx && A.ctx.state !== 'running';
+      soundBtn.classList.toggle('on', !!lost);
+    }, 500);
+
+    /* =====================================================================
+       HANDOFF — the call layer shrinks into the monitor glass
+       ===================================================================== */
+    function handoff(skipped) {
+      if (handedOff) return;
+      handedOff = true;
+      bedStop(skipped ? 0.3 : 1.2);
+      $('skipBtn').classList.remove('on');
+      if (skipped) {
+        callLayer.classList.add('fadeout');
+        revealSite();
+        setTimeout(teardown, 800);
+      } else {
+        pullBack();
+      }
+    }
+
+    function teardown() {
+      waveRun = false;
+      G((g) => g.stop()); gem = null;
+      callLayer.remove();
+    }
+
+    function pullBack() {
+      const mobile = window.innerWidth <= 768;
+      revealSite();
+      const W = window.innerWidth, H = window.innerHeight;
+      let gx = 0, gy = 0, gw = W, gh = H;
+      if (!mobile) {
+        const r = frameBox.getBoundingClientRect();
+        gx = r.left + r.width * 0.1974; gy = r.top + r.height * 0.1352;
+        gw = r.width * 0.5771; gh = r.height * 0.6131;
+      }
+      callLayer.style.transition = 'transform 1.3s cubic-bezier(.7,0,.2,1), opacity .6s ease .7s';
+      requestAnimationFrame(() => {
+        callLayer.style.transform = `translate(${gx}px, ${gy}px) scale(${gw / W}, ${gh / H})`;
+        callLayer.style.opacity = '0';
+      });
+      setTimeout(teardown, 1500);
+    }
+
+    function revealSite(noAudio) {
+      if (siteShown) return;
+      siteShown = true;
+      shellWrap.style.transition = 'opacity 0.9s ease';
       shellWrap.style.opacity = '1';
       shellWrap.style.pointerEvents = 'auto';
 
-      // Mobile lands straight in EXPAND — desktop stays windowed with
-      // EXPAND available as a manual choice, exactly as before.
-      if (window.innerWidth <= 768) {
-        toggleExpand();
-      }
+      if (window.innerWidth <= 768) toggleExpand();
 
-      // Tell the embedded broadcast to unmute/play in sync with the handoff.
-      // Requires a matching listener inside broadcast.html, e.g.:
-      //   window.addEventListener('message', (e) => {
-      //     if (e.data && e.data.type === 'synthcity:unmute') { /* unmute + play here */ }
-      //   });
-      try {
-        siteFrame.contentWindow.postMessage({ type: 'synthcity:unmute' }, '*');
-      } catch (e) { /* no-op if cross-origin or not yet loaded */ }
-    });
+      // Lead story slams in as the end of her sentence.
+      try { siteFrame.contentWindow.postMessage({ type: 'synthcity:headline' }, '*'); } catch (e) { }
+      // (No unmute when nobody has tapped yet — browsers would pause the video instead.)
+      if (noAudio === true) return;
+      try { siteFrame.contentWindow.postMessage({ type: 'synthcity:unmute' }, '*'); } catch (e) { }
+    }
+
+    // /broadcast → index.html?entry=direct : skip the call entirely
+    if (params.get('entry') === 'direct') {
+      connected = handedOff = true;
+      clearInterval(ringLoop); clearInterval(ringTimer);
+      callLayer.remove();
+      gemReady.then(() => { G((g) => g.stop()); gem = null; });
+      siteFrame.src = 'broadcast.html';   // no call → they get the broadcast's own cold open
+      revealSite(true);
+    }
 
     function toggleExpand() {
-      const box = document.getElementById('frameBox');
-      const icon = document.getElementById('toggleIcon');
-      const label = document.getElementById('toggleLabel');
-      const expanded = box.classList.toggle('expanded');
+      const icon = $('toggleIcon');
+      const label = $('toggleLabel');
+      const expanded = frameBox.classList.toggle('expanded');
       icon.textContent = expanded ? '⤡' : '⤢';
       label.textContent = expanded ? 'MINIMIZE' : 'EXPAND';
     }

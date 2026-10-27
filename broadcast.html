@@ -265,6 +265,49 @@ hr.divider { position: relative; z-index: 1; border: none; height: 1px; backgrou
   color: var(--neon-pink); font-size: 11px; transition: all 0.2s;
 }
 .news-play-btn:hover { background: rgba(255,45,120,0.15); border-color: #ff2d78; }
+.news-play-btn .ico-play { width: 10px; height: 12px; margin-left: 2px; display: block; }
+.ico-snd { display: inline-flex; align-items: center; }
+.ico-snd svg { display: block; }
+
+/* Phones: story cards stack like a modern news app — full-width thumbnail,
+   play button sitting on it, headline at full width underneath. */
+@media (max-width: 640px) {
+  .news-feed { padding: 0 !important; }
+  .news-item {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas: "thumb" "body";
+    gap: 14px;
+    padding: 22px 20px;
+    align-items: start;
+  }
+  .news-thumb {
+    grid-area: thumb;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-color: rgba(255,45,120,0.18);
+  }
+  .news-thumb-placeholder { font-size: 40px; }
+  .news-body { grid-area: body; }
+  .news-play-btn {
+    grid-area: thumb;
+    align-self: end;
+    justify-self: end;
+    margin: 12px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: none;
+    background: var(--neon-pink);
+    color: #0a0006;
+    box-shadow: 0 6px 24px rgba(255,45,120,0.45);
+  }
+  .news-play-btn .ico-play { width: 13px; height: 15px; margin-left: 3px; }
+  .news-ts { font-size: 10px; letter-spacing: 3px; }
+  .news-hl { font-size: 18px; line-height: 1.35; margin-top: 4px; }
+  .news-sub { font-size: 13px; margin-top: 8px; }
+}
 .news-tag-ANOMALY, .news-tag-UPDATE { color: var(--neon-cyan) !important; }
 .news-item:last-child { border-bottom: none; }
 .news-ts { font-family: var(--font-mono); font-size: 10px; color: var(--neon-cyan); white-space: nowrap; padding-top: 3px; min-width: 75px; }
@@ -622,6 +665,13 @@ footer {
 
 </style>
 <script>
+// Drawn speaker icons (emoji render as glossy iOS graphics on iPhones)
+const ICON_MUTED = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="none"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+const ICON_SOUND = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="none"/><path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12"/></svg>';
+document.addEventListener('DOMContentLoaded', () => {
+  ['newsHeroMuteIcon', 'txMuteIcon'].forEach((id) => { const el = document.getElementById(id); if (el && !el.innerHTML) el.innerHTML = ICON_MUTED; });
+});
+
 // ── SIGNAL ACQUISITION ──────────────────────────────────
 function dismissSignal() {
   const el = document.getElementById('signalAcquisition');
@@ -633,6 +683,8 @@ function dismissSignal() {
 }
 
 function runSignalAcquisition() {
+  // The call intro already acquired the signal
+  if (new URLSearchParams(location.search).get('via') === 'call') return;
   // Check localStorage — only show once
   if (localStorage.getItem('scb_signal_seen')) return;
   localStorage.setItem('scb_signal_seen', '1');
@@ -747,7 +799,7 @@ function skipIntro() {
   gap:6px;
   transition:border-color 0.2s,color 0.2s;
 ">
-  <span id="newsHeroMuteIcon">🔇</span><span id="newsHeroMuteLabel">UNMUTE</span>
+  <span id="newsHeroMuteIcon" class="ico-snd"></span><span id="newsHeroMuteLabel">UNMUTE</span>
 </button>
 
 <!-- ============================================================
@@ -914,7 +966,7 @@ function skipIntro() {
           <div class="news-meta-col">
             <div>${timecode}</div><div>${sector}</div><div>${category}</div>
           </div>
-          <div class="news-play-btn" ${videoUrl ? `onclick="playNewsClip('${videoUrl}','${safeTitle}')"` : 'style="opacity:0.25;cursor:default"'}>▶</div>
+          <div class="news-play-btn" ${videoUrl ? `onclick="playNewsClip('${videoUrl}','${safeTitle}')"` : 'style="opacity:0.25;cursor:default"'} aria-label="Play clip"><svg class="ico-play" viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0l10 6-10 6z" fill="currentColor"/></svg></div>
         </div>
       `;
     }).join('');
@@ -947,6 +999,14 @@ function skipIntro() {
   const tagline2 = document.getElementById('coldTagline2');
   const ripple   = document.getElementById('coldRipple');
   const body     = document.body;
+
+  // Arrived through the call from 2187 (index.html)? The call WAS the cold
+  // open — go straight to the news so "Our top story tonight…" lands on it.
+  if (new URLSearchParams(location.search).get('via') === 'call') {
+    overlay.style.display = 'none';
+    const sb = document.getElementById('skipBtn'); if (sb) sb.style.display = 'none';
+    return;
+  }
 
   // Prevent scroll during intro
   body.style.overflow = 'hidden';
@@ -1698,7 +1758,7 @@ function skipIntro() {
         "
         onmouseover="this.style.borderColor='rgba(191,95,255,0.8)';this.style.color='#fff'"
         onmouseout="this.style.borderColor='rgba(191,95,255,0.35)';this.style.color='rgba(232,228,216,0.7)'">
-          <span id="txMuteIcon">🔇</span><span id="txMuteLabel">UNMUTE</span>
+          <span id="txMuteIcon" class="ico-snd"></span><span id="txMuteLabel">UNMUTE</span>
         </button>
       </div>
     </div>
@@ -2193,7 +2253,7 @@ function toggleTxMute() {
       vidEl.play().catch(() => {});
     }
   }
-  if (icon) icon.textContent = window._txMuted ? '🔇' : '🔊';
+  if (icon) icon.innerHTML = window._txMuted ? ICON_MUTED : ICON_SOUND;
   if (lbl)  lbl.textContent  = window._txMuted ? 'UNMUTE' : 'MUTE';
 }
 
@@ -2220,6 +2280,21 @@ function initSlideshow() {
   const slides = SITE_CONFIG?.heroSlides
     ? SITE_CONFIG.heroSlides.map(s => ({ video: S3_BASE+s.video, tag: s.tag, hl: s.hl }))
     : defaultSlides;
+
+  // ── LEAD STORY ─────────────────────────────────────────
+  // The intro call ends on "Our top story tonight…", so this headline is
+  // what the visitor lands on. Works whether slides come from the defaults
+  // above or from S3 content.json: finds the matching story, rewrites it,
+  // or adds it (with the factory-floor footage) if it isn't there.
+  const LEAD = {
+    hl: 'BUREAU CLASSIFIES SYNTHETIC OVERSUPPLY AS ECONOMIC SUCCESS',
+    tag: 'BREAKING',
+    match: /OVERSUPPLY/i,
+    video: S3_BASE + 'production.mp4',
+  };
+  let leadIdx = slides.findIndex(s => LEAD.match.test(s.hl || ''));
+  if (leadIdx === -1) { slides.unshift({ video: LEAD.video, tag: LEAD.tag, hl: LEAD.hl }); leadIdx = 0; }
+  else { slides[leadIdx] = Object.assign({}, slides[leadIdx], { hl: LEAD.hl, tag: LEAD.tag }); }
 
   // Build dots
   slides.forEach((_, i) => {
@@ -2387,8 +2462,13 @@ function initSlideshow() {
     });
   }
 
-  // Load first slide
-  goTo(0);
+  // index.html posts this at the exact handoff moment, so the headline
+  // re-slams in as the sentence's ending (the iframe loaded long before).
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'synthcity:headline') goTo(leadIdx);
+  });
+
+  goTo(leadIdx);
 }
 
 // Show/hide mute button based on whether hero is visible
@@ -2430,7 +2510,7 @@ function toggleNewsHeroMute() {
       vidEl.play().catch(() => {});
     }
   }
-  if (icon) icon.textContent = window._newsHeroMuted ? '🔇' : '🔊';
+  if (icon) icon.innerHTML = window._newsHeroMuted ? ICON_MUTED : ICON_SOUND;
   if (lbl)  lbl.textContent  = window._newsHeroMuted ? 'UNMUTE' : 'MUTE';
 }
 
@@ -2801,7 +2881,7 @@ function triggerGlitch() {
   // Auth line
   const auth = document.createElement('div');
   auth.style.cssText = 'font-size:10px;letter-spacing:3px;color:rgba(232,228,216,0.4);margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:10px';
-  auth.innerHTML = 'AUTHENTICATION VERIFIED &nbsp;<span style="color:#ff2d78;font-size:13px">☑</span>';
+  auth.innerHTML = 'AUTHENTICATION VERIFIED &nbsp;<span style="color:#ff2d78;font-size:13px">☑︎</span>';
 
   // Progress label
   const progLabel = document.createElement('div');
