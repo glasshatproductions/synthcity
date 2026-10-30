@@ -15,6 +15,12 @@ status = 200
 force = false
 
 [[redirects]]
+from = "/rarity"
+to = "/detector.html"
+status = 200
+force = false
+
+[[redirects]]
 from = "/kalahari"
 to = "/kalahari.html"
 status = 200
